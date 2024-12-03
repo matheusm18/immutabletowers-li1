@@ -7,7 +7,7 @@ import ImmutableTowers
 type Posicao = (Float, Float)
 
 desenha :: ImmutableTowers -> Picture
-desenha (ImmutableTowers m) = Pictures $ (desenhaterreno (mapaCoord (0,0) m))
+desenha (ImmutableTowers m) = Pictures $ (desenhaterreno (mapaCoord (0.5,0.5) m))
   where
 
     desenhaterreno :: [(Terreno, Posicao)] -> [Picture]
@@ -55,9 +55,9 @@ mapa01 :: Mapa
 mapa01 =
     [ [a, t, r, a, a, a],
       [r, t, r, a, r, r],
+      [t, t, r, a, r, t],
       [r, t, r, a, r, t],
-      [r, t, r, a, r, t],
-      [r, t, t, t, t, t],
+      [t, t, t, t, t, t],
       [a, a, a, a, r, r]
                        ] 
     where
@@ -70,9 +70,14 @@ mapa01 =
 
 mapaCoord :: Posicao -> Mapa -> [(Terreno,Posicao)]
 mapaCoord _ [] = []
-mapaCoord (x, y) ([] : b) = mapaCoord (0, y + 1) (b)
+mapaCoord (x, y) ([] : b) = mapaCoord (0.5, y + 1) (b)
 mapaCoord (x, y) ((a : b):ab) = (a,(x, y)) : mapaCoord (x + 1, y) ((b) : ab)
 
+
+encontraTerrenoCoords :: Posicao -> Mapa -> Terreno
+encontraTerrenoCoords (0.5, 0.5) ((a:b):ab) = a
+encontraTerrenoCoords (x,y) ([]:b) = encontraTerrenoCoords (x, y-1) b
+encontraTerrenoCoords (x,y) ((a:b):ab) = encontraTerrenoCoords (x-1, y) (b:ab)
 
 main :: IO ()
 main = display FullScreen black (desenha (ImmutableTowers mapa01))

@@ -102,7 +102,7 @@ data Projetil = Projetil
     -- | Duração do efeito do projétil no inimigo.
     duracaoProjetil :: Duracao
   }
-  deriving (Show)
+  deriving (Eq, Show)
 
 -- | Direção de movimento de uma entidade no jogo.
 data Direcao
