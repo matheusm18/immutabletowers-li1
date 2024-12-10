@@ -4,10 +4,10 @@ import Graphics.Gloss
 import ImmutableTowers
 
 
-type Posicao = (Float, Float)
 
 desenha :: ImmutableTowers -> Picture
-desenha (ImmutableTowers m) = Pictures $ (desenhaterreno (mapaCoord (0.5,0.5) m) m)
+desenha (ImmutableTowers m b) = Pictures $ desenhaterreno (mapaCoord (0.5,0.5) m) m ++ desenhaBase posBase
+
   where
 
     desenhaterreno :: [(Terreno, Posicao)] -> Mapa -> [Picture]
@@ -72,8 +72,70 @@ desenha (ImmutableTowers m) = Pictures $ (desenhaterreno (mapaCoord (0.5,0.5) m)
     desenharailponteesqv (x,y) = Color (makeColorI 77 46 28 255) $ translate (x*w/2 - y*w/2) (-x*h/2 - y*h/2 + 4*h)  $ polygon [(-w/2,h/4), (-w/2,0),(0,h/2), (0,3*h/4)]
     desenharailpontedirv :: Posicao -> Picture
     desenharailpontedirv (x,y) = Color (makeColorI 77 46 28 255) $ translate (x*w/2 - y*w/2) (-x*h/2 - y*h/2 + 4*h)  $ polygon [ (w/2,0), (w/2,h/4), (0,-h/4), (0,-h/2)]
- 
 
+    desenhaBase :: Posicao -> [Picture]
+    desenhaBase pos = desenhaBase1 pos ++ desenhaBase2 pos ++ desenhaBase3 pos ++ desenhaBase4 pos ++ desenhaTelhado1 pos ++ desenhaTelhado2 pos ++ desenhaBandeiraPole pos ++ desenhaBandeira pos
+
+
+    desenhaBase1 :: Posicao -> [Picture]
+    desenhaBase1 (x, y) = [
+        translate (x * w / 2 - y * w / 2) (-x * h / 2 - y * h / 2 + 4 * h) $
+        Color (makeColorI 174 184 174 255) $
+        Pictures [polygon [(-w/2, 0), (-w/2, h/8), (0, -h/2 + h/8), (0, -h/2)], 
+                  polygon [(-w/2 + w/8, h/2), (-w/2 + w/8, h/2 + h/8), (0, h/4), (0, h/8)]]
+      ]
+
+    desenhaBase2 :: Posicao -> [Picture]
+    desenhaBase2 (x, y) = [
+        translate (x * w / 2 - y * w / 2) (-x * h / 2 - y * h / 2 + 4 * h) $
+        Color (makeColorI 207 218 206 255) $
+        polygon [(-w/2, h/8), (-w/2 + w/8, h/2), (0, h/8), (0, -h/2 + h/ 8)]
+        ]
+
+    desenhaBase3 :: Posicao -> [Picture]
+    desenhaBase3 (x, y) = [
+        translate (x * w / 2 - y * w / 2) (-x * h / 2 - y * h / 2 + 4 * h) $
+        Color (makeColorI 135 142 134 255) $
+        Pictures [polygon [(w/2, 0), (w/2, h/8), (0, -h/2 + h/8), (0, -h/2)], 
+                  polygon [(w/2 - w/8, h/2), (w/2 - w/8, h/2 + h/8), (0, h/4), (0, h/8)]]
+      ]
+
+    desenhaBase4 :: Posicao -> [Picture]
+    desenhaBase4 (x, y) = [
+        translate (x * w / 2 - y * w / 2) (-x * h / 2 - y * h / 2 + 4 * h) $
+        Color (makeColorI 182 191 181 255) $
+        polygon [(w/2, h/8), (w/2 - w/8, h/2), (0, h/8), (0, -h/2 + h/ 8)]
+      ]
+
+    desenhaTelhado1 :: Posicao -> [Picture]
+    desenhaTelhado1 (x, y) = [
+        translate (x * w / 2 - y * w / 2) (-x * h / 2 - y * h / 2 + 4 * h) $
+        Color (makeColorI 213 101 101 255) $
+        polygon [(-w/2 + w/8, h/2 + h/8), (0, h), (0, h/ 4)]
+      ]
+
+    desenhaTelhado2 :: Posicao -> [Picture]
+    desenhaTelhado2 (x, y) = [
+        translate (x * w / 2 - y * w / 2) (-x * h / 2 - y * h / 2 + 4 * h) $
+        Color (makeColorI 188 88 88 255) $
+        polygon [(w/2 - w/8, h/2 + h/8), (0, h), (0, h/ 4)]
+      ]
+
+    desenhaBandeiraPole :: Posicao -> [Picture]
+    desenhaBandeiraPole (x, y) = [
+        translate (x * w / 2 - y * w / 2) (-x * h / 2 - y * h / 2 + 4 * h) $
+        Color (makeColorI 139 69 19 255) $
+        polygon [(-h/64, h-h/32), (-h/64, 5*h/4), (h/64, 5*h/4), (h/64, h-h/32)]
+      ]
+
+    desenhaBandeira :: Posicao -> [Picture]
+    desenhaBandeira (x, y) = [
+        translate (x * w / 2 - y * w / 2) (-x * h / 2 - y * h / 2 + 4 * h) $
+        Color red $
+        polygon [(-h/64, 9*h/8), (-h/64, 5*h/4), (-h/4, 5*h/4), (-h/8, 19*h/16), (-h/4, 9*h/8)]
+      ]
+
+    posBase = posicaoBase b
 
 w = 100
 h = w/2
@@ -121,4 +183,4 @@ main :: IO ()
 main = display
             (InWindow "Immutable Towers" (((round w)+10)*(contaCol mapa01),((round h)+10) * (contaLinh mapa01)) (500, 250))
             black
-            (desenha (ImmutableTowers mapa01))
+            (desenha (ImmutableTowers mapa01 (Base 100 (7.5,1.5) 0)))
