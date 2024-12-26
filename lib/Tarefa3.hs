@@ -19,16 +19,16 @@ atualizaOnda t Onda {inimigosOnda = linimigos, tempoOnda = trestantei, cicloOnda
     = case trestantei of
         0 -> Onda {inimigosOnda = tail linimigos, tempoOnda = tempoentreinimigos} -- falta botar o inimigo que saiu para jogo
         x -> Onda {tempoOnda = max 0 (x - t)}
-atualizaOnda t Onda {inimigosOnda = linimigos, tempoOnda = trestantei, entradaOnda = tonda}
-    = Onda {entradaOnda = tnovoonda}
+atualizaOnda t Onda {inimigosOnda = linimigos, tempoOnda = trestantei, entradaOnda = tonda, cicloOnda = tempoentreinimigos}
+    = Onda {entradaOnda = tnovoonda, inimigosOnda = linimigos, tempoOnda = trestantei, cicloOnda = tempoentreinimigos}
     where tnovoonda = max 0 (tonda - t)
 
 -- | Função que atualiza todos os portais do jogo com o passar do tempo.
 atualizaPortal :: Tempo -> Portal -> Portal
-atualizaPortal t Portal {ondasPortal = londas} =
+atualizaPortal t Portal {ondasPortal = londas, posicaoPortal = pos} =
     case (inimigosOnda onda) of
-         [] -> Portal {ondasPortal = restoondas}
-         _ -> Portal {ondasPortal = ondaatualizada:restoondas}
+         [] -> Portal {ondasPortal = restoondas, posicaoPortal = pos}
+         _ -> Portal {ondasPortal = ondaatualizada:restoondas, posicaoPortal = pos}
     where
         (onda:restoondas) = londas
         ondaatualizada = atualizaOnda t onda
@@ -39,10 +39,7 @@ atualizaPortais t lportais = map (atualizaPortal t) lportais
 
 -- | Função auxiliar que atualiza uma torre (cooldown).
 atualizaTorre :: Tempo -> [Inimigo] -> Torre -> Torre
-atualizaTorre t inimigos torre@(Torre {tempoTorre = 0, cicloTorre = tempo})
-    = if null (inimigosNoAlcance torre inimigos) then Torre {tempoTorre = 0} else Torre {tempoTorre = tempo}
-atualizaTorre t inimigos Torre {tempoTorre = temporestante} = let temponovo = max 0 (temporestante - t)
-                                                     in  Torre {tempoTorre = temponovo}
+atualizaTorre t inimigos torre = torre
 
 -- | Função que atualiza todas as torres do jogo com o passar do tempo.
 atualizaTorres :: Tempo -> [Inimigo] -> [Torre] -> [Torre]
@@ -134,15 +131,15 @@ atualizaInimigos t mapa base torres inimigos
 
 -- | Função que atualiza a base, i.e, a vida da base e os créditos da base.
 atualizaBase :: Tempo -> Base -> Float -> Creditos -> Base
-atualizaBase t Base {vidaBase = vida, posicaoBase = posicao, creditosBase = creditos} danobase butim
-    = Base {vidaBase = vidanova, creditosBase = creditosnovos}
+atualizaBase t Base {vidaBase = vida, posicaoBase = base, creditosBase = creditos} danobase butim
+    = Base {vidaBase = vidanova, creditosBase = creditosnovos, posicaoBase = base}
     where vidanova = vida - danobase
           creditosnovos = creditos + butim
 
 -- | Função principal que atualiza o jogo com o passar do tempo.
 atualizaJogo :: Tempo -> Jogo -> Jogo
 atualizaJogo t Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa}
-    = Jogo {baseJogo = baseatt, portaisJogo = lportaisatt, torresJogo = ltorresatt, inimigosJogo = linimigosatt}
+    = Jogo {baseJogo = baseatt, portaisJogo = lportaisatt, torresJogo = ltorresatt, inimigosJogo = linimigosatt, mapaJogo = mapa}
     where
         lportaisatt = atualizaPortais t lportais
         ltorresatt = atualizaTorres t linimigos ltorres

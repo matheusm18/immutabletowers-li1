@@ -1,13 +1,18 @@
 module Desenhar where
 
 import Graphics.Gloss
-import Graphics.Gloss.Interface.Pure.Game
 import ImmutableTowers
 import LI12425
 
 -- Função principal para desenhar o mapa
 desenha :: ImmutableTowers -> Picture
-desenha (ImmutableTowers jogo) = Pictures $ concatMap desenhaLinha (zip [0..] (mapaJogo jogo))
+desenha (ImmutableTowers Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa}) 
+                        = Pictures $  concatMap desenhaLinha (zip [0..] mapa) ++ [desenhaBase posbase] ++ (map desenhaTorres lpostorres) ++ (map desenhaPortais lposportais) ++ (map desenhaInimigo lposinimigos)
+            where
+                lposinimigos = map (\i -> posicaoInimigo i) linimigos
+                lposportais = map (\i -> posicaoPortal i) lportais
+                lpostorres = map (\i -> posicaoTorre i) ltorres
+                posbase = posicaoBase base
 
 desenhaLinha :: (Int, [Terreno]) -> [Picture]
 desenhaLinha (y, linha) = concatMap (desenhaChao y) (zip [0..] linha)
@@ -26,13 +31,27 @@ desenhaTerreno Relva (x, y) = desenhaChaoBase (x, y) (makeColorI 91 142 80 255)
 desenhaTerreno Terra (x, y) = desenhaChaoBase (x, y) (makeColorI 186 140 93 255)
 
 desenhaChaoBase :: Posicao -> Color -> Picture
-desenhaChaoBase (x, y) color = Color color $ translate (x * w) (-y * h) $ rectangleSolid w h
+desenhaChaoBase (x, y) color = Color color $ translate (x * w) (y * h) $ rectangleSolid w h
 
 w :: Float
 w = 40
 
 h :: Float
 h = 40
+
+-- tentar perceber porque o mapa esta ao contrario!!
+
+desenhaInimigo :: Posicao -> Picture
+desenhaInimigo (x,y) = Color red $ translate (x * 40) (y * 40) $ rectangleSolid 20 20
+
+desenhaPortais :: Posicao -> Picture
+desenhaPortais (x,y) = Color yellow $ translate (x * 40) (y * 40) $ circleSolid 15
+
+desenhaTorres :: Posicao -> Picture
+desenhaTorres (x,y) = Color (greyN 0.5) $ translate (x * 40) (y * 40) $ rectangleSolid 20 30
+
+desenhaBase :: Posicao -> Picture
+desenhaBase (x,y) = Color (greyN 0.5) $ translate (x * 40) (y * 40) $ rectangleSolid 30 30
 
 mapa01 :: [[Terreno]]
 mapa01 =
@@ -49,12 +68,3 @@ mapa01 =
     t = Terra
     r = Relva
     a = Agua
-
--- Função para contar o número de colunas no mapa
-contaCol :: Mapa -> Int
-contaCol [] = 0
-contaCol (linha:_) = length linha
-
--- Função para contar o número de linhas no mapa
-contaLinhas :: Mapa -> Int
-contaLinhas = length

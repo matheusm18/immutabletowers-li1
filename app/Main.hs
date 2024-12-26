@@ -13,29 +13,29 @@ import Tarefa3
 jogoInicio :: Jogo
 jogoInicio = Jogo {
     baseJogo = Base {
-        vidaBase = 100,  -- Exemplo de vida inicial da base
-        posicaoBase = (5.5, 2.5),  -- Posição da base no mapa
-        creditosBase = 50  -- Exemplo de créditos iniciais
+        vidaBase = 100,
+        posicaoBase = (5.5, 2.5),
+        creditosBase = 50
     },
     portaisJogo = [
         Portal {
-            posicaoPortal = (0.5, 0.5),  -- Posição do primeiro portal
+            posicaoPortal = (0.5, 0.5),
             ondasPortal = [
                 Onda {
                     inimigosOnda = [
                         Inimigo {
                             posicaoInimigo = (1.5, 1.5),
                             direcaoInimigo = Sul,
-                            vidaInimigo = 50,  -- Exemplo de vida inicial do inimigo
-                            velocidadeInimigo = 1,  -- Velocidade do inimigo
-                            ataqueInimigo = 5,  -- Dano do inimigo na base
-                            butimInimigo = 10,  -- Créditos que o jogador recebe
+                            vidaInimigo = 50,
+                            velocidadeInimigo = 1,
+                            ataqueInimigo = 5,
+                            butimInimigo = 10,
                             projeteisInimigo = []
                         }
                     ],
-                    cicloOnda = 2.0,  -- Tempo entre inimigos da onda
-                    tempoOnda = 2.0,  -- Tempo restante até o próximo inimigo
-                    entradaOnda = 5.0  -- Tempo até a entrada da onda
+                    cicloOnda = 2.0,
+                    tempoOnda = 2.0,
+                    entradaOnda = 5.0
                 }
             ]
         }
@@ -66,10 +66,10 @@ jogoInicio = Jogo {
             }
         }
     ],
-    mapaJogo = mapa01,  -- Aqui você pode definir o seu mapa, por exemplo, um mapa de exemplo
+    mapaJogo = mapa01,
     inimigosJogo = [
         Inimigo {
-            posicaoInimigo = (2.5, 4.5),
+            posicaoInimigo = (0.5, 0.5),
             direcaoInimigo = Este,
             vidaInimigo = 100,
             velocidadeInimigo = 1,
@@ -80,7 +80,7 @@ jogoInicio = Jogo {
     ],
     lojaJogo = [
         (50, Torre {
-            posicaoTorre = (0, 0),  -- A posição não importa aqui, pois será definida na construção
+            posicaoTorre = (0, 0),
             danoTorre = 25,
             alcanceTorre = 3.5,
             rajadaTorre = 3,
