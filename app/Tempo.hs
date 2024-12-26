@@ -2,6 +2,9 @@ module Tempo where
 
 import ImmutableTowers
 import LI12425
+import Tarefa1
+import Tarefa2
+import Tarefa3
 
 reageTempo :: Tempo -> ImmutableTowers -> ImmutableTowers
-reageTempo _ it = it
+reageTempo t (ImmutableTowers jogo) = ImmutableTowers (atualizaJogo t jogo)

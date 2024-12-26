@@ -129,7 +129,7 @@ data Inimigo = Inimigo
     -- | Efeitos secundários ativos no inimigo.
     projeteisInimigo :: [Projetil]
   }
-  deriving (Show)
+  deriving (Show,Eq)
 
 -- | Onda de inimigos que saem de um portal.
 data Onda = Onda

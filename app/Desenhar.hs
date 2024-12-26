@@ -1,10 +1,13 @@
+module Desenhar where
+
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import ImmutableTowers
+import LI12425
 
 -- Função principal para desenhar o mapa
-desenha :: Mapa -> Picture
-desenha mapa = Pictures $ concatMap desenhaLinha (zip [0..] mapa)
+desenha :: ImmutableTowers -> Picture
+desenha (ImmutableTowers jogo) = Pictures $ concatMap desenhaLinha (zip [0..] (mapaJogo jogo))
 
 desenhaLinha :: (Int, [Terreno]) -> [Picture]
 desenhaLinha (y, linha) = concatMap (desenhaChao y) (zip [0..] linha)
@@ -55,13 +58,3 @@ contaCol (linha:_) = length linha
 -- Função para contar o número de linhas no mapa
 contaLinhas :: Mapa -> Int
 contaLinhas = length
-
-background :: Color
-background = greyN 0.6
-
--- Função principal para exibir a janela
-main :: IO ()
-main = display
-            (InWindow "Immutable Towers" (800, 600) (100, 100))
-            background
-            (desenha mapa01)
