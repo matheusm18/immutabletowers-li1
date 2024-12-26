@@ -11,20 +11,88 @@ module Tarefa2 where
 
 import LI12425
 
+
+dist :: Posicao -> Posicao -> Float
+dist (x1,y1) (x2,y2) = sqrt ((x2-x1)^2 + (y2-y1)^2)
+
 inimigosNoAlcance :: Torre -> [Inimigo] -> [Inimigo]
-inimigosNoAlcance = undefined
+inimigosNoAlcance _ [] = []
+inimigosNoAlcance torre (inimigo:resto)
+    | dist (x,y) (xi,yi) <= dist (x,y) (x+r,y) = inimigo : inimigosNoAlcance torre resto
+    | otherwise = inimigosNoAlcance torre resto
+        where
+            (x,y) = posicaoTorre (torre)
+            r = alcanceTorre (torre)
+            (xi,yi) = posicaoInimigo (inimigo)
+
+
+verificaGelo :: [Projetil] -> Bool
+verificaGelo listaprojetil = any (\p -> tipoProjetil p == Gelo) listaprojetil
+
+verificaFogo:: [Projetil] -> Bool
+verificaFogo listaprojetil = any (\p -> tipoProjetil p == Fogo) listaprojetil
+
+verificaResina:: [Projetil] -> Bool
+verificaResina listaprojetil = any (\p -> tipoProjetil p == Resina) listaprojetil
+
+dobraDuracao :: Projetil -> Duracao
+dobraDuracao (Projetil _ Infinita) = Infinita
+dobraDuracao (Projetil _ (Finita d)) = Finita (2*d)
+
+somaDuracao :: Projetil -> Projetil -> Duracao
+somaDuracao (Projetil _ Infinita) (Projetil _ _ ) = Infinita
+somaDuracao (Projetil _ _) (Projetil _ Infinita) = Infinita
+somaDuracao (Projetil _ (Finita d1)) (Projetil _ (Finita d2)) = Finita (d1 + d2)
+
+-- A lista de projéteis se não for vazia pode conter ou apenas Fogo, ou conter Resina com Gelo, ou Gelo com Resina.
+atualizaProjeteis :: Projetil -> [Projetil] -> [Projetil]
+atualizaProjeteis p [] = [p]
+atualizaProjeteis pinc (p:rp) = 
+    case (tipoProjetil pinc, tipoProjetil p) of
+         (Fogo, Gelo) -> rp
+         (Fogo, Resina) ->
+            if verificaGelo rp
+            then [p] -- deixa apenas a resina
+            else [Projetil Fogo (dobraDuracao pinc)] -- só havia resina na lista.
+         (Fogo, Fogo) -> [Projetil Fogo (somaDuracao pinc p)]
+         (Gelo, Fogo) -> rp
+         (Gelo, Gelo) -> (Projetil Gelo (somaDuracao pinc p)) : rp
+         (Gelo, Resina) ->
+            if verificaGelo rp
+            then p : [Projetil Gelo (somaDuracao pinc pg)]
+            else pinc : [p] -- só existia resina na lista.
+            where pg = head rp
+         (Resina, Fogo) -> [Projetil Fogo (dobraDuracao p)]
+         (Resina, Gelo) ->
+            if verificaResina rp
+            then p : [Projetil Resina (somaDuracao pinc pr)]
+            else pinc : [p] -- se não houver resina, então só existia gelo na lista.
+            where pr = head rp
+         (Resina, Resina) -> (Projetil Resina (somaDuracao pinc p)) : rp
 
 atingeInimigo :: Torre -> Inimigo -> Inimigo
-atingeInimigo = undefined
+atingeInimigo Torre {danoTorre = dano, projetilTorre = projetil} Inimigo {vidaInimigo = vidaInicial, projeteisInimigo = lprojeteis} 
+    = Inimigo {vidaInimigo = vidaInicial - dano, projeteisInimigo = atualizaProjeteis projetil lprojeteis}
 
 ativaInimigo :: Portal -> [Inimigo] -> (Portal, [Inimigo])
-ativaInimigo = undefined
+ativaInimigo portal  inimigos = (portalAtualizado, inimigos ++ [i])
+        where
+            ondaAtual = (head (ondasPortal (portal)))
+            (i:r) = inimigosOnda ondaAtual
+            ondaAtualizada = ondaAtual {inimigosOnda = r}
+            portalAtualizado = portal {ondasPortal = ondaAtualizada : tail (ondasPortal portal)}
 
 terminouJogo :: Jogo -> Bool
-terminouJogo = undefined
+terminouJogo jogo = ganhouJogo (jogo) || perdeuJogo (jogo)
 
 ganhouJogo :: Jogo -> Bool
-ganhouJogo = undefined
+ganhouJogo jogo = vida > 0 && null ondas && null inimigos
+        where
+            vida = vidaBase (baseJogo jogo)
+            ondas = map (ondasPortal) (portaisJogo (jogo))
+            inimigos = inimigosJogo (jogo)
 
 perdeuJogo :: Jogo -> Bool
-perdeuJogo = undefined
+perdeuJogo jogo = vida <= 0
+        where
+            vida = vidaBase (baseJogo jogo)

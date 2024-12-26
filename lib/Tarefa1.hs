@@ -20,7 +20,7 @@ tipoTerreno (x,y) mapa
     where x' = floor x
           y' = floor y
 
--- | Função que verifica se em um\a certa posição o tipo do terreno é Terra.
+-- | Função que verifica se em uma certa posição o tipo do terreno é Terra.
 validaPosicaoTerra :: Posicao -> Mapa -> Bool
 validaPosicaoTerra (x,y) mapa = case t of
     Just Terra -> True
