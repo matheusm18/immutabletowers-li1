@@ -17,13 +17,9 @@ dist (x1,y1) (x2,y2) = sqrt ((x2-x1)^2 + (y2-y1)^2)
 
 inimigosNoAlcance :: Torre -> [Inimigo] -> [Inimigo]
 inimigosNoAlcance _ [] = []
-inimigosNoAlcance torre (inimigo:resto)
-    | dist (x,y) (xi,yi) <= dist (x,y) (x+r,y) = inimigo : inimigosNoAlcance torre resto
-    | otherwise = inimigosNoAlcance torre resto
-        where
-            (x,y) = posicaoTorre (torre)
-            r = alcanceTorre (torre)
-            (xi,yi) = posicaoInimigo (inimigo)
+inimigosNoAlcance torre inimigos = filter (\i -> dist (x,y) (posicaoInimigo i) <= r) inimigos
+    where (x,y) = posicaoTorre torre
+          r = alcanceTorre torre
 
 
 verificaGelo :: [Projetil] -> Bool
@@ -81,12 +77,15 @@ atingeInimigo Torre {danoTorre = dano, projetilTorre = projetil} i
                ataqueInimigo = ataqueInimigo i}
 
 ativaInimigo :: Portal -> [Inimigo] -> (Portal, [Inimigo])
-ativaInimigo portal  inimigos = (portalAtualizado, inimigos ++ [i])
-        where
-            ondaAtual = (head (ondasPortal (portal)))
-            (i:r) = inimigosOnda ondaAtual
-            ondaAtualizada = ondaAtual {inimigosOnda = r}
-            portalAtualizado = portal {ondasPortal = ondaAtualizada : tail (ondasPortal portal)}
+ativaInimigo portal  inimigos =
+    case ondasPortal portal of
+        [] -> (portal, inimigos)
+        (onda:restoondas) -> 
+            case inimigosOnda onda of
+                [] -> (portal {ondasPortal = restoondas}, inimigos)
+                (i:r) -> let novaOnda = Onda {inimigosOnda = r}
+                             novoPortal = Portal {ondasPortal = novaOnda : restoondas}
+                         in (novoPortal, inimigos ++ [i])
 
 terminouJogo :: Jogo -> Bool
 terminouJogo jogo = ganhouJogo (jogo) || perdeuJogo (jogo)
@@ -95,7 +94,7 @@ ganhouJogo :: Jogo -> Bool
 ganhouJogo jogo = vida > 0 && null ondas && null inimigos
         where
             vida = vidaBase (baseJogo jogo)
-            ondas = map (ondasPortal) (portaisJogo (jogo))
+            ondas = concatMap (ondasPortal) (portaisJogo (jogo))
             inimigos = inimigosJogo (jogo)
 
 perdeuJogo :: Jogo -> Bool

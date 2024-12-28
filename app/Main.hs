@@ -6,9 +6,6 @@ import Graphics.Gloss
 import ImmutableTowers
 import Tempo
 import LI12425
-import Tarefa1
-import Tarefa2
-import Tarefa3
 
 jogoInicio :: Jogo
 jogoInicio = Jogo {
@@ -43,20 +40,20 @@ jogoInicio = Jogo {
     torresJogo = [
         Torre {
             posicaoTorre = (4.5, 3.5),
-            danoTorre = 20,  -- Dano da torre
-            alcanceTorre = 3.0,  -- Alcance da torre
-            rajadaTorre = 1,  -- Número máximo de inimigos atingidos por rajada
-            cicloTorre = 2.0,  -- Tempo entre rajadas
-            tempoTorre = 2.0,  -- Tempo restante até a próxima rajada
+            danoTorre = 20,
+            alcanceTorre = 3.0,
+            rajadaTorre = 1,
+            cicloTorre = 2.0,
+            tempoTorre = 2.0,
             projetilTorre = Projetil {
-                tipoProjetil = Resina,  -- Tipo de projétil da torre
-                duracaoProjetil = Finita 3.0  -- Duração do efeito do projétil
+                tipoProjetil = Resina,
+                duracaoProjetil = Finita 3.0
             }
         },
         Torre {
             posicaoTorre = (0.5, 1.5),
-            danoTorre = 101,
-            alcanceTorre = 200,
+            danoTorre = 50,
+            alcanceTorre = 100,
             rajadaTorre = 5,
             cicloTorre = 1.5,
             tempoTorre = 0,
@@ -72,7 +69,7 @@ jogoInicio = Jogo {
             posicaoInimigo = (0.5, 0.5),
             direcaoInimigo = Este,
             vidaInimigo = 100,
-            velocidadeInimigo = 1,
+            velocidadeInimigo = 10,
             ataqueInimigo = 10,
             butimInimigo = 15,
             projeteisInimigo = []
@@ -101,7 +98,7 @@ fundo :: Color
 fundo = greyN 0.6
 
 fr :: Int
-fr = 10
+fr = 5
 
 main :: IO ()
 main = do
