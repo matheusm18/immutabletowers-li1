@@ -48,7 +48,7 @@ desenhaPortais :: Posicao -> Picture
 desenhaPortais (x,y) = Color yellow $ translate (x * 40) (y * 40) $ circleSolid 15
 
 desenhaTorres :: Posicao -> Picture
-desenhaTorres (x,y) = Color (greyN 0.5) $ translate (x * 40) (y * 40) $ rectangleSolid 20 30
+desenhaTorres (x,y) = Color (orange) $ translate (x * 40) (y * 40) $ rectangleSolid 20 30
 
 desenhaBase :: Posicao -> Picture
 desenhaBase (x,y) = Color (greyN 0.5) $ translate (x * 40) (y * 40) $ rectangleSolid 30 30

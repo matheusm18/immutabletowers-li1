@@ -71,8 +71,14 @@ atualizaProjeteis pinc (p:rp) =
          (Resina, Resina) -> (Projetil Resina (somaDuracao pinc p)) : rp
 
 atingeInimigo :: Torre -> Inimigo -> Inimigo
-atingeInimigo Torre {danoTorre = dano, projetilTorre = projetil} Inimigo {vidaInimigo = vidaInicial, projeteisInimigo = lprojeteis} 
-    = Inimigo {vidaInimigo = vidaInicial - dano, projeteisInimigo = atualizaProjeteis projetil lprojeteis}
+atingeInimigo Torre {danoTorre = dano, projetilTorre = projetil} i
+    = Inimigo {vidaInimigo = max 0 ((vidaInimigo i) - dano), 
+               projeteisInimigo = atualizaProjeteis projetil (projeteisInimigo i), 
+               posicaoInimigo = posicaoInimigo i,
+               direcaoInimigo = direcaoInimigo i,
+               butimInimigo = butimInimigo i,
+               velocidadeInimigo = velocidadeInimigo i,
+               ataqueInimigo = ataqueInimigo i}
 
 ativaInimigo :: Portal -> [Inimigo] -> (Portal, [Inimigo])
 ativaInimigo portal  inimigos = (portalAtualizado, inimigos ++ [i])

@@ -54,14 +54,14 @@ jogoInicio = Jogo {
             }
         },
         Torre {
-            posicaoTorre = (0.5, 2.5),
-            danoTorre = 15,
-            alcanceTorre = 4.0,
-            rajadaTorre = 2,
+            posicaoTorre = (0.5, 1.5),
+            danoTorre = 101,
+            alcanceTorre = 200,
+            rajadaTorre = 5,
             cicloTorre = 1.5,
-            tempoTorre = 1.5,
+            tempoTorre = 0,
             projetilTorre = Projetil {
-                tipoProjetil = Gelo,
+                tipoProjetil = Fogo,
                 duracaoProjetil = Finita 5.0
             }
         }

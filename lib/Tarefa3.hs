@@ -39,7 +39,18 @@ atualizaPortais t lportais = map (atualizaPortal t) lportais
 
 -- | Função auxiliar que atualiza uma torre (cooldown).
 atualizaTorre :: Tempo -> [Inimigo] -> Torre -> Torre
-atualizaTorre t inimigos torre = torre
+atualizaTorre t inimigos torre@(Torre {tempoTorre = 0, cicloTorre = ciclotempo, posicaoTorre = pos, danoTorre = dano, alcanceTorre = alcance, rajadaTorre = rajada, projetilTorre = proj})
+    = if null (inimigosNoAlcance torre inimigos) 
+      then Torre {tempoTorre = 0, cicloTorre = ciclotempo, posicaoTorre = pos, danoTorre = dano, alcanceTorre = alcance, rajadaTorre = rajada, projetilTorre = proj} 
+      else Torre {tempoTorre = ciclotempo, cicloTorre = ciclotempo, posicaoTorre = pos, danoTorre = dano, alcanceTorre = alcance, rajadaTorre = rajada, projetilTorre = proj}
+atualizaTorre t inimigos torre = let temponovo = max 0 ((tempoTorre torre) - t)
+                                 in  Torre {tempoTorre = temponovo, 
+                                            cicloTorre = cicloTorre torre,
+                                            posicaoTorre = posicaoTorre torre,
+                                            danoTorre = danoTorre torre,
+                                            alcanceTorre = alcanceTorre torre,
+                                            rajadaTorre = rajadaTorre torre,
+                                            projetilTorre = projetilTorre torre}
 
 -- | Função que atualiza todas as torres do jogo com o passar do tempo.
 atualizaTorres :: Tempo -> [Inimigo] -> [Torre] -> [Torre]
@@ -52,38 +63,16 @@ atualizaVidaProjeteis Inimigo {vidaInimigo = vida, projeteisInimigo = lprojeteis
       then vida - 5 -- valor 5 é alterável (testar depois em jogo)
       else vida
 
--- | Função que move os inimigos ** ver melhor se a movimentação está correta **
+-- Falta fazer a função moveInimigo, anterior estava a crashar
 moveInimigo :: Tempo -> Inimigo -> Mapa -> (Direcao,Posicao)
-moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocidadeInimigo = velocidade, projeteisInimigo = lprojeteis} mapa
-    = if any (\proj -> tipoProjetil proj == Gelo) lprojeteis
-      then (direcao,(x,y))
-      else
-        case direcao of
-            Norte -> if validaPosicaoTerra (x,y+(velocidade*t)) mapa
-                     then (direcao,(x,y+(velocidade*t)))
-                     else if validaPosicaoTerra (x+(velocidade*t),y) mapa
-                     then (Este,(x,y))
-                     else (Oeste,(x,y))
-            Sul ->  if validaPosicaoTerra (x,(y-velocidade*t)) mapa
-                    then (direcao,(x,(y-velocidade*t)))
-                    else if validaPosicaoTerra (x+(velocidade*t),y) mapa
-                    then (Este,(x,y))
-                    else (Oeste,(x,y))
-            Este -> if validaPosicaoTerra (x+(velocidade*t),y) mapa
-                    then (direcao,(x+(velocidade*t),y))
-                    else if validaPosicaoTerra (x,y+(velocidade*t)) mapa
-                    then (Norte,(x,y))
-                    else (Sul,(x,y))
-            Oeste -> if validaPosicaoTerra (x-(velocidade*t),y) mapa
-                     then (direcao,(x-(velocidade*t),y))
-                     else if validaPosicaoTerra (x,y+(velocidade*t)) mapa
-                     then (Norte,(x,y))
-                     else (Sul,(x,y))
+moveInimigo t i mapa = (d,p)
+    where d = direcaoInimigo i
+          p = posicaoInimigo i
 
 -- | Função que atualiza a duração de um projétil com o passar do tempo.
 atualizaProjetil :: Tempo -> Projetil -> Projetil
 atualizaProjetil t Projetil {duracaoProjetil = Infinita} = Projetil {duracaoProjetil = Infinita}
-atualizaProjetil t Projetil {duracaoProjetil = Finita d} = Projetil {duracaoProjetil = Finita (d-t)}
+atualizaProjetil t Projetil {duracaoProjetil = Finita d, tipoProjetil = tp} = Projetil {duracaoProjetil = Finita (d-t), tipoProjetil = tp}
 
 -- | Função que dada uma lista de inimigos ativos retorna uma lista com os inimigos apos serem atacados por uma torre.
 atacaInimigos :: Torre -> [Inimigo] -> [Inimigo]
@@ -100,7 +89,9 @@ atualizaInimigo t mapa i
                direcaoInimigo = direcaonova, 
                vidaInimigo = vidanova, 
                velocidadeInimigo = velocidadenova, 
-               projeteisInimigo = lprojeteisnova}
+               projeteisInimigo = lprojeteisnova,
+               ataqueInimigo = ataqueInimigo i,
+               butimInimigo = butimInimigo i}
     where lprojeteis = projeteisInimigo i
           velocidade = velocidadeInimigo i
           (direcaonova,posnova) = moveInimigo t i mapa
@@ -123,9 +114,9 @@ getButim inimigos = butim
 -- | Função que atualiza os inimigos do jogo (aplica dano, movimenta, etc) e no fim retorna uma tupla com a lista de inimigos atualizadas, o dano dos inimigos a base e o butim dos inimigos mortos.
 atualizaInimigos :: Tempo -> Mapa -> Base -> [Torre] -> [Inimigo] -> ([Inimigo],Float,Creditos)
 atualizaInimigos t mapa base torres inimigos 
-    = (filter (\i -> vidaInimigo i > 0 && posicaoInimigo i /= posicaoBase base) inimigosatualizados, danobase, butim)
+    = ((filter (\i -> vidaInimigo i > 0 && posicaoInimigo i /= posicaoBase base) inimigosatualizados), danobase, butim)
     where inimigosaposataque = concatMap (\torre -> if tempoTorre torre == 0 then atacaInimigos torre inimigos else inimigos) torres
-          inimigosatualizados = map (atualizaInimigo t mapa) inimigosaposataque -- ainda faltam retirar os mortos e os que chegaram a base
+          inimigosatualizados = map (atualizaInimigo t mapa) inimigosaposataque -- (atualizados mas ainda faltam tirar os mortos e os que chegaram a base)
           danobase = getDanoNaBase inimigosatualizados base
           butim = getButim inimigosatualizados
 
