@@ -68,23 +68,19 @@ atualizaProjeteis pinc (p:rp) =
 
 atingeInimigo :: Torre -> Inimigo -> Inimigo
 atingeInimigo Torre {danoTorre = dano, projetilTorre = projetil} i
-    = Inimigo {vidaInimigo = max 0 ((vidaInimigo i) - dano), 
-               projeteisInimigo = atualizaProjeteis projetil (projeteisInimigo i), 
-               posicaoInimigo = posicaoInimigo i,
-               direcaoInimigo = direcaoInimigo i,
-               butimInimigo = butimInimigo i,
-               velocidadeInimigo = velocidadeInimigo i,
-               ataqueInimigo = ataqueInimigo i}
+    = case tipoProjetil projetil of 
+        Resina -> i {vidaInimigo = vidaInimigo i - dano, projeteisInimigo = atualizaProjeteis projetil (projeteisInimigo i), velocidadeInimigo = velocidadeInimigo i / 2}
+        _ -> i {vidaInimigo = vidaInimigo i - dano, projeteisInimigo = atualizaProjeteis projetil (projeteisInimigo i)}
 
 ativaInimigo :: Portal -> [Inimigo] -> (Portal, [Inimigo])
-ativaInimigo portal  inimigos =
+ativaInimigo portal inimigos =
     case ondasPortal portal of
         [] -> (portal, inimigos)
         (onda:restoondas) -> 
             case inimigosOnda onda of
                 [] -> (portal {ondasPortal = restoondas}, inimigos)
-                (i:r) -> let novaOnda = Onda {inimigosOnda = r}
-                             novoPortal = Portal {ondasPortal = novaOnda : restoondas}
+                (i:r) -> let novaOnda = onda {inimigosOnda = r, tempoOnda = cicloOnda onda }
+                             novoPortal = portal {ondasPortal = novaOnda : restoondas}
                          in (novoPortal, inimigos ++ [i])
 
 terminouJogo :: Jogo -> Bool

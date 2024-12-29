@@ -13,48 +13,53 @@ import LI12425
 import Tarefa1
 import Tarefa2
 
--- | Função auxiliar que atualiza as ondas.
-atualizaOnda :: Tempo -> Onda -> Onda
-atualizaOnda t onda@(Onda {inimigosOnda = [], tempoOnda = trestantei, cicloOnda = tempoentreinimigos, entradaOnda = 0}) = onda
-atualizaOnda t Onda {inimigosOnda = linimigos, tempoOnda = trestantei, cicloOnda = tempoentreinimigos, entradaOnda = 0} -- se onda estiver ativa:
-    = case trestantei of
-        0 -> Onda {inimigosOnda = tail linimigos, tempoOnda = tempoentreinimigos} -- falta botar o inimigo que saiu para jogo
-        tr -> Onda {tempoOnda = max 0 (tr - t)}
-atualizaOnda t Onda {inimigosOnda = linimigos, tempoOnda = trestantei, entradaOnda = tonda, cicloOnda = tempoentreinimigos}
-    = Onda {entradaOnda = tnovoonda, inimigosOnda = linimigos, tempoOnda = trestantei, cicloOnda = tempoentreinimigos}
-    where tnovoonda = max 0 (tonda - t)
 
--- | Função que atualiza todos os portais do jogo com o passar do tempo.
-atualizaPortal :: Tempo -> Portal -> Portal
-atualizaPortal t portal@(Portal {ondasPortal = [], posicaoPortal = pos}) = portal
-atualizaPortal t portal =
+-- Ainda falta ver porque os inimigos dentro dos portais não estão sendo ativados!!!!!
+
+-- | Função que com o passar do tempo retorna o portal atualizado juntamente com a lista de inimigos do jogo incluindo os inimigos ativados.
+atualizaPortal :: Tempo -> Portal -> [Inimigo] -> (Portal, [Inimigo])
+atualizaPortal t portal@(Portal {ondasPortal = [], posicaoPortal = pos}) inimigos = (portal,inimigos)
+atualizaPortal t portal inimigos =
     let (onda:restoondas) = ondasPortal portal
-        ondaatualizada = atualizaOnda t onda
-    in case (inimigosOnda ondaatualizada) of
-         [] -> portal {ondasPortal = restoondas}
-         _ -> portal {ondasPortal = ondaatualizada : restoondas}
+    in if entradaOnda onda /= 0
+       then (portal {ondasPortal = onda{ entradaOnda = max 0 (entradaOnda onda - t)} : restoondas}, inimigos)
+       else if entradaOnda onda == 0 && tempoOnda onda == 0
+       then (ativaInimigo portal inimigos)
+       else (portal {ondasPortal = onda { tempoOnda = tempoOnda onda - t} : restoondas }, inimigos)
+       
 
 -- | Função que atualiza todos os portais do jogo com o passar do tempo.
-atualizaPortais :: Tempo -> [Portal] -> [Portal]
-atualizaPortais t lportais = map (atualizaPortal t) lportais
+atualizaPortais :: Tempo -> [Portal] -> [Inimigo] -> ([Portal],[Inimigo])
+atualizaPortais t [] inimigos = ([],inimigos)
+atualizaPortais t (p1:rps) inimigos = let (p1att, inimigosp1att) = atualizaPortal t p1 inimigos
+                                          (portais, inimigosatualizados) = atualizaPortais t rps inimigosp1att
+                                      in (p1att : portais, inimigosatualizados)
 
--- | Função auxiliar que atualiza uma torre (cooldown).
-atualizaTorre :: Tempo -> [Inimigo] -> Torre -> Torre
-atualizaTorre t inimigos torre@(Torre {tempoTorre = 0})
-    = if null (inimigosNoAlcance torre inimigos) 
-      then torre
-      else torre {tempoTorre = cicloTorre torre}
-atualizaTorre t inimigos torre = torre {tempoTorre = max 0 (tempoTorre torre - t)}
+-- | Função que dada uma lista de inimigos ativos retorna uma lista com os inimigos apos serem atacados por uma torre e retorna a torre com o cooldown renovado se ela atacar.
+atacaInimigos :: Torre -> [Inimigo] -> (Torre,[Inimigo])
+atacaInimigos torre inimigos =
+    let (iatacar,_) = splitAt (rajadaTorre torre) (inimigosNoAlcance torre inimigos)
+        inimigosAtacados = map (atingeInimigo torre) iatacar
+        inimigosRestantes = filter (`notElem` iatacar) inimigos
+    in  if null iatacar then (torre, inimigos)
+        else (torre {tempoTorre = cicloTorre torre}, inimigosAtacados ++ inimigosRestantes)
 
--- | Função que atualiza todas as torres do jogo com o passar do tempo.
-atualizaTorres :: Tempo -> [Inimigo] -> [Torre] -> [Torre]
-atualizaTorres t inimigos torres = map (atualizaTorre t inimigos) torres
+-- | Função que atualiza as torres: ataca os inimigos e retorna a tupla com a torre atualizada e a lista dos inimigos apos o ataque.
+atualizaTorres :: Tempo -> [Torre] -> [Inimigo] -> ([Torre], [Inimigo])
+atualizaTorres t torres inimigos = foldl atualizaAux ([], inimigos) torres
+  where
+    atualizaAux :: ([Torre], [Inimigo]) -> Torre -> ([Torre], [Inimigo])
+    atualizaAux (acctorres, accinimigos) torre
+        | tempoTorre torre == 0 = let (torreAtt, inimigosAposAtaque) = atacaInimigos torre accinimigos
+                                  in (torreAtt : acctorres, inimigosAposAtaque)
+        | otherwise = let torreAtualizada = torre { tempoTorre = max 0 (tempoTorre torre - t) }
+                      in (torreAtualizada : acctorres, accinimigos)                          
 
 -- | Função que atualiza a vida de um inimigo de acordo com os projeteis ativos.
 atualizaVidaProjeteis :: Inimigo -> Float
 atualizaVidaProjeteis Inimigo {vidaInimigo = vida, projeteisInimigo = lprojeteis}
     = if (any (\proj -> tipoProjetil proj == Fogo) lprojeteis)
-      then vida - 5 -- valor 5 é alterável (testar depois em jogo)
+      then vida - 0.5 -- coloquei 0.5 mas é um valor qualquer (depois temos que testar em jogo)
       else vida
 
 moveInimigo :: Tempo -> Inimigo -> Mapa -> (Direcao,Posicao)
@@ -63,64 +68,73 @@ moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocid
       then (direcao,(x,y))
       else
         case direcao of
-            Norte -> if validaPosicaoTerra (x,y+0.501) mapa
-                     then (direcao,(x,y+(velocidade*t)))
+            Norte -> if validaPosicaoTerra (x,y-0.501) mapa
+                     then (direcao,(x,y-(velocidade*t)))
                      else if validaPosicaoTerra (x+0.501,y) mapa
                      then (Este,(x+(velocidade*t),y))
                      else (Oeste,(x-velocidade*t,y))
   
-            Sul ->  if validaPosicaoTerra (x,(y-0.501)) mapa
-                    then (direcao,(x,(y-velocidade*t)))
+            Sul ->  if validaPosicaoTerra (x,(y+0.501)) mapa
+                    then (direcao,(x,(y+velocidade*t)))
                     else if validaPosicaoTerra (x+0.501,y) mapa
                     then (Este,(x+(velocidade*t),y))
                     else (Oeste,(x-velocidade*t,y))
 
             Este -> if validaPosicaoTerra (x+0.501,y) mapa
                     then (direcao,(x+(velocidade*t),y))
-                    else if validaPosicaoTerra (x,y+0.501) mapa
-                    then (Norte,(x,y+(velocidade*t)))
-                    else (Sul,(x,y-velocidade*t))
+                    else if validaPosicaoTerra (x,y-0.501) mapa
+                    then (Norte,(x,y-(velocidade*t)))
+                    else (Sul,(x,y+velocidade*t))
 
             Oeste -> if validaPosicaoTerra (x-0.501,y) mapa
                      then (direcao,(x-(velocidade*t),y))
-                     else if validaPosicaoTerra (x,y+0.501) mapa
-                     then (Norte,(x,y+(velocidade*t)))
-                     else (Sul,(x,y-velocidade*t))
+                     else if validaPosicaoTerra (x,y-0.501) mapa
+                     then (Norte,(x,y-(velocidade*t)))
+                     else (Sul,(x,y+velocidade*t))
 
 -- | Função que atualiza a duração de um projétil com o passar do tempo.
 atualizaProjetil :: Tempo -> Projetil -> Projetil
 atualizaProjetil t proj@(Projetil {duracaoProjetil = Infinita}) = proj
-atualizaProjetil t Projetil {duracaoProjetil = Finita d, tipoProjetil = tp} = Projetil {duracaoProjetil = Finita (d-t), tipoProjetil = tp}
+atualizaProjetil t Projetil {duracaoProjetil = Finita d, tipoProjetil = tp} 
+    = if (d-t) >= 0 then Projetil {duracaoProjetil = Finita (d-t), tipoProjetil = tp}
+      else Projetil {duracaoProjetil = Finita 0, tipoProjetil = tp}
 
--- | Função que dada uma lista de inimigos ativos retorna uma lista com os inimigos apos serem atacados por uma torre.
-atacaInimigos :: Torre -> [Inimigo] -> [Inimigo]
-atacaInimigos torre inimigos =
-    let (iatacar,r) = splitAt (rajadaTorre torre) (inimigosNoAlcance torre inimigos)
-        inimigosAtacados = map (atingeInimigo torre) iatacar
-        inimigosRestantes = filter (`notElem` iatacar) inimigos
-    in inimigosAtacados ++ inimigosRestantes
+-- Função que verifica se a duração de um projétil expirou
+duracaoExpirou :: Projetil -> Bool
+duracaoExpirou Projetil {duracaoProjetil = Finita 0} = True
+duracaoExpirou _ = False
 
 -- | Função auxiliar que atualiza os inimigos que já sofreram o dano da torre, isto é, movimentação, dano dos projéteis, etc.
 atualizaInimigo :: Tempo -> Mapa -> Inimigo -> Inimigo
 atualizaInimigo t mapa i
-    = Inimigo {posicaoInimigo = posnova, 
-               direcaoInimigo = direcaonova, 
-               vidaInimigo = vidanova, 
-               velocidadeInimigo = velocidadenova, 
-               projeteisInimigo = lprojeteisnova,
-               ataqueInimigo = ataqueInimigo i,
-               butimInimigo = butimInimigo i}
+    = i {posicaoInimigo = posnova, 
+         direcaoInimigo = direcaonova, 
+         vidaInimigo = vidanova, 
+         velocidadeInimigo = velocidadenova, 
+         projeteisInimigo = lprojeteisnova}
     where lprojeteis = projeteisInimigo i
           velocidade = velocidadeInimigo i
           (direcaonova,posnova) = moveInimigo t i mapa
           vidanova = atualizaVidaProjeteis i
-          lprojeteisnova = map (atualizaProjetil t) lprojeteis
-          velocidadenova = if any (\proj -> tipoProjetil proj == Resina) lprojeteis then (velocidade * 0.5) else velocidade
+          velocidadenova = if any (\p -> case duracaoProjetil p of 
+                                            Finita d -> d <= 0.01 && tipoProjetil p == Resina -- por algum motivo a verifição do duracaoExpirou não funcionava aqui.
+                                            _ -> False) lprojeteis
+                           then velocidade * 2
+                           else velocidade
+          lprojeteisnova = filter (\p -> not (duracaoExpirou p)) (map (atualizaProjetil t) lprojeteis) -- atualiza e remove os expirados
+
+-- | Função que atualiza os inimigos do jogo (aplica dano, movimenta, etc) e no fim retorna uma tupla com a lista de inimigos atualizadas, o dano dos inimigos a base e o butim dos inimigos mortos.
+atualizaInimigos :: Tempo -> Mapa -> Base -> [Inimigo] -> ([Inimigo], Float, Creditos)
+atualizaInimigos t mapa base inimigos =
+    let inimigosatualizados = map (atualizaInimigo t mapa) inimigos
+        danobase = getDanoNaBase inimigosatualizados base
+        butim = getButim inimigosatualizados
+    in (filter (\i -> vidaInimigo i > 0 && dist(posicaoInimigo i) (posicaoBase base) >= 0.35) inimigosatualizados, danobase, butim)
 
 -- | Função auxiliar que retorna o dano que os inimigos que chegaram a base causaram a ela.
 getDanoNaBase :: [Inimigo] -> Base -> Float
 getDanoNaBase inimigos base = danobase
-    where inimigosbase = filter (\i -> posicaoInimigo i == posicaoBase base) inimigos
+    where inimigosbase = filter (\i -> dist (posicaoInimigo i) (posicaoBase base) <= 0.35) inimigos -- ^ comparar as posições estava dando erro, então coloquei <= 0.35
           danobase = sum (map (\i -> ataqueInimigo i) inimigosbase)
 
 -- | Função auxiliar que retorna os créditos que os inimigos mortos deram a base.
@@ -128,15 +142,6 @@ getButim :: [Inimigo] -> Creditos
 getButim inimigos = butim
     where inimigosmortos = filter (\i -> vidaInimigo i <= 0) inimigos
           butim = sum (map (\i -> butimInimigo i) inimigosmortos)
-
--- | Função que atualiza os inimigos do jogo (aplica dano, movimenta, etc) e no fim retorna uma tupla com a lista de inimigos atualizadas, o dano dos inimigos a base e o butim dos inimigos mortos.
-atualizaInimigos :: Tempo -> Mapa -> Base -> [Torre] -> [Inimigo] -> ([Inimigo],Float,Creditos)
-atualizaInimigos t mapa base torres inimigos 
-    = let inimigosaposataque = concatMap (\torre -> if tempoTorre torre == 0 then atacaInimigos torre inimigos else inimigos) torres
-          inimigosatualizados = map (atualizaInimigo t mapa) inimigosaposataque
-          danobase = getDanoNaBase inimigosatualizados base
-          butim = getButim inimigosatualizados
-      in (filter (\i -> vidaInimigo i > 0 && posicaoInimigo i /= posicaoBase base) inimigosatualizados, danobase, butim)
 
 -- | Função que atualiza a base, i.e, a vida da base e os créditos da base.
 atualizaBase :: Tempo -> Base -> Float -> Creditos -> Base
@@ -146,8 +151,8 @@ atualizaBase _ base danobase butim
 -- | Função principal que atualiza o jogo com o passar do tempo.
 atualizaJogo :: Tempo -> Jogo -> Jogo
 atualizaJogo t jogo@(Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa})
-    =  let lportaisatt = atualizaPortais t lportais
-           ltorresatt = atualizaTorres t linimigos ltorres
-           (linimigosatt, danonabase, butim) = atualizaInimigos t mapa base ltorresatt linimigos
+    =  let (ltorresatt, linimigosaposataque) = atualizaTorres t ltorres linimigos
+           (linimigosatt, danonabase, butim) = atualizaInimigos t mapa base linimigosaposataque
            baseatt = atualizaBase t base danonabase butim
-        in jogo {baseJogo = baseatt, portaisJogo = lportaisatt, torresJogo = ltorresatt, inimigosJogo = linimigosatt}
+           (portaisapossaida,inimigosattcomativados) = atualizaPortais t lportais linimigosatt
+       in jogo {baseJogo = baseatt, portaisJogo = portaisapossaida, torresJogo = ltorresatt, inimigosJogo = inimigosattcomativados}

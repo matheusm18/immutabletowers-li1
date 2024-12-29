@@ -7,12 +7,29 @@ import ImmutableTowers
 import Tempo
 import LI12425
 
+
+janela :: Display
+janela = InWindow "Immutable Towers" (1920, 1080) (0, 0)
+
+fundo :: Color
+fundo = greyN 0.6
+
+fr :: Int
+fr = 10
+
+main :: IO ()
+main = do
+  play janela fundo fr it desenha reageEventos reageTempo
+  where
+    it = ImmutableTowers jogoInicio jogoInicio (MenuInicial Jogar)
+
+
 jogoInicio :: Jogo
 jogoInicio = Jogo {
     baseJogo = Base {
-        vidaBase = 100,
-        posicaoBase = (5.5, 2.5),
-        creditosBase = 50
+        vidaBase = 150,
+        posicaoBase = (7.5, 1.5),
+        creditosBase = 0
     },
     portaisJogo = [
         Portal {
@@ -21,18 +38,18 @@ jogoInicio = Jogo {
                 Onda {
                     inimigosOnda = [
                         Inimigo {
-                            posicaoInimigo = (1.5, 1.5),
-                            direcaoInimigo = Sul,
+                            posicaoInimigo = (1.5, 2.5),
+                            direcaoInimigo = Este,
                             vidaInimigo = 50,
-                            velocidadeInimigo = 1,
+                            velocidadeInimigo = 0.1,
                             ataqueInimigo = 5,
                             butimInimigo = 10,
                             projeteisInimigo = []
                         }
                     ],
                     cicloOnda = 2.0,
-                    tempoOnda = 2.0,
-                    entradaOnda = 5.0
+                    tempoOnda = 10.0,
+                    entradaOnda = 1.0
                 }
             ]
         }
@@ -40,38 +57,47 @@ jogoInicio = Jogo {
     torresJogo = [
         Torre {
             posicaoTorre = (4.5, 3.5),
-            danoTorre = 20,
-            alcanceTorre = 3.0,
-            rajadaTorre = 1,
-            cicloTorre = 2.0,
-            tempoTorre = 2.0,
+            danoTorre = 15,
+            alcanceTorre = 1.5,
+            rajadaTorre = 2,
+            cicloTorre = 5,
+            tempoTorre = 1,
             projetilTorre = Projetil {
-                tipoProjetil = Resina,
+                tipoProjetil = Gelo,
                 duracaoProjetil = Finita 3.0
             }
         },
         Torre {
             posicaoTorre = (0.5, 1.5),
-            danoTorre = 50,
-            alcanceTorre = 100,
-            rajadaTorre = 5,
-            cicloTorre = 1.5,
-            tempoTorre = 0,
+            danoTorre = 15,
+            alcanceTorre = 2,
+            rajadaTorre = 2,
+            cicloTorre = 5,
+            tempoTorre = 5,
             projetilTorre = Projetil {
-                tipoProjetil = Fogo,
-                duracaoProjetil = Finita 5.0
+                tipoProjetil = Resina,
+                duracaoProjetil = Finita 3.0
             }
         }
     ],
     mapaJogo = mapa01,
     inimigosJogo = [
         Inimigo {
+            posicaoInimigo = (0.5, 3.5),
+            direcaoInimigo = Sul,
+            vidaInimigo = 100,
+            velocidadeInimigo = 1,
+            ataqueInimigo = 15,
+            butimInimigo = 15,
+            projeteisInimigo = []
+        },
+        Inimigo {
             posicaoInimigo = (0.5, 0.5),
             direcaoInimigo = Este,
             vidaInimigo = 100,
-            velocidadeInimigo = 10,
+            velocidadeInimigo = 1,
             ataqueInimigo = 10,
-            butimInimigo = 15,
+            butimInimigo = 25,
             projeteisInimigo = []
         }
     ],
@@ -90,18 +116,3 @@ jogoInicio = Jogo {
         })
     ]
 }
-
-janela :: Display
-janela = InWindow "Immutable Towers" (1920, 1080) (0, 0)
-
-fundo :: Color
-fundo = greyN 0.6
-
-fr :: Int
-fr = 5
-
-main :: IO ()
-main = do
-  play janela fundo fr it desenha reageEventos reageTempo
-  where
-    it = ImmutableTowers jogoInicio
