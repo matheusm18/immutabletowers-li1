@@ -17,12 +17,14 @@ fundo = greyN 0.6
 fr :: Int
 fr = 10
 
+
 main :: IO ()
 main = do
-  play janela fundo fr it desenha reageEventos reageTempo
-  where
-    it = ImmutableTowers jogoInicio jogoInicio (MenuInicial Jogar)
-
+  menujogar <- loadBMP "app/menujogar.bmp"
+  menusair <- loadBMP "app/menusair.bmp"
+  menuganhou <- loadBMP "app/ganhou.bmp"
+  menuperdeu <- loadBMP "app/perdeu.bmp"
+  play janela fundo fr (ImmutableTowers jogoInicio jogoInicio (MenuInicial Jogar) [menujogar,menusair,menuganhou,menuperdeu]) desenha reageEventos reageTempo
 
 jogoInicio :: Jogo
 jogoInicio = Jogo {
@@ -87,7 +89,7 @@ jogoInicio = Jogo {
             direcaoInimigo = Sul,
             vidaInimigo = 100,
             velocidadeInimigo = 1,
-            ataqueInimigo = 15,
+            ataqueInimigo = 150,
             butimInimigo = 15,
             projeteisInimigo = []
         },
@@ -95,7 +97,7 @@ jogoInicio = Jogo {
             posicaoInimigo = (0.5, 0.5),
             direcaoInimigo = Este,
             vidaInimigo = 100,
-            velocidadeInimigo = 1,
+            velocidadeInimigo = 5,
             ataqueInimigo = 10,
             butimInimigo = 25,
             projeteisInimigo = []

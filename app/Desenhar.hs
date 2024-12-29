@@ -13,11 +13,11 @@ invertePos (x,y) = (x,-y)
 
 -- | Função principal para desenhar o mapa ( zip com a lista [0, -1..] porque o eixo do gloss cresce pra cima)
 desenha :: ImmutableTowers -> Picture
-desenha ImmutableTowers {menu = MenuInicial Jogar} = Pictures $ [Color red $ Translate (-160) 140 $ Text "Jogar", Translate (-150) (-100) $ Text "Sair"]
-desenha ImmutableTowers {menu = MenuInicial Sair} = Pictures $ [Translate (-160) 140 $ Text "Jogar",Color red $ Translate (-150) (-100) $ Text "Sair"]
-desenha ImmutableTowers {menu = ModoJogo GanhouJogo} = Pictures $ [Color green $ Translate (-210) 140 $ Text "Ganhou!", Translate (-500) (-100) $ Text "ENTER para sair"]
-desenha ImmutableTowers {menu = ModoJogo PerdeuJogo} = Pictures $ [Color red $ Translate (-210) 140 $ Text "Perdeu!", Translate (-500) (-100) $ Text "ENTER para sair"]
-desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento))
+desenha ImmutableTowers {menu = MenuInicial Jogar, imagens = [menujogar,_,_,_]} = menujogar
+desenha ImmutableTowers {menu = MenuInicial Sair, imagens = [_,menusair,_,_]} = menusair
+desenha ImmutableTowers {menu = ModoJogo GanhouJogo, imagens = [_,_,menuganhou,_]} = menuganhou
+desenha ImmutableTowers {menu = ModoJogo PerdeuJogo, imagens = [_,_,_,menuperdeu]} = menuperdeu
+desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) _)
                         =  Translate (-320) (320) $ Scale (2) (2) $ Pictures $  concatMap desenhaLinha (zip [0,-1..] mapa) ++ [desenhaBase posbase] ++ (map desenhaTorres ldesenhatorres) ++ (map desenhaPortais lposportais) ++ (map desenhaInimigo lposinimigos)
             where
                 lposinimigos = map (\i -> invertePos(posicaoInimigo i)) linimigos

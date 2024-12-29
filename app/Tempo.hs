@@ -7,7 +7,7 @@ import Tarefa3
 
 
 reageTempo :: Tempo -> ImmutableTowers -> ImmutableTowers
-reageTempo t it@(ImmutableTowers _ _ (MenuInicial _)) = it
+reageTempo t it@(ImmutableTowers _ _ (MenuInicial _) _) = it
 reageTempo t it@(ImmutableTowers {jogoAtual = jogoAtual, menu = ModoJogo estado}) = 
     case estado of
         EmAndamento -> if ganhouJogo jogoAtual
