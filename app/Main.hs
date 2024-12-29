@@ -17,14 +17,35 @@ fundo = greyN 0.6
 fr :: Int
 fr = 10
 
+imagensLoad :: IO [(String, Picture)]
+imagensLoad = do
+    menujogar <- loadBMP "imgs/menujogar.bmp"
+    menusair <- loadBMP "imgs/menusair.bmp"
+    menuganhou <- loadBMP "imgs/ganhou.bmp"
+    menuperdeu <- loadBMP "imgs/perdeu.bmp"
+    bgjogo <- loadBMP "imgs/bgjogo.bmp"
+    inimigoeste <- loadBMP "imgs/inimigoEste.bmp"
+    inimigooeste <- loadBMP "imgs/inimigoOeste.bmp"
+    torrefogo <- loadBMP "imgs/TorreFogo.bmp"
+    torreresina <- loadBMP "imgs/TorreResina.bmp"
+    torregelo <- loadBMP "imgs/TorreGelo.bmp"
+    portal <- loadBMP "imgs/portal.bmp"
+    return [("menujogar", menujogar), 
+           ("menusair", menusair), 
+           ("menuganhou", menuganhou), 
+           ("menuperdeu", menuperdeu), 
+           ("bgjogo", bgjogo), 
+           ("inimigoeste", inimigoeste), 
+           ("inimigooeste", inimigooeste),
+           ("torrefogo", torrefogo),
+           ("torreresina", torreresina),
+           ("torregelo", torregelo),
+           ("portal", portal)]
 
 main :: IO ()
 main = do
-  menujogar <- loadBMP "app/menujogar.bmp"
-  menusair <- loadBMP "app/menusair.bmp"
-  menuganhou <- loadBMP "app/ganhou.bmp"
-  menuperdeu <- loadBMP "app/perdeu.bmp"
-  play janela fundo fr (ImmutableTowers jogoInicio jogoInicio (MenuInicial Jogar) [menujogar,menusair,menuganhou,menuperdeu]) desenha reageEventos reageTempo
+  imagens <- imagensLoad
+  play janela fundo fr (ImmutableTowers jogoInicio jogoInicio (MenuInicial Jogar) imagens) desenha reageEventos reageTempo
 
 jogoInicio :: Jogo
 jogoInicio = Jogo {
@@ -59,25 +80,25 @@ jogoInicio = Jogo {
     torresJogo = [
         Torre {
             posicaoTorre = (4.5, 3.5),
-            danoTorre = 15,
+            danoTorre = 50,
             alcanceTorre = 1.5,
             rajadaTorre = 2,
             cicloTorre = 5,
             tempoTorre = 1,
             projetilTorre = Projetil {
-                tipoProjetil = Gelo,
+                tipoProjetil = Fogo,
                 duracaoProjetil = Finita 3.0
             }
         },
         Torre {
             posicaoTorre = (0.5, 1.5),
-            danoTorre = 15,
+            danoTorre = 70,
             alcanceTorre = 2,
             rajadaTorre = 2,
             cicloTorre = 5,
-            tempoTorre = 5,
+            tempoTorre = 3,
             projetilTorre = Projetil {
-                tipoProjetil = Resina,
+                tipoProjetil = Gelo,
                 duracaoProjetil = Finita 3.0
             }
         }
@@ -85,7 +106,7 @@ jogoInicio = Jogo {
     mapaJogo = mapa01,
     inimigosJogo = [
         Inimigo {
-            posicaoInimigo = (0.5, 3.5),
+            posicaoInimigo = (1.5, 3.5),
             direcaoInimigo = Sul,
             vidaInimigo = 100,
             velocidadeInimigo = 1,
@@ -96,6 +117,24 @@ jogoInicio = Jogo {
         Inimigo {
             posicaoInimigo = (0.5, 0.5),
             direcaoInimigo = Este,
+            vidaInimigo = 100,
+            velocidadeInimigo = 5,
+            ataqueInimigo = 10,
+            butimInimigo = 25,
+            projeteisInimigo = []
+        },
+        Inimigo {
+            posicaoInimigo = (1.5, 2.5),
+            direcaoInimigo = Sul,
+            vidaInimigo = 70,
+            velocidadeInimigo = 5,
+            ataqueInimigo = 10,
+            butimInimigo = 25,
+            projeteisInimigo = []
+        },
+        Inimigo {
+            posicaoInimigo = (1.5, 1.5),
+            direcaoInimigo = Sul,
             vidaInimigo = 100,
             velocidadeInimigo = 5,
             ataqueInimigo = 10,

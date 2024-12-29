@@ -9,4 +9,4 @@ data EstadoJogo = EmAndamento | PerdeuJogo | GanhouJogo deriving Eq
 
 data Menu = MenuInicial OpcaoMenu | ModoJogo EstadoJogo deriving Eq
 
-data ImmutableTowers = ImmutableTowers { jogoInicial :: Jogo, jogoAtual :: Jogo, menu :: Menu, imagens :: [Picture]}
+data ImmutableTowers = ImmutableTowers { jogoInicial :: Jogo, jogoAtual :: Jogo, menu :: Menu, imagens :: [(String,Picture)]}

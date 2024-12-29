@@ -11,20 +11,42 @@ import LI12425
 invertePos :: Posicao -> Posicao
 invertePos (x,y) = (x,-y)
 
+
+-- | Função auxiliar que busca a imagem que esta associada a string na lista de imagens
+getImagem :: String -> [(String,Picture)] -> Picture
+getImagem s lista = case lookup s lista of
+    Just p -> p
+    Nothing -> Blank
+
 -- | Função principal para desenhar o mapa ( zip com a lista [0, -1..] porque o eixo do gloss cresce pra cima)
 desenha :: ImmutableTowers -> Picture
-desenha ImmutableTowers {menu = MenuInicial Jogar, imagens = [menujogar,_,_,_]} = menujogar
-desenha ImmutableTowers {menu = MenuInicial Sair, imagens = [_,menusair,_,_]} = menusair
-desenha ImmutableTowers {menu = ModoJogo GanhouJogo, imagens = [_,_,menuganhou,_]} = menuganhou
-desenha ImmutableTowers {menu = ModoJogo PerdeuJogo, imagens = [_,_,_,menuperdeu]} = menuperdeu
-desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) _)
-                        =  Translate (-320) (320) $ Scale (2) (2) $ Pictures $  concatMap desenhaLinha (zip [0,-1..] mapa) ++ [desenhaBase posbase] ++ (map desenhaTorres ldesenhatorres) ++ (map desenhaPortais lposportais) ++ (map desenhaInimigo lposinimigos)
+desenha ImmutableTowers {menu = MenuInicial Jogar, imagens = limagens} = getImagem "menujogar" limagens
+desenha ImmutableTowers {menu = MenuInicial Sair, imagens = limagens} = getImagem "menusair" limagens
+desenha ImmutableTowers {menu = ModoJogo GanhouJogo, imagens = limagens} = getImagem "menuganhou" limagens
+desenha ImmutableTowers {menu = ModoJogo PerdeuJogo, imagens = limagens} = getImagem "menuperdeu" limagens
+desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens)
+            =  Pictures [getImagem "bgjogo" limagens,
+                        (Translate (-320) (240) $ Scale (2) (2) $ Pictures $  concatMap desenhaLinha (zip [0,-1..] mapa) ++ [desenhaBase posbase] ++ (map (desenhaTorres torres) ldesenhatorres) ++ (map (desenhaPortais portal) lposportais) ++ (map (desenhaInimigo inimigoeste) lposinimigos)),
+                         picvida,
+                         piccreditos]
             where
                 lposinimigos = map (\i -> invertePos(posicaoInimigo i)) linimigos
                 lposportais = map (\i -> invertePos(posicaoPortal i)) lportais
                 (lpostorres, ltipoprojtorres) = (map (\t -> invertePos(posicaoTorre t)) ltorres, map (\p -> tipoProjetil p) (map (\t -> projetilTorre t) ltorres))
                 ldesenhatorres = zip lpostorres ltipoprojtorres
                 posbase = invertePos(posicaoBase base)
+                picvida = Scale 0.5 0.5 $ Translate (1150) (50) $ desenhaVida (vidaBase base)
+                piccreditos = Scale 0.5 0.5 $ Translate 1250 (-550) $ desenhaCreditos (creditosBase base)
+                inimigoeste = getImagem "inimigoeste" limagens
+                torres = filter (\(s,p) -> s == "torrefogo" || s == "torreresina" || s == "torregelo") limagens
+                portal = getImagem "portal" limagens
+
+
+desenhaVida :: Float -> Picture
+desenhaVida v = Pictures [Color red $ translate 0 0 $ Text (show v)]
+
+desenhaCreditos :: Int -> Picture
+desenhaCreditos c = Pictures [Color (orange) $ translate 0 (-20) $ Text (show c)]
 
 desenhaLinha :: (Int, [Terreno]) -> [Picture]
 desenhaLinha (y, linha) = concatMap (desenhaChao y) (zip [0..] linha)
@@ -51,40 +73,28 @@ w = 40
 h :: Float
 h = 40
 
-desenhaInimigo :: Posicao -> Picture
-desenhaInimigo (x,y) = Color red $ translate (x * 40) (y * 40) $ rectangleSolid 20 20
+desenhaInimigo :: Picture -> Posicao -> Picture
+desenhaInimigo inimigo (x,y) = translate (x * 40) (y * 40) $ Scale 0.1 0.1 $ inimigo
 
-desenhaPortais :: Posicao -> Picture
-desenhaPortais (x,y) = Color yellow $ translate (x * 40) (y * 40) $ circleSolid 15
+desenhaPortais :: Picture -> Posicao -> Picture
+desenhaPortais portal (x,y) = Translate (x * 40) (y * 40) $ Scale 0.11 0.11 $ portal
 
-desenhaTorres :: (Posicao, TipoProjetil) -> Picture
-desenhaTorres ((x,y), Fogo) = desenhaTorreFogo (x,y)
-desenhaTorres ((x,y), Gelo) = desenhaTorreGelo (x,y)
-desenhaTorres ((x,y), Resina) = desenhaTorreResina (x,y)
+desenhaTorres :: [(String,Picture)] -> (Posicao, TipoProjetil) -> Picture
+desenhaTorres torres ((x,y), Fogo) = desenhaTorreFogo (getImagem "torrefogo" torres) (x,y)
+desenhaTorres torres ((x,y), Resina) = desenhaTorreResina (getImagem "torreresina" torres) (x,y)
+desenhaTorres torres ((x,y), Gelo) = desenhaTorreGelo (getImagem "torregelo" torres) (x,y)
 
-desenhaTorreFogo :: Posicao -> Picture
-desenhaTorreFogo (x, y) = Pictures
-    [ Color (greyN 0.5) $ translate (x * 40) (y * 40) desenhaBaseTorre
-    , Color red $ translate (x * 40) (y * 40 + 15) desenhaTopoTorre
-    ]
+desenhaTorreFogo :: Picture -> Posicao -> Picture
+desenhaTorreFogo torrefogo (x, y) = Pictures
+    [Translate (x * 40) (y * 40) $ Scale 0.11 0.11 $ torrefogo]
 
-desenhaTorreGelo :: Posicao -> Picture
-desenhaTorreGelo (x, y) = Pictures
-    [ Color (greyN 0.5) $ translate (x * 40) (y * 40) desenhaBaseTorre
-    , Color blue $ translate (x * 40) (y * 40 + 15) desenhaTopoTorre
-    ]
+desenhaTorreResina :: Picture -> Posicao -> Picture
+desenhaTorreResina torreresina (x, y) = Pictures
+    [Translate (x * 40) (y * 40) $ Scale 0.11 0.11 $ torreresina]
 
-desenhaTorreResina :: Posicao -> Picture
-desenhaTorreResina (x, y) = Pictures
-    [ Color (greyN 0.5) $ translate (x * 40) (y * 40) desenhaBaseTorre
-    , Color green $ translate (x * 40) (y * 40 + 15) desenhaTopoTorre
-    ]
-
-desenhaBaseTorre :: Picture
-desenhaBaseTorre = rectangleSolid 20 30
-
-desenhaTopoTorre :: Picture
-desenhaTopoTorre = polygon [(-10,0), (10,0), (0,10)]
+desenhaTorreGelo :: Picture -> Posicao -> Picture
+desenhaTorreGelo torregelo (x, y) = Pictures
+    [Translate (x * 40) (y * 40) $ Scale 0.11 0.11 $ torregelo]
 
 desenhaBase :: Posicao -> Picture
 desenhaBase (x,y) = Color (greyN 0.5) $ translate (x * 40) (y * 40) $ rectangleSolid 30 30
