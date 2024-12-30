@@ -55,10 +55,10 @@ verificaSobreposicao (x,y) (Torre { posicaoTorre = (xt,yt)} :rl) base@(Base {pos
             = (x,y) /= (xt,yt) && verificaSobreposicao (x,y) rl base
 
 
--- Função auxiliar que dado um portal e uma lista de ondas verifica se há no máximo um portal com a onda iniciada.
-verificaOndas :: Portal -> [Onda] -> Bool
-verificaOndas _ [] = True
-verificaOndas portal ondas = length ondasiniciadas == 1 || length ondasiniciadas == 0
+-- Função auxiliar que dada uma lista de ondas de um dado portal verifica se há no máximo uma onda iniciada.
+verificaOndas :: [Onda] -> Bool
+verificaOndas [] = True
+verificaOndas ondas = length ondasiniciadas == 1 || length ondasiniciadas == 0
     where ondasiniciadas = filter (\onda -> (entradaOnda onda) == 0) ondas
 
 -- | Função que verifica se o estado de jogo está válido para os Portais
@@ -68,7 +68,7 @@ validaPortais portais mapa base torres =
     all (\p -> validaPosicaoTerra (posicaoPortal p) mapa) portais &&   -- ^ Verifica se a posição de cada portal é válida
     all (\p -> verificaCaminho (posicaoPortal p) (posicaoBase base) mapa) portais && -- ^ Verifica se para cada portal há um caminho entre ele e a base
     all (\p -> verificaSobreposicao (posicaoPortal p) (torres) (base)) portais && -- ^ Verifica se para cada portal ele não está sobreposto a uma torre/base
-    all (\p -> verificaOndas p (ondasPortal p)) portais -- ^ Verifica se para cada portal tem no máximo uma onda ativa
+    all (\p -> verificaOndas (ondasPortal p)) portais -- ^ Verifica se para cada portal tem no máximo uma onda ativa
 
 
 -- | Função que dada a posição do portal e um inimigo, verifica se o inimigo cumpre as restrições da alínea a)
@@ -110,7 +110,7 @@ validaInimigosPortal posPortal ondasPortal =
     all (\i -> verificaRestricoes posPortal i) inimigosPortal
     where inimigosPortal = concatenaInimigos ondasPortal
 
--- | Função que verifica todas as restrições estabelecidas para os inimigos em jogo
+-- | Função que verifica todas as restrições estabelecidas para os inimigos em jogo.
 validaInimigosEmJogo :: [Inimigo] -> [Torre] -> Mapa -> Bool
 validaInimigosEmJogo inimigosemjogo torres mapa = 
     all (\i -> validaPosicaoTerra (posicaoInimigo i) mapa) inimigosemjogo &&

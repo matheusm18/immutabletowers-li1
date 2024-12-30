@@ -24,8 +24,22 @@ imagensLoad = do
     menuganhou <- loadBMP "imgs/ganhou.bmp"
     menuperdeu <- loadBMP "imgs/perdeu.bmp"
     bgjogo <- loadBMP "imgs/bgjogo.bmp"
-    inimigoeste <- loadBMP "imgs/inimigoEste.bmp"
-    inimigooeste <- loadBMP "imgs/inimigoOeste.bmp"
+    inimigoEste <- loadBMP "imgs/SoldadoEste.bmp"
+    inimigofogoEste <- loadBMP "imgs/SoldadoFogoEste.bmp"
+    inimigoresinaEste <- loadBMP "imgs/SoldadoResinaEste.bmp"
+    inimigogeloEste <- loadBMP "imgs/SoldadoGeloEste.bmp"
+    inimigoOeste <- loadBMP "imgs/SoldadoOeste.bmp"
+    inimigofogoOeste <- loadBMP "imgs/SoldadoFogoOeste.bmp"
+    inimigoresinaOeste <- loadBMP "imgs/SoldadoResinaOeste.bmp"
+    inimigogeloOeste <- loadBMP "imgs/SoldadoGeloOeste.bmp"
+    inimigoNorte <- loadBMP "imgs/SoldadoNorte.bmp"
+    inimigofogoNorte <- loadBMP "imgs/SoldadoFogoNorte.bmp"
+    inimigoresinaNorte <- loadBMP "imgs/SoldadoResinaNorte.bmp"
+    inimigogeloNorte <- loadBMP "imgs/SoldadoGeloNorte.bmp"
+    inimigoSul <- loadBMP "imgs/SoldadoSul.bmp"
+    inimigofogoSul <- loadBMP "imgs/SoldadoFogoSul.bmp"
+    inimigoresinaSul <- loadBMP "imgs/SoldadoResinaSul.bmp"
+    inimigogeloSul <- loadBMP "imgs/SoldadoGeloSul.bmp"
     torrefogo <- loadBMP "imgs/TorreFogo.bmp"
     torreresina <- loadBMP "imgs/TorreResina.bmp"
     torregelo <- loadBMP "imgs/TorreGelo.bmp"
@@ -35,8 +49,22 @@ imagensLoad = do
            ("menuganhou", menuganhou), 
            ("menuperdeu", menuperdeu), 
            ("bgjogo", bgjogo), 
-           ("inimigoeste", inimigoeste), 
-           ("inimigooeste", inimigooeste),
+           ("inimigoEste", inimigoEste),
+           ("inimigofogoEste", inimigofogoEste),
+           ("inimigoresinaEste", inimigoresinaEste),
+           ("inimigogeloEste", inimigogeloEste),
+           ("inimigoOeste", inimigoOeste),
+           ("inimigofogoOeste", inimigofogoOeste),
+           ("inimigoresinaOeste", inimigoresinaOeste),
+           ("inimigogeloOeste", inimigogeloOeste),
+           ("inimigoNorte", inimigoNorte),
+           ("inimigofogoNorte", inimigofogoNorte),
+           ("inimigoresinaNorte", inimigoresinaNorte),
+           ("inimigogeloNorte", inimigogeloNorte),
+           ("inimigoSul", inimigoSul),
+           ("inimigofogoSul", inimigofogoSul),
+           ("inimigoresinaSul", inimigoresinaSul),
+           ("inimigogeloSul", inimigogeloSul),
            ("torrefogo", torrefogo),
            ("torreresina", torreresina),
            ("torregelo", torregelo),
@@ -61,18 +89,52 @@ jogoInicio = Jogo {
                 Onda {
                     inimigosOnda = [
                         Inimigo {
-                            posicaoInimigo = (1.5, 2.5),
+                            posicaoInimigo = (0.5, 0.5),
                             direcaoInimigo = Este,
-                            vidaInimigo = 50,
-                            velocidadeInimigo = 0.1,
+                            vidaInimigo = 100,
+                            velocidadeInimigo = 1,
+                            ataqueInimigo = 5,
+                            butimInimigo = 10,
+                            projeteisInimigo = []
+                        },
+                        Inimigo {
+                            posicaoInimigo = (0.5, 0.5),
+                            direcaoInimigo = Este,
+                            vidaInimigo = 90,
+                            velocidadeInimigo = 2,
                             ataqueInimigo = 5,
                             butimInimigo = 10,
                             projeteisInimigo = []
                         }
                     ],
-                    cicloOnda = 2.0,
-                    tempoOnda = 10.0,
-                    entradaOnda = 1.0
+                    cicloOnda = 8.0,
+                    tempoOnda = 5.0,
+                    entradaOnda = 3.0
+                },
+                Onda {
+                    inimigosOnda = [
+                        Inimigo {
+                            posicaoInimigo = (0.5, 0.5),
+                            direcaoInimigo = Este,
+                            vidaInimigo = 500,
+                            velocidadeInimigo = 2,
+                            ataqueInimigo = 5,
+                            butimInimigo = 10,
+                            projeteisInimigo = []
+                        },
+                        Inimigo {
+                            posicaoInimigo = (0.5, 0.5),
+                            direcaoInimigo = Este,
+                            vidaInimigo = 150,
+                            velocidadeInimigo = 2,
+                            ataqueInimigo = 5,
+                            butimInimigo = 10,
+                            projeteisInimigo = []
+                        }
+                    ],
+                    cicloOnda = 8.0,
+                    tempoOnda = 5.0,
+                    entradaOnda = 3.0
                 }
             ]
         }
@@ -84,7 +146,7 @@ jogoInicio = Jogo {
             alcanceTorre = 1.5,
             rajadaTorre = 2,
             cicloTorre = 5,
-            tempoTorre = 1,
+            tempoTorre = 5,
             projetilTorre = Projetil {
                 tipoProjetil = Fogo,
                 duracaoProjetil = Finita 3.0
@@ -93,7 +155,7 @@ jogoInicio = Jogo {
         Torre {
             posicaoTorre = (0.5, 1.5),
             danoTorre = 70,
-            alcanceTorre = 2,
+            alcanceTorre = 5,
             rajadaTorre = 2,
             cicloTorre = 5,
             tempoTorre = 3,
@@ -110,35 +172,8 @@ jogoInicio = Jogo {
             direcaoInimigo = Sul,
             vidaInimigo = 100,
             velocidadeInimigo = 1,
-            ataqueInimigo = 150,
+            ataqueInimigo = 10,
             butimInimigo = 15,
-            projeteisInimigo = []
-        },
-        Inimigo {
-            posicaoInimigo = (0.5, 0.5),
-            direcaoInimigo = Este,
-            vidaInimigo = 100,
-            velocidadeInimigo = 5,
-            ataqueInimigo = 10,
-            butimInimigo = 25,
-            projeteisInimigo = []
-        },
-        Inimigo {
-            posicaoInimigo = (1.5, 2.5),
-            direcaoInimigo = Sul,
-            vidaInimigo = 70,
-            velocidadeInimigo = 5,
-            ataqueInimigo = 10,
-            butimInimigo = 25,
-            projeteisInimigo = []
-        },
-        Inimigo {
-            posicaoInimigo = (1.5, 1.5),
-            direcaoInimigo = Sul,
-            vidaInimigo = 100,
-            velocidadeInimigo = 5,
-            ataqueInimigo = 10,
-            butimInimigo = 25,
             projeteisInimigo = []
         }
     ],

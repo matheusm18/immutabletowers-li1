@@ -13,27 +13,25 @@ import LI12425
 import Tarefa1
 import Tarefa2
 
-
--- Ainda falta ver porque os inimigos dentro dos portais não estão sendo ativados!!!!!
-
 -- | Função que com o passar do tempo retorna o portal atualizado juntamente com a lista de inimigos do jogo incluindo os inimigos ativados.
 atualizaPortal :: Tempo -> Portal -> [Inimigo] -> (Portal, [Inimigo])
-atualizaPortal t portal@(Portal {ondasPortal = [], posicaoPortal = pos}) inimigos = (portal,inimigos)
+atualizaPortal _ portal@(Portal {ondasPortal = [], posicaoPortal = pos}) inimigos = (portal,inimigos)
 atualizaPortal t portal inimigos =
     let (onda:restoondas) = ondasPortal portal
-    in if entradaOnda onda /= 0
-       then (portal {ondasPortal = onda{ entradaOnda = max 0 (entradaOnda onda - t)} : restoondas}, inimigos)
-       else if entradaOnda onda == 0 && tempoOnda onda == 0
-       then (ativaInimigo portal inimigos)
-       else (portal {ondasPortal = onda { tempoOnda = tempoOnda onda - t} : restoondas }, inimigos)
-       
+    in  if inimigosOnda onda == []
+        then (portal {ondasPortal = restoondas}, inimigos)
+        else if entradaOnda onda == 0 && tempoOnda onda == 0
+        then (ativaInimigo portal inimigos)
+        else if entradaOnda onda == 0 && tempoOnda onda > 0
+        then (portal {ondasPortal = (onda { tempoOnda = max 0 (tempoOnda onda - t) }) : restoondas}, inimigos)
+        else (portal {ondasPortal = (onda {entradaOnda = max 0 (entradaOnda onda - t)}) : restoondas}, inimigos)
 
 -- | Função que atualiza todos os portais do jogo com o passar do tempo.
 atualizaPortais :: Tempo -> [Portal] -> [Inimigo] -> ([Portal],[Inimigo])
-atualizaPortais t [] inimigos = ([],inimigos)
+atualizaPortais _ [] inimigos = ([],inimigos)
 atualizaPortais t (p1:rps) inimigos = let (p1att, inimigosp1att) = atualizaPortal t p1 inimigos
                                           (portais, inimigosatualizados) = atualizaPortais t rps inimigosp1att
-                                      in (p1att : portais, inimigosatualizados)
+                                      in ((p1att : portais), inimigosatualizados)
 
 -- | Função que dada uma lista de inimigos ativos retorna uma lista com os inimigos apos serem atacados por uma torre e retorna a torre com o cooldown renovado se ela atacar.
 atacaInimigos :: Torre -> [Inimigo] -> (Torre,[Inimigo])
@@ -59,7 +57,7 @@ atualizaTorres t torres inimigos = foldl atualizaAux ([], inimigos) torres
 atualizaVidaProjeteis :: Inimigo -> Float
 atualizaVidaProjeteis Inimigo {vidaInimigo = vida, projeteisInimigo = lprojeteis}
     = if (any (\proj -> tipoProjetil proj == Fogo) lprojeteis)
-      then vida - 0.5 -- coloquei 0.5 mas é um valor qualquer (depois temos que testar em jogo)
+      then vida - 1 -- coloquei 1 mas é um valor qualquer (depois temos que testar em jogo)
       else vida
 
 moveInimigo :: Tempo -> Inimigo -> Mapa -> (Direcao,Posicao)
@@ -154,5 +152,5 @@ atualizaJogo t jogo@(Jogo {baseJogo = base, portaisJogo = lportais, torresJogo =
     =  let (ltorresatt, linimigosaposataque) = atualizaTorres t ltorres linimigos
            (linimigosatt, danonabase, butim) = atualizaInimigos t mapa base linimigosaposataque
            baseatt = atualizaBase t base danonabase butim
-           (portaisapossaida,inimigosattcomativados) = atualizaPortais t lportais linimigosatt
-       in jogo {baseJogo = baseatt, portaisJogo = portaisapossaida, torresJogo = ltorresatt, inimigosJogo = inimigosattcomativados}
+           (portaisapossaida,inimigosattcativados) = atualizaPortais t lportais linimigosatt
+       in jogo {baseJogo = baseatt, portaisJogo = portaisapossaida, torresJogo = ltorresatt, inimigosJogo = inimigosattcativados}

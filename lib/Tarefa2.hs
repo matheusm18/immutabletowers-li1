@@ -79,9 +79,9 @@ ativaInimigo portal inimigos =
         (onda:restoondas) -> 
             case inimigosOnda onda of
                 [] -> (portal {ondasPortal = restoondas}, inimigos)
-                (i:r) -> let novaOnda = onda {inimigosOnda = r, tempoOnda = cicloOnda onda }
-                             novoPortal = portal {ondasPortal = novaOnda : restoondas}
-                         in (novoPortal, inimigos ++ [i])
+                (i:r) -> let novaOnda = onda {inimigosOnda = r, tempoOnda = cicloOnda onda}
+                             novoPortal = portal {ondasPortal = (novaOnda : restoondas)}
+                         in (novoPortal, i : inimigos)
 
 terminouJogo :: Jogo -> Bool
 terminouJogo jogo = ganhouJogo (jogo) || perdeuJogo (jogo)

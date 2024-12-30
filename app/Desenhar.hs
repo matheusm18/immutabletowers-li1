@@ -3,7 +3,7 @@ module Desenhar where
 import Graphics.Gloss
 import ImmutableTowers
 import LI12425
-
+import Tarefa2(verificaGelo,verificaFogo)
 
 -- Mapa antes estava ao contrario porque no gloss o y cresce para cima, (acho que arrumei, verifica depois) !!!!
 
@@ -18,6 +18,11 @@ getImagem s lista = case lookup s lista of
     Just p -> p
     Nothing -> Blank
 
+
+-- | Função auxiliar que já retorna a posição do inimigo convertida para o gloss e a lista de projeteis do inimigo
+getPosDirProjetil :: Inimigo -> (Posicao, Direcao, [Projetil])
+getPosDirProjetil i = (invertePos (posicaoInimigo i),direcaoInimigo i, projeteisInimigo i)
+
 -- | Função principal para desenhar o mapa ( zip com a lista [0, -1..] porque o eixo do gloss cresce pra cima)
 desenha :: ImmutableTowers -> Picture
 desenha ImmutableTowers {menu = MenuInicial Jogar, imagens = limagens} = getImagem "menujogar" limagens
@@ -26,21 +31,24 @@ desenha ImmutableTowers {menu = ModoJogo GanhouJogo, imagens = limagens} = getIm
 desenha ImmutableTowers {menu = ModoJogo PerdeuJogo, imagens = limagens} = getImagem "menuperdeu" limagens
 desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens)
             =  Pictures [getImagem "bgjogo" limagens,
-                        (Translate (-320) (240) $ Scale (2) (2) $ Pictures $  concatMap desenhaLinha (zip [0,-1..] mapa) ++ [desenhaBase posbase] ++ (map (desenhaTorres torres) ldesenhatorres) ++ (map (desenhaPortais portal) lposportais) ++ (map (desenhaInimigo inimigoeste) lposinimigos)),
+                        (Translate (-320) (240) $ Scale (2) (2) $ Pictures $  concatMap desenhaLinha (zip [0,-1..] mapa) ++ [desenhaBase posbase] ++ (map (desenhaTorres torres) ldesenhatorres) ++ (map (desenhaPortais portal) lposportais) ++ (map (desenhaInimigo picinimigos) dadosInimigos)),
                          picvida,
                          piccreditos]
             where
-                lposinimigos = map (\i -> invertePos(posicaoInimigo i)) linimigos
+                dadosInimigos = map getPosDirProjetil linimigos
                 lposportais = map (\i -> invertePos(posicaoPortal i)) lportais
                 (lpostorres, ltipoprojtorres) = (map (\t -> invertePos(posicaoTorre t)) ltorres, map (\p -> tipoProjetil p) (map (\t -> projetilTorre t) ltorres))
                 ldesenhatorres = zip lpostorres ltipoprojtorres
                 posbase = invertePos(posicaoBase base)
                 picvida = Scale 0.5 0.5 $ Translate (1150) (50) $ desenhaVida (vidaBase base)
                 piccreditos = Scale 0.5 0.5 $ Translate 1250 (-550) $ desenhaCreditos (creditosBase base)
-                inimigoeste = getImagem "inimigoeste" limagens
+                inimigosNorte = filter (\(s,p) -> s == "inimigoNorte" || s == "inimigofogoNorte" || s == "inimigoresinaNorte" || s == "inimigogeloNorte") limagens
+                inimigosEste = filter (\(s,p) -> s == "inimigoEste" || s == "inimigofogoEste" || s == "inimigoresinaEste" || s == "inimigogeloEste") limagens
+                inimigosOeste = filter (\(s,p) -> s == "inimigoOeste" || s == "inimigofogoOeste" || s == "inimigoresinaOeste" || s == "inimigogeloOeste") limagens
+                inimigosSul = filter (\(s,p) -> s == "inimigoSul" || s == "inimigofogoSul" || s == "inimigoresinaSul" || s == "inimigogeloSul") limagens
+                picinimigos = inimigosNorte ++ inimigosEste ++ inimigosOeste ++ inimigosSul
                 torres = filter (\(s,p) -> s == "torrefogo" || s == "torreresina" || s == "torregelo") limagens
                 portal = getImagem "portal" limagens
-
 
 desenhaVida :: Float -> Picture
 desenhaVida v = Pictures [Color red $ translate 0 0 $ Text (show v)]
@@ -73,8 +81,22 @@ w = 40
 h :: Float
 h = 40
 
-desenhaInimigo :: Picture -> Posicao -> Picture
-desenhaInimigo inimigo (x,y) = translate (x * 40) (y * 40) $ Scale 0.1 0.1 $ inimigo
+desenhaInimigo :: [(String,Picture)] -> (Posicao,Direcao,[Projetil]) -> Picture
+desenhaInimigo picinimigos ((x,y),dir,lp) =
+    let inimigoGelo = getImagem ("inimigogelo" ++ (show dir)) picinimigos
+        inimigoFogo = getImagem ("inimigofogo" ++ (show dir)) picinimigos
+        inimigoResina = getImagem ("inimigoresina" ++ (show dir)) picinimigos
+        inimigo = getImagem ("inimigo" ++ (show dir)) picinimigos
+    in case lp of 
+        [] -> desenhaInimigoAux inimigo (x,y)
+        _ -> if verificaGelo lp
+             then desenhaInimigoAux inimigoGelo (x,y)
+             else if verificaFogo lp
+             then desenhaInimigoAux inimigoFogo (x,y)
+             else desenhaInimigoAux inimigoResina (x,y)
+
+desenhaInimigoAux :: Picture -> Posicao -> Picture
+desenhaInimigoAux pic (x,y) = Translate (x * 40) (y * 40) $ Scale 0.1 0.1 $ pic
 
 desenhaPortais :: Picture -> Posicao -> Picture
 desenhaPortais portal (x,y) = Translate (x * 40) (y * 40) $ Scale 0.11 0.11 $ portal
