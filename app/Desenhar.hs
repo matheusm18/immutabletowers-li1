@@ -31,7 +31,7 @@ desenha ImmutableTowers {menu = ModoJogo GanhouJogo, imagens = limagens} = getIm
 desenha ImmutableTowers {menu = ModoJogo PerdeuJogo, imagens = limagens} = getImagem "menuperdeu" limagens
 desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens)
             =  Pictures [getImagem "bgjogo" limagens,
-                        (Translate (-320) (240) $ Scale (2) (2) $ Pictures $  concatMap desenhaLinha (zip [0,-1..] mapa) ++ [desenhaBase posbase] ++ (map (desenhaTorres torres) ldesenhatorres) ++ (map (desenhaPortais portal) lposportais) ++ (map (desenhaInimigo picinimigos) dadosInimigos)),
+                        (Translate (-320) (240) $ Scale (2) (2) $ Pictures $  concatMap desenhaLinha (zip [0,-1..] mapa) ++ [desenhaBase picbase posbase] ++ (map (desenhaTorres torres) ldesenhatorres) ++ (map (desenhaPortais portal) lposportais) ++ (map (desenhaInimigo picinimigos) dadosInimigos)),
                          picvida,
                          piccreditos]
             where
@@ -49,6 +49,7 @@ desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torres
                 picinimigos = inimigosNorte ++ inimigosEste ++ inimigosOeste ++ inimigosSul
                 torres = filter (\(s,p) -> s == "torrefogo" || s == "torreresina" || s == "torregelo") limagens
                 portal = getImagem "portal" limagens
+                picbase = getImagem "base" limagens
 
 desenhaVida :: Float -> Picture
 desenhaVida v = Pictures [Color red $ translate 0 0 $ Text (show v)]
@@ -118,8 +119,8 @@ desenhaTorreGelo :: Picture -> Posicao -> Picture
 desenhaTorreGelo torregelo (x, y) = Pictures
     [Translate (x * 40) (y * 40) $ Scale 0.11 0.11 $ torregelo]
 
-desenhaBase :: Posicao -> Picture
-desenhaBase (x,y) = Color (greyN 0.5) $ translate (x * 40) (y * 40) $ rectangleSolid 30 30
+desenhaBase :: Picture -> Posicao -> Picture
+desenhaBase base (x,y) = Translate (x * 40) (y * 40) $ Scale 0.11 0.11 $ base
 
 mapa01 :: [[Terreno]]
 mapa01 =

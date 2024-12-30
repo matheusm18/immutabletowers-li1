@@ -44,6 +44,7 @@ imagensLoad = do
     torreresina <- loadBMP "imgs/TorreResina.bmp"
     torregelo <- loadBMP "imgs/TorreGelo.bmp"
     portal <- loadBMP "imgs/portal.bmp"
+    base <- loadBMP "imgs/base.bmp"
     return [("menujogar", menujogar), 
            ("menusair", menusair), 
            ("menuganhou", menuganhou), 
@@ -68,7 +69,8 @@ imagensLoad = do
            ("torrefogo", torrefogo),
            ("torreresina", torreresina),
            ("torregelo", torregelo),
-           ("portal", portal)]
+           ("portal", portal),
+           ("base",base)]
 
 main :: IO ()
 main = do
