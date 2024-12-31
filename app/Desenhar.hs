@@ -5,8 +5,6 @@ import ImmutableTowers
 import LI12425
 import Tarefa2(verificaGelo,verificaFogo)
 
--- Mapa antes estava ao contrario porque no gloss o y cresce para cima, (acho que arrumei, verifica depois) !!!!
-
 -- | Função auxiliar que ajuda a converter as posições do jogo para as posições do gloss
 invertePos :: Posicao -> Posicao
 invertePos (x,y) = (x,-y)
@@ -29,8 +27,8 @@ desenha ImmutableTowers {menu = MenuInicial Jogar, imagens = limagens} = getImag
 desenha ImmutableTowers {menu = MenuInicial Sair, imagens = limagens} = getImagem "menusair" limagens
 desenha ImmutableTowers {menu = ModoJogo GanhouJogo, imagens = limagens} = getImagem "menuganhou" limagens
 desenha ImmutableTowers {menu = ModoJogo PerdeuJogo, imagens = limagens} = getImagem "menuperdeu" limagens
-desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens)
-            =  Pictures [getImagem "bgjogo" limagens,
+desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens torreSelecionada)
+            =  Pictures [getBg torreSelecionada limagens,
                         (Translate (-320) (240) $ Scale (2) (2) $ Pictures $  concatMap desenhaLinha (zip [0,-1..] mapa) ++ [desenhaBase picbase posbase] ++ (map (desenhaTorres torres) ldesenhatorres) ++ (map (desenhaPortais portal) lposportais) ++ (map (desenhaInimigo picinimigos) dadosInimigos)),
                          picvida,
                          piccreditos]
@@ -50,6 +48,13 @@ desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torres
                 torres = filter (\(s,p) -> s == "torrefogo" || s == "torreresina" || s == "torregelo") limagens
                 portal = getImagem "portal" limagens
                 picbase = getImagem "base" limagens
+
+getBg :: Maybe Torre -> [(String,Picture)] -> Picture
+getBg Nothing limagens = getImagem "bgjogo" limagens
+getBg (Just t) limagens = case tipoProjetil (projetilTorre t) of
+    Fogo -> getImagem "bgjogofogo" limagens
+    Resina -> getImagem "bgjogoresina" limagens
+    Gelo -> getImagem "bgjogogelo" limagens
 
 desenhaVida :: Float -> Picture
 desenhaVida v = Pictures [Color red $ translate 0 0 $ Text (show v)]

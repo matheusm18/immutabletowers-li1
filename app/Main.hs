@@ -17,6 +17,11 @@ fundo = greyN 0.6
 fr :: Int
 fr = 10
 
+main :: IO ()
+main = do
+  imagens <- imagensLoad
+  play janela fundo fr (ImmutableTowers jogoInicio jogoInicio (MenuInicial Jogar) imagens Nothing) desenha reageEventos reageTempo
+
 imagensLoad :: IO [(String, Picture)]
 imagensLoad = do
     menujogar <- loadBMP "imgs/menujogar.bmp"
@@ -24,6 +29,9 @@ imagensLoad = do
     menuganhou <- loadBMP "imgs/ganhou.bmp"
     menuperdeu <- loadBMP "imgs/perdeu.bmp"
     bgjogo <- loadBMP "imgs/bgjogo.bmp"
+    bgjogogelo <- loadBMP "imgs/bgjogogelo.bmp"
+    bgjogofogo <- loadBMP "imgs/bgjogofogo.bmp"
+    bgjogoresina <- loadBMP "imgs/bgjogoresina.bmp"
     inimigoEste <- loadBMP "imgs/SoldadoEste.bmp"
     inimigofogoEste <- loadBMP "imgs/SoldadoFogoEste.bmp"
     inimigoresinaEste <- loadBMP "imgs/SoldadoResinaEste.bmp"
@@ -49,7 +57,10 @@ imagensLoad = do
            ("menusair", menusair), 
            ("menuganhou", menuganhou), 
            ("menuperdeu", menuperdeu), 
-           ("bgjogo", bgjogo), 
+           ("bgjogo", bgjogo),
+           ("bgjogogelo", bgjogogelo),
+           ("bgjogofogo", bgjogofogo),
+           ("bgjogoresina", bgjogoresina),
            ("inimigoEste", inimigoEste),
            ("inimigofogoEste", inimigofogoEste),
            ("inimigoresinaEste", inimigoresinaEste),
@@ -72,17 +83,12 @@ imagensLoad = do
            ("portal", portal),
            ("base",base)]
 
-main :: IO ()
-main = do
-  imagens <- imagensLoad
-  play janela fundo fr (ImmutableTowers jogoInicio jogoInicio (MenuInicial Jogar) imagens) desenha reageEventos reageTempo
-
 jogoInicio :: Jogo
 jogoInicio = Jogo {
     baseJogo = Base {
         vidaBase = 150,
         posicaoBase = (7.5, 1.5),
-        creditosBase = 0
+        creditosBase = 55
     },
     portaisJogo = [
         Portal {
@@ -183,12 +189,36 @@ jogoInicio = Jogo {
         (50, Torre {
             posicaoTorre = (0, 0),
             danoTorre = 25,
-            alcanceTorre = 3.5,
-            rajadaTorre = 3,
-            cicloTorre = 1.0,
+            alcanceTorre = 1.5,
+            rajadaTorre = 2,
+            cicloTorre = 5,
+            tempoTorre = 0,
+            projetilTorre = Projetil {
+                tipoProjetil = Gelo,
+                duracaoProjetil = Finita 2.0
+            }
+        }),
+        (50, Torre {
+            posicaoTorre = (0, 0),
+            danoTorre = 25,
+            alcanceTorre = 1.5,
+            rajadaTorre = 2,
+            cicloTorre = 5,
             tempoTorre = 0,
             projetilTorre = Projetil {
                 tipoProjetil = Fogo,
+                duracaoProjetil = Finita 2.0
+            }
+        }),
+        (50, Torre {
+            posicaoTorre = (0, 0),
+            danoTorre = 25,
+            alcanceTorre = 1.5,
+            rajadaTorre = 2,
+            cicloTorre = 5,
+            tempoTorre = 0,
+            projetilTorre = Projetil {
+                tipoProjetil = Resina,
                 duracaoProjetil = Finita 2.0
             }
         })

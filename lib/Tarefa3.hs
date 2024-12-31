@@ -115,11 +115,11 @@ atualizaInimigo t mapa i
           (direcaonova,posnova) = moveInimigo t i mapa
           vidanova = atualizaVidaProjeteis i
           velocidadenova = if any (\p -> case duracaoProjetil p of 
-                                            Finita d -> d <= 0.01 && tipoProjetil p == Resina -- por algum motivo a verifição do duracaoExpirou não funcionava aqui.
+                                            Finita d -> d <= 0.01 && tipoProjetil p == Resina -- ^ por algum motivo a verifição do duracaoExpirou não funcionava aqui.
                                             _ -> False) lprojeteis
                            then velocidade * 2
                            else velocidade
-          lprojeteisnova = filter (\p -> not (duracaoExpirou p)) (map (atualizaProjetil t) lprojeteis) -- atualiza e remove os expirados
+          lprojeteisnova = filter (\p -> not (duracaoExpirou p)) (map (atualizaProjetil t) lprojeteis) -- ^ atualiza e remove os expirados
 
 -- | Função que atualiza os inimigos do jogo (aplica dano, movimenta, etc) e no fim retorna uma tupla com a lista de inimigos atualizadas, o dano dos inimigos a base e o butim dos inimigos mortos.
 atualizaInimigos :: Tempo -> Mapa -> Base -> [Inimigo] -> ([Inimigo], Float, Creditos)
