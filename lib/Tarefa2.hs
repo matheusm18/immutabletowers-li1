@@ -69,7 +69,13 @@ atualizaProjeteis pinc (p:rp) =
 atingeInimigo :: Torre -> Inimigo -> Inimigo
 atingeInimigo Torre {danoTorre = dano, projetilTorre = projetil} i
     = case tipoProjetil projetil of 
-        Resina -> i {vidaInimigo = vidaInimigo i - dano, projeteisInimigo = atualizaProjeteis projetil (projeteisInimigo i), velocidadeInimigo = velocidadeInimigo i / 2}
+        Resina -> i {vidaInimigo = vidaInimigo i - dano, 
+                     projeteisInimigo = atualizaProjeteis projetil (projeteisInimigo i), 
+                     velocidadeInimigo = if verificaFogo (projeteisInimigo i)
+                                         then velocidadeInimigo i
+                                         else if verificaResina (projeteisInimigo i) 
+                                         then velocidadeInimigo i 
+                                         else velocidadeInimigo i / 2}
         _ -> i {vidaInimigo = vidaInimigo i - dano, projeteisInimigo = atualizaProjeteis projetil (projeteisInimigo i)}
 
 ativaInimigo :: Portal -> [Inimigo] -> (Portal, [Inimigo])

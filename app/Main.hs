@@ -15,7 +15,7 @@ fundo :: Color
 fundo = greyN 0.6
 
 fr :: Int
-fr = 10
+fr = 60
 
 main :: IO ()
 main = do
@@ -53,6 +53,9 @@ imagensLoad = do
     torregelo <- loadBMP "imgs/TorreGelo.bmp"
     portal <- loadBMP "imgs/portal.bmp"
     base <- loadBMP "imgs/base.bmp"
+    terrenoagua <- loadBMP "imgs/terrenoagua.bmp"
+    terrenorelva <- loadBMP "imgs/terrenorelva.bmp"
+    terrenoterra <- loadBMP "imgs/terrenoterra.bmp"
     return [("menujogar", menujogar), 
            ("menusair", menusair), 
            ("menuganhou", menuganhou), 
@@ -81,14 +84,18 @@ imagensLoad = do
            ("torreresina", torreresina),
            ("torregelo", torregelo),
            ("portal", portal),
-           ("base",base)]
+           ("base",base),
+           ("terrenoagua", terrenoagua),
+           ("terrenorelva", terrenorelva),
+           ("terrenoterra", terrenoterra)]
+
 
 jogoInicio :: Jogo
 jogoInicio = Jogo {
     baseJogo = Base {
         vidaBase = 150,
         posicaoBase = (7.5, 1.5),
-        creditosBase = 55
+        creditosBase = 400
     },
     portaisJogo = [
         Portal {
@@ -102,88 +109,91 @@ jogoInicio = Jogo {
                             vidaInimigo = 100,
                             velocidadeInimigo = 1,
                             ataqueInimigo = 5,
-                            butimInimigo = 10,
+                            butimInimigo = 25,
                             projeteisInimigo = []
                         },
                         Inimigo {
                             posicaoInimigo = (0.5, 0.5),
                             direcaoInimigo = Este,
                             vidaInimigo = 90,
-                            velocidadeInimigo = 2,
+                            velocidadeInimigo = 1,
                             ataqueInimigo = 5,
-                            butimInimigo = 10,
+                            butimInimigo = 25,
                             projeteisInimigo = []
                         }
                     ],
-                    cicloOnda = 8.0,
+                    cicloOnda = 2.0,
                     tempoOnda = 5.0,
-                    entradaOnda = 3.0
+                    entradaOnda = 5.0
                 },
                 Onda {
                     inimigosOnda = [
                         Inimigo {
                             posicaoInimigo = (0.5, 0.5),
                             direcaoInimigo = Este,
-                            vidaInimigo = 500,
-                            velocidadeInimigo = 2,
-                            ataqueInimigo = 5,
-                            butimInimigo = 10,
+                            vidaInimigo = 1000,
+                            velocidadeInimigo = 1,
+                            ataqueInimigo = 200,
+                            butimInimigo = 25,
                             projeteisInimigo = []
                         },
                         Inimigo {
                             posicaoInimigo = (0.5, 0.5),
                             direcaoInimigo = Este,
                             vidaInimigo = 150,
-                            velocidadeInimigo = 2,
+                            velocidadeInimigo = 1,
                             ataqueInimigo = 5,
-                            butimInimigo = 10,
+                            butimInimigo = 25,
                             projeteisInimigo = []
                         }
                     ],
-                    cicloOnda = 8.0,
+                    cicloOnda = 1.0,
                     tempoOnda = 5.0,
-                    entradaOnda = 3.0
+                    entradaOnda = 5.0
                 }
             ]
-        }
+        },
+        Portal {
+            posicaoPortal = (2.5, 7.5),
+            ondasPortal = [
+                Onda {
+                    inimigosOnda = [
+                        Inimigo {
+                            posicaoInimigo = (2.5, 7.5),
+                            direcaoInimigo = Norte,
+                            vidaInimigo = 100,
+                            velocidadeInimigo = 1,
+                            ataqueInimigo = 5,
+                            butimInimigo = 25,
+                            projeteisInimigo = []
+                        },
+                        Inimigo {
+                            posicaoInimigo = (2.5, 7.5),
+                            direcaoInimigo = Norte,
+                            vidaInimigo = 90,
+                            velocidadeInimigo = 1,
+                            ataqueInimigo = 5,
+                            butimInimigo = 25,
+                            projeteisInimigo = []
+                        }
+                    ],
+                    cicloOnda = 2.0,
+                    tempoOnda = 5.0,
+                    entradaOnda = 5.0
+                }]}
     ],
     torresJogo = [
-        Torre {
-            posicaoTorre = (4.5, 3.5),
-            danoTorre = 50,
-            alcanceTorre = 1.5,
-            rajadaTorre = 2,
-            cicloTorre = 5,
-            tempoTorre = 5,
-            projetilTorre = Projetil {
-                tipoProjetil = Fogo,
-                duracaoProjetil = Finita 3.0
-            }
-        },
-        Torre {
-            posicaoTorre = (0.5, 1.5),
-            danoTorre = 70,
-            alcanceTorre = 5,
-            rajadaTorre = 2,
-            cicloTorre = 5,
-            tempoTorre = 3,
-            projetilTorre = Projetil {
-                tipoProjetil = Gelo,
-                duracaoProjetil = Finita 3.0
-            }
-        }
     ],
     mapaJogo = mapa01,
-    inimigosJogo = [
-        Inimigo {
-            posicaoInimigo = (1.5, 3.5),
-            direcaoInimigo = Sul,
-            vidaInimigo = 100,
-            velocidadeInimigo = 1,
-            ataqueInimigo = 10,
-            butimInimigo = 15,
-            projeteisInimigo = []
-        }
+    inimigosJogo = [ Inimigo {
+                            posicaoInimigo = (0.5, 0.5),
+                            direcaoInimigo = Este,
+                            vidaInimigo = 1000,
+                            velocidadeInimigo = 1,
+                            ataqueInimigo = 200,
+                            butimInimigo = 25,
+                            projeteisInimigo = []
+                        }
     ],
     lojaJogo = [
         (50, Torre {

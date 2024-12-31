@@ -57,7 +57,7 @@ atualizaTorres t torres inimigos = foldl atualizaAux ([], inimigos) torres
 atualizaVidaProjeteis :: Inimigo -> Float
 atualizaVidaProjeteis Inimigo {vidaInimigo = vida, projeteisInimigo = lprojeteis}
     = if (any (\proj -> tipoProjetil proj == Fogo) lprojeteis)
-      then vida - 1 -- coloquei 1 mas é um valor qualquer (depois temos que testar em jogo)
+      then vida - (1/30) -- coloquei (1/30) para dar 2 de dano por segundo com o fps a 60 (depois temos que testar em jogo)
       else vida
 
 moveInimigo :: Tempo -> Inimigo -> Mapa -> (Direcao,Posicao)
@@ -69,26 +69,26 @@ moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocid
             Norte -> if validaPosicaoTerra (x,y-0.501) mapa
                      then (direcao,(x,y-(velocidade*t)))
                      else if validaPosicaoTerra (x+0.501,y) mapa
-                     then (Este,(x+(velocidade*t),y))
-                     else (Oeste,(x-velocidade*t,y))
-  
+                     then (Este,(x,y))
+                     else (Oeste,(x,y))
+
             Sul ->  if validaPosicaoTerra (x,(y+0.501)) mapa
-                    then (direcao,(x,(y+velocidade*t)))
+                    then (direcao,(x,y+(velocidade*t)))
                     else if validaPosicaoTerra (x+0.501,y) mapa
-                    then (Este,(x+(velocidade*t),y))
-                    else (Oeste,(x-velocidade*t,y))
+                    then (Este,(x,y))
+                    else (Oeste,(x,y))
 
             Este -> if validaPosicaoTerra (x+0.501,y) mapa
                     then (direcao,(x+(velocidade*t),y))
                     else if validaPosicaoTerra (x,y-0.501) mapa
-                    then (Norte,(x,y-(velocidade*t)))
-                    else (Sul,(x,y+velocidade*t))
+                    then (Norte,(x,y))
+                    else (Sul,(x,y))
 
             Oeste -> if validaPosicaoTerra (x-0.501,y) mapa
                      then (direcao,(x-(velocidade*t),y))
                      else if validaPosicaoTerra (x,y-0.501) mapa
-                     then (Norte,(x,y-(velocidade*t)))
-                     else (Sul,(x,y+velocidade*t))
+                     then (Norte,(x,y))
+                     else (Sul,(x,y))
 
 -- | Função que atualiza a duração de um projétil com o passar do tempo.
 atualizaProjetil :: Tempo -> Projetil -> Projetil
@@ -114,9 +114,7 @@ atualizaInimigo t mapa i
           velocidade = velocidadeInimigo i
           (direcaonova,posnova) = moveInimigo t i mapa
           vidanova = atualizaVidaProjeteis i
-          velocidadenova = if any (\p -> case duracaoProjetil p of 
-                                            Finita d -> d <= 0.01 && tipoProjetil p == Resina -- ^ por algum motivo a verifição do duracaoExpirou não funcionava aqui.
-                                            _ -> False) lprojeteis
+          velocidadenova = if any (\p -> tipoProjetil p == Resina) (lprojeteis) && not (any (\p -> tipoProjetil p == Resina) lprojeteisnova)
                            then velocidade * 2
                            else velocidade
           lprojeteisnova = filter (\p -> not (duracaoExpirou p)) (map (atualizaProjetil t) lprojeteis) -- ^ atualiza e remove os expirados

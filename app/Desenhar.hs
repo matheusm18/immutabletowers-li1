@@ -29,7 +29,7 @@ desenha ImmutableTowers {menu = ModoJogo GanhouJogo, imagens = limagens} = getIm
 desenha ImmutableTowers {menu = ModoJogo PerdeuJogo, imagens = limagens} = getImagem "menuperdeu" limagens
 desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens torreSelecionada)
             =  Pictures [getBg torreSelecionada limagens,
-                        (Translate (-320) (240) $ Scale (2) (2) $ Pictures $  concatMap desenhaLinha (zip [0,-1..] mapa) ++ [desenhaBase picbase posbase] ++ (map (desenhaTorres torres) ldesenhatorres) ++ (map (desenhaPortais portal) lposportais) ++ (map (desenhaInimigo picinimigos) dadosInimigos)),
+                        (Translate (-320) (240) $ Scale (2) (2) $ Pictures $  concatMap (desenhaLinha picterrenos) (zip [0,-1..] mapa) ++ [desenhaBase picbase posbase] ++ (map (desenhaTorres torres) ldesenhatorres) ++ (map (desenhaPortais portal) lposportais) ++ (map (desenhaInimigo picinimigos) dadosInimigos)),
                          picvida,
                          piccreditos]
             where
@@ -48,6 +48,7 @@ desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torres
                 torres = filter (\(s,p) -> s == "torrefogo" || s == "torreresina" || s == "torregelo") limagens
                 portal = getImagem "portal" limagens
                 picbase = getImagem "base" limagens
+                picterrenos = filter (\(s,p) -> s == "terrenoagua" || s == "terrenorelva" || s == "terrenoterra") limagens
 
 getBg :: Maybe Torre -> [(String,Picture)] -> Picture
 getBg Nothing limagens = getImagem "bgjogo" limagens
@@ -62,21 +63,21 @@ desenhaVida v = Pictures [Color red $ translate 0 0 $ Text (show v)]
 desenhaCreditos :: Int -> Picture
 desenhaCreditos c = Pictures [Color (orange) $ translate 0 (-20) $ Text (show c)]
 
-desenhaLinha :: (Int, [Terreno]) -> [Picture]
-desenhaLinha (y, linha) = concatMap (desenhaChao y) (zip [0..] linha)
+desenhaLinha :: [(String,Picture)] -> (Int, [Terreno]) -> [Picture]
+desenhaLinha limagens (y, linha) = concatMap (desenhaChao limagens y) (zip [0..] linha)
 
-desenhaChao :: Int -> (Int, Terreno) -> [Picture]
-desenhaChao y (x, terreno) = [desenhaTerreno terreno (posicaoCentro x y)]
+desenhaChao :: [(String,Picture)] -> Int -> (Int, Terreno) -> [Picture]
+desenhaChao limagens y (x, terreno) = [desenhaTerreno limagens terreno (posicaoCentro x y)]
 
 -- | Calcula a posição do centro de um quadrado no mapa ( na parte do y subtrai porque eixo cresce para baixo )
 posicaoCentro :: Int -> Int -> (Float, Float)
 posicaoCentro x y = (fromIntegral x + 0.5, fromIntegral y - 0.5)
 
 -- | Função para desenhar cada tipo de terreno
-desenhaTerreno :: Terreno -> Posicao -> Picture
-desenhaTerreno Agua (x, y) = desenhaChaoBase (x, y) (makeColorI 154 209 221 255)
-desenhaTerreno Relva (x, y) = desenhaChaoBase (x, y) (makeColorI 91 142 80 255)
-desenhaTerreno Terra (x, y) = desenhaChaoBase (x, y) (makeColorI 186 140 93 255)
+desenhaTerreno :: [(String,Picture)] -> Terreno -> Posicao -> Picture
+desenhaTerreno limagens Agua (x, y) = Translate (x * w) (y * w) $ Scale (1/9) (1/9) $ (getImagem "terrenoagua" limagens)
+desenhaTerreno limagens Relva (x, y) = Translate (x * w) (y * w) $ Scale (1/9) (1/9) $ (getImagem "terrenorelva" limagens)
+desenhaTerreno limagens Terra (x, y) = Translate (x * w) (y * w) $ Scale (1/9) (1/9) $ (getImagem "terrenoterra" limagens)
 
 desenhaChaoBase :: Posicao -> Color -> Picture
 desenhaChaoBase (x, y) color = Color color $ translate (x * w) (y * h) $ rectangleSolid w h
@@ -129,14 +130,14 @@ desenhaBase base (x,y) = Translate (x * 40) (y * 40) $ Scale 0.11 0.11 $ base
 
 mapa01 :: [[Terreno]]
 mapa01 =
-    [ [t,t,a,r,r,r,r,r],
-      [r,t,a,a,r,t,t,t],
-      [a,t,a,a,r,t,r,a],
-      [a,t,a,a,r,t,r,a],
-      [t,t,a,a,r,t,t,t],
-      [t,a,a,a,r,r,r,t],
-      [t,a,t,t,t,t,t,t],
-      [t,t,t,a,r,r,r,a]
+    [ [t,t,a,a,r,r,r,r],
+      [a,t,a,a,r,t,t,t],
+      [a,t,r,r,r,t,r,a],
+      [t,t,r,a,r,t,r,a],
+      [a,t,a,a,r,t,t,a],
+      [a,t,r,r,r,r,t,a],
+      [a,t,t,t,t,t,t,a],
+      [a,a,t,a,a,a,a,a]
     ]
   where
     t = Terra
