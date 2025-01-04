@@ -6,6 +6,7 @@ import LI12425
 import Tarefa1 (validaPosicaoRelva)
 import Data.Maybe (fromJust)
 
+-- | Função auxiliar que reage aos eventos do teclado quando o jogo está no menu inicial
 reageEventosMenu :: Event -> ImmutableTowers -> ImmutableTowers
 reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) it@(ImmutableTowers {menu = MenuInicial Jogar}) = it {menu = ModoJogo EmAndamento}
 reageEventosMenu (EventKey (SpecialKey KeyDown) Down _ _) it@(ImmutableTowers {menu = MenuInicial Jogar}) = it {menu = MenuInicial Sair}
@@ -15,11 +16,12 @@ reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) it@(ImmutableTowers {
 reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) it@(ImmutableTowers {menu = MenuInicial Sair})  = error "Jogo fechado."
 reageEventosMenu _ it = it
 
+-- | Função principal que reage aos eventos do jogador (ações do teclado e do rato)
 reageEventos :: Event -> ImmutableTowers -> ImmutableTowers
 reageEventos (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo}) =
     case torreSelecionada it of 
             Nothing -> selecionarTorre posMouse it
-            Just torre -> case posTelaParaJogo posMouse of
+            Just torre -> case posEcraParaJogo posMouse of
                             Nothing -> selecionarTorre posMouse it
                             Just (xc,yc) -> if podeAdicionarTorre (xc,yc) it && podeComprarTorre it
                                             then it {torreSelecionada = Nothing,jogoAtual = jogo {torresJogo = torresJogo jogo ++ [torrenova], baseJogo = base {creditosBase = creditosBase base - custotorre}}}
@@ -35,7 +37,8 @@ reageEventos _ it = it
 {- Funções auxiliares:
 
 As funções que tem "Area" são funções que retornam o (xmin,xmax,ymin,ymax) das áreas destas imagens
--}
+
+Obtivemos as coordenadas destas áreas fazendo o trace na função reageEventos para obter a posição do clique do rato -}
 
 torreGeloArea :: (Float, Float, Float, Float)
 torreGeloArea = (-911, -665, 46.5, 294.5)
@@ -49,19 +52,25 @@ torreResinaArea = (-911,-665,-491.5,-241.5)
 mapaArea :: (Float, Float, Float, Float)
 mapaArea = (-320, 320, -400, 240)
 
+{- Função auxiliar que recebe o (xmin,xmax,ymin,ymax) de uma área e recebe (x,y) coordenadas do clique do rato e 
+verifica se o clique do rato está dentro desta área -}
+
 clicouDentro :: (Float, Float, Float, Float) -> (Float, Float) -> Bool
 clicouDentro (xmin, xmax, ymin, ymax) (x, y) = x >= xmin && x <= xmax && y >= ymin && y <= ymax
 
+-- | Função que retorna o custo de uma determinada torre na loja
 getCustoTorre :: Torre -> Loja -> Creditos
 getCustoTorre torre loja = let inverteTupla (c,t) = (t,c)
                                lojainvertida = map inverteTupla loja
                            in fromJust (lookup torre lojainvertida)
 
+-- | Função que verifica se o jogador pode comprar uma torre (se tem créditos suficientes)
 podeComprarTorre :: ImmutableTowers -> Bool
 podeComprarTorre it = case torreSelecionada it of
                          Nothing -> False
                          Just torre -> creditosBase (baseJogo (jogoAtual it)) >= getCustoTorre torre (lojaJogo (jogoAtual it))
 
+-- | Função que seleciona a torre que o jogador clicou (ou deseleciona se já estava selecionada)
 selecionarTorre :: (Float, Float) -> ImmutableTowers -> ImmutableTowers
 selecionarTorre (x, y) it
     | clicouDentro torreGeloArea (x, y) = if torreSelecionada it == Just torregelo 
@@ -79,9 +88,10 @@ selecionarTorre (x, y) it
           torrefogo = head (filter (\t -> tipoProjetil (projetilTorre t) == Fogo) (map (\(c,t) -> t) loja))
           torreresina = head (filter (\t -> tipoProjetil (projetilTorre t) == Resina) (map (\(c,t) -> t) loja))
 
-posTelaParaJogo :: (Float, Float) -> Maybe (Float, Float)
-posTelaParaJogo (x, y)
-    | clicouDentro mapaArea (x, y) = let tamanhoQuadrado = 80 -- (visto que o w e o h eram 40 e fizemos scale 2 na desenha)
+-- | Função auxiliar que converte as coordenadas do clique do rato no ecrã para as coordenadas do jogo
+posEcraParaJogo :: (Float, Float) -> Maybe (Float, Float)
+posEcraParaJogo (x, y)
+    | clicouDentro mapaArea (x, y) = let tamanhoQuadrado = 80 -- (visto que o w e o h são ambos 80)
                                          indiceX = floor ((x + 320) / tamanhoQuadrado)
                                          indiceY = floor ((240 - y) / tamanhoQuadrado)
                                          posicaoJogoX = fromIntegral indiceX + 0.5 -- para retornar a posição do jogo do centro do quadrado
@@ -89,6 +99,7 @@ posTelaParaJogo (x, y)
                                      in Just (posicaoJogoX, posicaoJogoY)
     | otherwise = Nothing
 
+-- | Função que verifica se é possível adicionar uma torre numa determinada posição (deve ser uma posição de relva e não deve haver outra torre nessa posição)
 podeAdicionarTorre :: (Float, Float) -> ImmutableTowers -> Bool
 podeAdicionarTorre pos it =
     let torres = torresJogo (jogoAtual it)

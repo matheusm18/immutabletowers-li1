@@ -7,20 +7,26 @@ import ImmutableTowers
 import Tempo
 import LI12425
 
-
+-- | Janela do jogo
 janela :: Display
 janela = InWindow "Immutable Towers" (1920, 1080) (0, 0)
 
+-- | Background, escolhemos a cor cinza mas acabará por não aparecer, substituimos depois o fundo por imagens na função desenha
 fundo :: Color
 fundo = greyN 0.6
 
+-- | Frames por segundo (fps)
 fr :: Int
 fr = 60
 
+-- | Função main, é a função principal que inicia o jogo
 main :: IO ()
 main = do
   imagens <- imagensLoad
   play janela fundo fr (ImmutableTowers jogoInicio jogoInicio (MenuInicial Jogar) imagens Nothing) desenha reageEventos reageTempo
+
+{- Função que carrega as imagens do jogo de modo a estas estarem armazenadas numa lista de tuplas com a string igual o nome da imagem e a imagem em si, 
+para facilita rdepois a busca pela imagem correta nas outras funções -}
 
 imagensLoad :: IO [(String, Picture)]
 imagensLoad = do
@@ -90,6 +96,7 @@ imagensLoad = do
            ("terrenoterra", terrenoterra)]
 
 
+-- | Estado do jogo inicial
 jogoInicio :: Jogo
 jogoInicio = Jogo {
     baseJogo = Base {
@@ -185,16 +192,7 @@ jogoInicio = Jogo {
     torresJogo = [
     ],
     mapaJogo = mapa01,
-    inimigosJogo = [ Inimigo {
-                            posicaoInimigo = (0.5, 0.5),
-                            direcaoInimigo = Este,
-                            vidaInimigo = 1000,
-                            velocidadeInimigo = 1,
-                            ataqueInimigo = 200,
-                            butimInimigo = 25,
-                            projeteisInimigo = []
-                        }
-    ],
+    inimigosJogo = [],
     lojaJogo = [
         (50, Torre {
             posicaoTorre = (0, 0),

@@ -5,7 +5,7 @@ import LI12425
 import Tarefa2
 import Tarefa3
 
-
+-- | Função que atualiza o jogo conforme o tempo passa. Recebe o tempo (t) que passou desde a última atualização e o jogo atual e retorna o jogo atualizado.
 reageTempo :: Tempo -> ImmutableTowers -> ImmutableTowers
 reageTempo _ it@(ImmutableTowers {menu = MenuInicial _ }) = it
 reageTempo t it@(ImmutableTowers {jogoAtual = jogoAtual, menu = ModoJogo estado}) = 

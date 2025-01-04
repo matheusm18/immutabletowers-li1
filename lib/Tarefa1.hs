@@ -11,7 +11,7 @@ module Tarefa1 where
 
 import LI12425
 
--- | Função auxiliar que dado uma posição e o mapa verifica qual o tipo de terreno nessa posição
+-- | Função auxiliar que dada uma posição e o mapa, verifica qual o tipo de terreno nessa posição.
 tipoTerreno :: Posicao -> Mapa -> Maybe Terreno
 tipoTerreno (x,y) mapa
     | y' < 0 || y' >= fromIntegral (length (mapa)) = Nothing
@@ -27,7 +27,14 @@ validaPosicaoTerra (x,y) mapa = case t of
     _ -> False
     where t = tipoTerreno (x,y) mapa
 
-{-| Função que dada uma posição retorna as posições que estão em volta que são válidas (tem terreno com Terra)
+-- | Função que verifica se em uma certa posição o tipo do terreno é Relva.
+validaPosicaoRelva :: Posicao -> Mapa -> Bool
+validaPosicaoRelva (x,y) mapa = case t of
+    Just Relva -> True
+    _ -> False
+    where t = tipoTerreno (x,y) mapa
+
+{- Função que dada uma posição retorna as posições que estão em volta cujo terreno é Terra
 
 Como a função validaPosicaoTerra (que é utilizada dentro do filter) utiliza a função tipoTerreno, não é necessário verificar se as posições adjacentes são válidas.
      
@@ -36,32 +43,39 @@ Como a função validaPosicaoTerra (que é utilizada dentro do filter) utiliza a
 posAdjacentes :: Posicao -> Mapa -> [Posicao]
 posAdjacentes (x,y) mapa = filter (\(cx,cy) -> validaPosicaoTerra (cx,cy) mapa) [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
 
--- | Função auxiliar que verifica se existe um caminho entre duas posições.
+-- | Função que verifica se existe um caminho entre duas posições.
 verificaCaminho :: Posicao -> Posicao -> Mapa -> Bool
 verificaCaminho posinicial posfinal mapa = buscaCaminho [posinicial] []
   where
     buscaCaminho [] _ = False
     buscaCaminho (atual:fila) visitados
         | atual == posfinal    = True
-        | elem atual visitados = buscaCaminho fila visitados  -- ^ Se a posição atual já foi visitada, passa a procurar para a próxima posição
+        | elem atual visitados = buscaCaminho fila visitados  -- ^ Se a posição atual já foi visitada, passa a procurar para as próximas posições
         | otherwise            =
             let visitados' = atual : visitados  -- ^ Adiciona a posição atual à lista de visitados
                 adjacentes = filter (`notElem` visitados') (posAdjacentes atual mapa) -- ^ Filtra as posições adjacentes válidas que ainda não foram visitadas
             in buscaCaminho (fila ++ adjacentes) visitados'
 
+{- Função que verifica se existem torres ou base numa dada posição
+
+Retorna True quando não há sobreposições (torres ou base na posição), retorna False caso contrário -}
+
 verificaSobreposicao :: Posicao -> [Torre] -> Base -> Bool
 verificaSobreposicao (x,y) [] Base {posicaoBase = posBase} = (x,y) /= posBase
-verificaSobreposicao (x,y) (Torre { posicaoTorre = (xt,yt)} :rl) base@(Base {posicaoBase = posBase})
-            = (x,y) /= (xt,yt) && verificaSobreposicao (x,y) rl base
+verificaSobreposicao (x,y) ((Torre {posicaoTorre = (xt,yt)}):rl) base
+            = (x,y) /= (xt,yt) && verificaSobreposicao (x,y) rl base -- ^ recursão para verificar todas as torres
 
 
--- Função auxiliar que dada uma lista de ondas de um dado portal verifica se há no máximo uma onda iniciada.
+{- Função que dada a lista de ondas de um dado portal verifica se há no máximo uma onda iniciada.
+
+Retorna True quando há no máximo uma onda iniciada, False caso contrário -}
+
 verificaOndas :: [Onda] -> Bool
 verificaOndas [] = True
 verificaOndas ondas = length ondasiniciadas == 1 || length ondasiniciadas == 0
     where ondasiniciadas = filter (\onda -> (entradaOnda onda) == 0) ondas
 
--- | Função que verifica se o estado de jogo está válido para os Portais
+-- | Função que verifica se o estado de jogo está válido para os Portais (cumprem todos os critérios)
 validaPortais :: [Portal] -> Mapa -> Base -> [Torre] -> Bool
 validaPortais [] _ _ _ = False -- ^ Verifica se há pelo menos um portal
 validaPortais portais mapa base torres =
@@ -71,17 +85,22 @@ validaPortais portais mapa base torres =
     all (\p -> verificaOndas (ondasPortal p)) portais -- ^ Verifica se para cada portal tem no máximo uma onda ativa
 
 
--- | Função que dada a posição do portal e um inimigo, verifica se o inimigo cumpre as restrições da alínea a)
+-- | Função que dada a posição do portal e um inimigo deste portal(por lançar), verifica se o inimigo cumpre as restrições da alínea a)
 verificaRestricoes :: Posicao -> Inimigo -> Bool
-verificaRestricoes posPortal Inimigo {posicaoInimigo = pos, vidaInimigo = vida, projeteisInimigo = lprojeteis}
-            = posPortal == pos && vida > 0 && (lprojeteis == [])
+verificaRestricoes posPortal Inimigo {posicaoInimigo = posI, vidaInimigo = vida, projeteisInimigo = lprojeteis}
+            = posPortal == posI && vida > 0 && (lprojeteis == [])
 
--- | Função que dada uma onda em que cada onda tem uma lista de inimigos, concatena estas listas e retorna uma lista de inimigos geral
+{- Função auxiliar que dada uma lista de ondas em que cada onda tem uma lista de inimigos, 
+concatena estas listas de inimigos e retorna a lista de inimigos concatenada -}
+
 concatenaInimigos :: [Onda] -> [Inimigo]
 concatenaInimigos [] = []
 concatenaInimigos (onda:rl) = (inimigosOnda onda) ++ concatenaInimigos rl
 
--- | Função auxiliar que verifica se um inimigo está sobreposto a alguma torre
+{- Função auxiliar que verifica se um inimigo está sobreposto a alguma torre
+
+Retorna True quando o inimigo não está sobreposto a nenhuma torre, False caso contrário -}
+
 verificaSobreposicaoInimigoTorres :: [Torre] -> Inimigo -> Bool
 verificaSobreposicaoInimigoTorres torres inimigo = all (\torre -> (posicaoTorre torre) /= (posicaoInimigo inimigo)) torres
 
@@ -89,22 +108,25 @@ verificaSobreposicaoInimigoTorres torres inimigo = all (\torre -> (posicaoTorre 
 validaVelocidade :: Inimigo -> Bool
 validaVelocidade inimigo = (velocidadeInimigo (inimigo)) >= 0
 
--- | Função que verifica se a lista de projéteis ativos é válida
+{- Função que verifica se a lista de projéteis ativos é válida.
+
+Isto é, não pode conter mais do que um projétil do mesmo tipo e não pode conter simultaneamente Fogo e Resina, 
+nem Fogo e Gelo -}
+
 validaProjeteis :: [Projetil] -> Bool
 validaProjeteis lp = length(lfogos) <=1 && 
                      length(lgelos) <=1 && 
                      length(lresinas) <=1 &&
-                     (if length(lfogos) == 1 && length(lresinas) /= 0 then False
+                     (if length(lfogos) == 1 && (length(lresinas) /= 0 || length(lgelos) /= 0) then False
                       else if length(lresinas) == 1 && length(lfogos) /= 0 then False
-                      else if length(lfogos) == 1 && length(lgelos) /= 0 then False
                       else if length (lgelos) == 1 && length(lfogos) /= 0 then False
                       else True)
-                        where listatiposp@(tp1:rtps) = map (tipoProjetil) lp
-                              lfogos = filter (== Fogo) listatiposp
-                              lgelos = filter (== Gelo) listatiposp
-                              lresinas = filter (== Resina) listatiposp
+                        where listaTiposP = map (tipoProjetil) lp
+                              lfogos = filter (== Fogo) listaTiposP
+                              lgelos = filter (== Gelo) listaTiposP
+                              lresinas = filter (== Resina) listaTiposP
 
--- | Função que verifica se todos os inimigos de todas as ondas cumprem as restrições da alínea a)
+-- | Função que verifica se todos os inimigos de todas as ondas de um portal cumprem as restrições da alínea a)
 validaInimigosPortal :: Posicao -> [Onda] -> Bool
 validaInimigosPortal posPortal ondasPortal =
     all (\i -> verificaRestricoes posPortal i) inimigosPortal
@@ -118,26 +140,28 @@ validaInimigosEmJogo inimigosemjogo torres mapa =
     all (\i -> validaVelocidade i) inimigosemjogo &&
     all (\i -> validaProjeteis (projeteisInimigo i)) inimigosemjogo
 
--- | Função que verifica se em uma certa posição o tipo do terreno é Relva.
-validaPosicaoRelva :: Posicao -> Mapa -> Bool
-validaPosicaoRelva (x,y) mapa = case t of
-    Just Relva -> True
-    _ -> False
-    where t = tipoTerreno (x,y) mapa
-
+-- | Função que verifica se a torre tem um alcance válido (valor positivo)
 validaAlcanceTorre :: Torre -> Bool
 validaAlcanceTorre torre = (alcanceTorre (torre)) > 0
 
+-- | Função que verifica se a torre tem uma rajada válida (valor positivo)
 validaRajadaTorre :: Torre -> Bool
 validaRajadaTorre torre = (rajadaTorre (torre)) > 0
 
+-- | Função que verifica se a torre tem um ciclo válido (valor não negativo)
 validaCicloTorre :: Torre -> Bool
 validaCicloTorre torre = (cicloTorre (torre)) >= 0
 
-verificaSobreposicaoTorres :: [Torre] -> [Torre] -> Bool
-verificaSobreposicaoTorres  [] torres = True
-verificaSobreposicaoTorres (t:r) l  = length (filter (== posicaoTorre t) (map (posicaoTorre) l)) == 1 && verificaSobreposicaoTorres r l
+{- Função que verifica se as torres não estão sobrepostas
 
+Retorna True quando as torres não estão sobrepostas, False caso contrário -}
+
+verificaSobreposicaoTorres :: [Torre] -> [Torre] -> Bool
+verificaSobreposicaoTorres  [] _ = True
+verificaSobreposicaoTorres (t:r) l  = length (filter (== posicaoTorre t) (posicoesTorres)) == 1 && verificaSobreposicaoTorres r l
+    where posicoesTorres = map (posicaoTorre) l
+
+-- | Função que verifica se o estado de jogo está válido para os Torres (cumprem todos os critérios)
 validaTorres :: [Torre] -> Mapa -> Bool
 validaTorres torres mapa = 
     all (\torre -> validaPosicaoRelva (posicaoTorre torre) mapa) torres && -- ^ Verifica se as torres estão sobre relva
@@ -146,16 +170,21 @@ validaTorres torres mapa =
     all (\torre -> validaCicloTorre torre) torres &&
     verificaSobreposicaoTorres torres torres
 
+-- | Função que verifica se a base tem um crédito válido (valor não negativo)
 validaCreditoBase :: Base -> Bool
 validaCreditoBase base = (creditosBase (base)) >= 0
 
-verificaSobreposicaoBase :: Posicao -> [Torre] -> [Portal] -> Bool
-verificaSobreposicaoBase (x,y) [] [] = True
-verificaSobreposicaoBase (x,y) [] (Portal { posicaoPortal = posPortal} :rp)= (x,y) /= posPortal && verificaSobreposicaoBase (x,y) [] rp
-verificaSobreposicaoBase (x,y) (Torre { posicaoTorre = posTorre} :rl) [] = (x,y) /= posTorre && verificaSobreposicaoBase (x,y) rl []
-verificaSobreposicaoBase (x,y) (Torre { posicaoTorre = posTorre} :rl) (Portal {posicaoPortal = posPortal} :rp)
-            = verificaSobreposicaoBase (x,y) (Torre { posicaoTorre = posTorre} :rl) [] && verificaSobreposicaoBase (x,y) [] (Portal {posicaoPortal = posPortal} :rp)
+{- Função que dada a posição da base, a lista das torres e a lista dos portais, 
+verifica se a base não está sobreposta a torres ou portais
 
+Retorna True quando a base não está sobreprosta a torres ou portais, False caso contrário -}
+
+verificaSobreposicaoBase :: Posicao -> [Torre] -> [Portal] -> Bool
+verificaSobreposicaoBase posBase torres portais =
+    all (\torre -> (posicaoTorre torre /= posBase)) torres && -- ^ verifica para cada torre
+    all (\portal -> (posicaoPortal portal /= posBase)) portais -- ^ verifica para cada portal
+
+-- | Função que verifica se o estado de jogo está válido para a Base (cumpre todos os critérios)
 validaBase :: Base -> Mapa -> [Torre] -> [Portal] -> Bool
 validaBase base mapa torres portais =
     validaPosicaoTerra (posicaoBase base) mapa &&
@@ -166,8 +195,8 @@ validaBase base mapa torres portais =
 validaJogo :: Jogo -> Bool
 validaJogo Jogo {baseJogo = base, portaisJogo = portais, torresJogo = torres, mapaJogo = mapa, inimigosJogo = inimigos} =
     validaPortais portais mapa base torres &&
-    all (\p -> validaInimigosPortal (posicaoPortal p) (ondasPortal p)) portais && -- ^ Valida inimigos por lançar
-    validaInimigosEmJogo inimigos torres mapa && -- ^ Valida inimigos em jogo
+    all (\p -> validaInimigosPortal (posicaoPortal p) (ondasPortal p)) portais && -- ^ valida inimigos por lançar
+    validaInimigosEmJogo inimigos torres mapa && -- ^ valida inimigos em jogo
     validaTorres torres mapa &&
     validaBase base mapa torres portais
 
