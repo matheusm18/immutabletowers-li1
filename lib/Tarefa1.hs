@@ -199,4 +199,3 @@ validaJogo Jogo {baseJogo = base, portaisJogo = portais, torresJogo = torres, ma
     validaInimigosEmJogo inimigos torres mapa && -- ^ valida inimigos em jogo
     validaTorres torres mapa &&
     validaBase base mapa torres portais
-

@@ -148,7 +148,7 @@ desenhaBase :: Picture -> Posicao -> Picture
 desenhaBase base (x,y) = Translate (x * w) (y * w) $ Scale (2/9) (2/9) $ base
 
 -- | Mapa do jogo
-mapa01 :: [[Terreno]]
+mapa01 :: Mapa
 mapa01 =
     [ [t,t,a,a,r,r,r,r],
       [a,t,a,a,r,t,t,t],
