@@ -13,7 +13,7 @@ reageEventosMenu (EventKey (SpecialKey KeyDown) Down _ _) it@(ImmutableTowers {m
 reageEventosMenu (EventKey (SpecialKey KeyUp) Down _ _) it@(ImmutableTowers {menu = MenuInicial Sair}) = it {menu = MenuInicial Jogar}
 reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) it@(ImmutableTowers {jogoInicial = jogoInicio, menu = ModoJogo PerdeuJogo}) = it {jogoAtual = jogoInicio, menu = MenuInicial Jogar}
 reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) it@(ImmutableTowers {jogoInicial = jogoInicio, menu = ModoJogo GanhouJogo}) = it {jogoAtual = jogoInicio, menu = MenuInicial Jogar}
-reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) it@(ImmutableTowers {menu = MenuInicial Sair})  = error "Jogo fechado."
+reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) (ImmutableTowers {menu = MenuInicial Sair})  = error "Jogo fechado."
 reageEventosMenu _ it = it
 
 -- | Função principal que reage aos eventos do jogador (ações do teclado e do rato)
@@ -84,16 +84,16 @@ selecionarTorre (x, y) it
                                            else it {torreSelecionada = Just torreresina}
     | otherwise = it { torreSelecionada = Nothing }
     where loja = lojaJogo (jogoAtual it)
-          torregelo = head (filter (\t -> tipoProjetil (projetilTorre t) == Gelo) (map (\(c,t) -> t) loja))
-          torrefogo = head (filter (\t -> tipoProjetil (projetilTorre t) == Fogo) (map (\(c,t) -> t) loja))
-          torreresina = head (filter (\t -> tipoProjetil (projetilTorre t) == Resina) (map (\(c,t) -> t) loja))
+          torregelo = head (filter (\t -> tipoProjetil (projetilTorre t) == Gelo) (map (\(_,t) -> t) loja))
+          torrefogo = head (filter (\t -> tipoProjetil (projetilTorre t) == Fogo) (map (\(_,t) -> t) loja))
+          torreresina = head (filter (\t -> tipoProjetil (projetilTorre t) == Resina) (map (\(_,t) -> t) loja))
 
 -- | Função auxiliar que converte as coordenadas do clique do rato no ecrã para as coordenadas do jogo
 posEcraParaJogo :: (Float, Float) -> Maybe (Float, Float)
 posEcraParaJogo (x, y)
     | clicouDentro mapaArea (x, y) = let tamanhoQuadrado = 80 -- (visto que o w e o h são ambos 80)
-                                         indiceX = floor ((x + 320) / tamanhoQuadrado)
-                                         indiceY = floor ((240 - y) / tamanhoQuadrado)
+                                         indiceX = floor ((x + 320) / tamanhoQuadrado) :: Int
+                                         indiceY = floor ((240 - y) / tamanhoQuadrado) :: Int
                                          posicaoJogoX = fromIntegral indiceX + 0.5 -- para retornar a posição do jogo do centro do quadrado
                                          posicaoJogoY = fromIntegral indiceY + 0.5
                                      in Just (posicaoJogoX, posicaoJogoY)

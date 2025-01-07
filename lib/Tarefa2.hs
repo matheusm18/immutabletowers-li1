@@ -75,13 +75,13 @@ atualizaProjeteis pinc (p:rp) =
          (Gelo, Gelo) -> (Projetil Gelo (somaDuracao pinc p)) : rp
          (Gelo, Resina) ->
             if verificaGelo rp
-            then p : [Projetil Gelo (somaDuracao pinc pg)]
+            then (Projetil Gelo (somaDuracao pinc pg)) : [p]
             else pinc : [p] -- só existia resina na lista.
             where pg = head rp
          (Resina, Fogo) -> [Projetil Fogo (dobraDuracao p)]
          (Resina, Gelo) ->
             if verificaResina rp
-            then p : [Projetil Resina (somaDuracao pinc pr)]
+            then (Projetil Resina (somaDuracao pinc pr)) : [p]
             else pinc : [p] -- se não houver resina, então só existia gelo na lista.
             where pr = head rp
          (Resina, Resina) -> (Projetil Resina (somaDuracao pinc p)) : rp

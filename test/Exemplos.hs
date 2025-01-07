@@ -43,7 +43,7 @@ mapa02 =
 torre01 :: Torre
 torre01 = Torre { posicaoTorre = (2.5, 5.5),
                   danoTorre = 25,
-                  alcanceTorre = 3,
+                  alcanceTorre = 5,
                   rajadaTorre = 3,
                   cicloTorre = 5,
                   tempoTorre = 3,
@@ -53,7 +53,7 @@ torre01 = Torre { posicaoTorre = (2.5, 5.5),
 torre02 :: Torre
 torre02 = Torre { posicaoTorre = (1.5, 4.5),
                   danoTorre = 35,
-                  alcanceTorre = 6,
+                  alcanceTorre = 4,
                   rajadaTorre = 4,
                   cicloTorre = 4,
                   tempoTorre = 2,
@@ -66,7 +66,7 @@ torre03 = Torre { posicaoTorre = (4.5, 4.5),
                   alcanceTorre = 5,
                   rajadaTorre = 4,
                   cicloTorre = 5,
-                  tempoTorre = 2,
+                  tempoTorre = 0,
                   projetilTorre = Projetil Resina (Finita 10)
                 }      
 
@@ -93,6 +93,12 @@ base02 = Base { vidaBase = 200,
                 posicaoBase = (9.5, 7.5),
                 creditosBase = 250
               }
+
+baseSemVida :: Base
+baseSemVida = Base { vidaBase = 0,
+                     posicaoBase = (7.5, 1.5),
+                     creditosBase = 150
+                   }
 
 -- Inimigos:
 
@@ -161,7 +167,7 @@ onda01 :: Onda
 onda01 = Onda { inimigosOnda = [inimigo01, inimigo01],
                 cicloOnda = 5,
                 tempoOnda = 3,
-                entradaOnda = 3
+                entradaOnda = 0
               }
 
 onda02 :: Onda
@@ -174,8 +180,8 @@ onda02 = Onda { inimigosOnda = [inimigo02, inimigo03],
 onda03 :: Onda
 onda03 = Onda { inimigosOnda = [inimigo04, inimigo04],
                 cicloOnda = 10,
-                tempoOnda = 5,
-                entradaOnda = 2
+                tempoOnda = 0,
+                entradaOnda = 0
               }
 
 -- Portais:
@@ -195,6 +201,10 @@ portal03 = Portal { posicaoPortal = (3.5, 8.5),
                     ondasPortal = [onda03]
                   }
 
+portalSemOndas :: Portal
+portalSemOndas = Portal { posicaoPortal = (0.5, 0.5),
+                         ondasPortal = []
+                       }
 -- Jogos:
 
 jogo01 :: Jogo
@@ -223,3 +233,31 @@ jogoInvalido = Jogo { baseJogo = base01,
                       inimigosJogo = [],
                       lojaJogo = [(50, torre01), (50, torre02), (50, torre03)]
                     }
+
+jogoGanho :: Jogo
+jogoGanho = Jogo { baseJogo = base01,
+                   portaisJogo = [portalSemOndas],
+                   torresJogo = [torre01],
+                   mapaJogo = mapa01,
+                   inimigosJogo = [],
+                   lojaJogo = [(50, torre01), (50, torre02), (50, torre03)]
+                 }
+
+jogoPerdido :: Jogo
+jogoPerdido = Jogo { baseJogo = baseSemVida,
+                     portaisJogo = [portal01],
+                     torresJogo = [torre01],
+                     mapaJogo = mapa01,
+                     inimigosJogo = [inimigoEmJogo01],
+                     lojaJogo = [(50, torre01), (50, torre02), (50, torre03)]
+                   }
+
+-- | Jogo esperado após atualização do jogo01 com tempo = 0.5
+jogoAposAtualizaJogo01 :: Jogo
+jogoAposAtualizaJogo01 = Jogo { baseJogo = base01,
+                               portaisJogo = [portal01 {ondasPortal = [onda01 {tempoOnda = 2.5}]}],
+                               torresJogo = [torre01 {tempoTorre = 2.5}],
+                               mapaJogo = mapa01,
+                               inimigosJogo = [inimigoEmJogo01 {posicaoInimigo = (1.5, 6.5), direcaoInimigo = Sul, vidaInimigo = 100.0, projeteisInimigo = []}],
+                               lojaJogo = [(50, torre01), (50, torre02), (50, torre03)]
+                             }

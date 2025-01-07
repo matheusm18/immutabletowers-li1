@@ -53,7 +53,7 @@ data Base = Base
     -- | Balanço de créditos do jogador.
     creditosBase :: Creditos
   }
-  deriving (Show)
+  deriving (Eq,Show)
 
 -- | Distância entre duas posições.
 type Distancia = Float
@@ -142,7 +142,7 @@ data Onda = Onda
     -- | Tempo restante, em segundos, para a entrada da onda.
     entradaOnda :: Tempo
   }
-  deriving (Show)
+  deriving (Eq,Show)
 
 -- | Portal de entrada de inimigos no mapa.
 data Portal = Portal
@@ -151,7 +151,7 @@ data Portal = Portal
     -- | Ondas de inimigos que saem do portal.
     ondasPortal :: [Onda]
   }
-  deriving (Show)
+  deriving (Eq,Show)
 
 -- | Estado do jogo. Um jogo é composto pela base, vários portais, várias torres, um mapa, vários inimigos e a loja.
 data Jogo = Jogo
@@ -168,7 +168,7 @@ data Jogo = Jogo
     -- | Loja de torres disponíveis para construir.
     lojaJogo :: Loja
   }
-  deriving (Show)
+  deriving (Eq,Show)
 
 -- | Valor inicial que determina a sequência de números pseudo-aleatórios.
 type Semente = Int

@@ -38,15 +38,15 @@ desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torres
                 posbase = invertePos(posicaoBase base)
                 picvida = Scale 0.5 0.5 $ Translate (1150) (50) $ desenhaVida (vidaBase base)
                 piccreditos = Scale 0.5 0.5 $ Translate 1250 (-550) $ desenhaCreditos (creditosBase base)
-                inimigosNorte = filter (\(s,p) -> s == "inimigoNorte" || s == "inimigofogoNorte" || s == "inimigoresinaNorte" || s == "inimigogeloNorte") limagens
-                inimigosEste = filter (\(s,p) -> s == "inimigoEste" || s == "inimigofogoEste" || s == "inimigoresinaEste" || s == "inimigogeloEste") limagens
-                inimigosOeste = filter (\(s,p) -> s == "inimigoOeste" || s == "inimigofogoOeste" || s == "inimigoresinaOeste" || s == "inimigogeloOeste") limagens
-                inimigosSul = filter (\(s,p) -> s == "inimigoSul" || s == "inimigofogoSul" || s == "inimigoresinaSul" || s == "inimigogeloSul") limagens
+                inimigosNorte = filter (\(s,_) -> s == "inimigoNorte" || s == "inimigofogoNorte" || s == "inimigoresinaNorte" || s == "inimigogeloNorte") limagens
+                inimigosEste = filter (\(s,_) -> s == "inimigoEste" || s == "inimigofogoEste" || s == "inimigoresinaEste" || s == "inimigogeloEste") limagens
+                inimigosOeste = filter (\(s,_) -> s == "inimigoOeste" || s == "inimigofogoOeste" || s == "inimigoresinaOeste" || s == "inimigogeloOeste") limagens
+                inimigosSul = filter (\(s,_) -> s == "inimigoSul" || s == "inimigofogoSul" || s == "inimigoresinaSul" || s == "inimigogeloSul") limagens
                 picinimigos = inimigosNorte ++ inimigosEste ++ inimigosOeste ++ inimigosSul
-                torres = filter (\(s,p) -> s == "torrefogo" || s == "torreresina" || s == "torregelo") limagens
+                torres = filter (\(s,_) -> s == "torrefogo" || s == "torreresina" || s == "torregelo") limagens
                 portal = getImagem "portal" limagens
                 picbase = getImagem "base" limagens
-                picterrenos = filter (\(s,p) -> s == "terrenoagua" || s == "terrenorelva" || s == "terrenoterra") limagens
+                picterrenos = filter (\(s,_) -> s == "terrenoagua" || s == "terrenorelva" || s == "terrenoterra") limagens
 
 -- | Função que retorna a imagem de fundo dependendo da torre selecionada
 getBg :: Maybe Torre -> [(String,Picture)] -> Picture

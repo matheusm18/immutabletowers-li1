@@ -33,7 +33,7 @@ atualizaPortais t (p1:rps) inimigos = let (p1att, inimigosp1att) = atualizaPorta
                                           (portais, inimigosatualizados) = atualizaPortais t rps inimigosp1att
                                       in ((p1att : portais), inimigosatualizados)
 
--- | Função que dada uma lista de inimigos ativos retorna uma lista com os inimigos apos serem atacados por uma torre e retorna a torre com o cooldown renovado se ela atacar.
+-- | Função que dada uma torre e uma lista de inimigos ativos retorna uma lista com os inimigos apos serem atacados por esta torre e retorna a torre com o cooldown renovado, se ela atacar.
 atacaInimigos :: Torre -> [Inimigo] -> (Torre,[Inimigo])
 atacaInimigos torre inimigos =
     let (iatacar,_) = splitAt (rajadaTorre torre) (inimigosNoAlcance torre inimigos)

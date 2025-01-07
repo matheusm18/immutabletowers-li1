@@ -138,7 +138,7 @@ jogoInicio = Jogo {
                         Inimigo {
                             posicaoInimigo = (0.5, 0.5),
                             direcaoInimigo = Este,
-                            vidaInimigo = 1000,
+                            vidaInimigo = 250,
                             velocidadeInimigo = 1,
                             ataqueInimigo = 200,
                             butimInimigo = 25,
