@@ -6,7 +6,9 @@ import LI12425
 import Tarefa1 (validaPosicaoRelva)
 import Data.Maybe (fromJust)
 
--- | Função auxiliar que reage aos eventos do teclado quando o jogo está no menu inicial
+{-| Função auxiliar que reage aos eventos do teclado quando o jogo está no menu inicial
+
+Decidimos adicionar este extra com o menu inicial para tornar o jogo mais intuitivo e não aparecer logo o jogo -}
 reageEventosMenu :: Event -> ImmutableTowers -> ImmutableTowers
 reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) it@(ImmutableTowers {menu = MenuInicial Jogar}) = it {menu = ModoJogo EmAndamento}
 reageEventosMenu (EventKey (SpecialKey KeyDown) Down _ _) it@(ImmutableTowers {menu = MenuInicial Jogar}) = it {menu = MenuInicial Sair}
@@ -34,25 +36,25 @@ reageEventos k it@(ImmutableTowers {menu = ModoJogo m}) = reageEventosMenu k (it
 reageEventos _ it = it
 
 
-{- Funções auxiliares:
+{-| Funções auxiliares:
 
 As funções que tem "Area" são funções que retornam o (xmin,xmax,ymin,ymax) das áreas destas imagens
 
 Obtivemos as coordenadas destas áreas fazendo o trace na função reageEventos para obter a posição do clique do rato -}
 
 torreGeloArea :: (Float, Float, Float, Float)
-torreGeloArea = (-911, -665, 46.5, 294.5)
+torreGeloArea = (-911, -728, 111.5, 294.5)
 
 torreFogoArea :: (Float, Float, Float, Float)
-torreFogoArea = (-911,-665,-221.5,30.5)
+torreFogoArea = (-911,-728,-118.5,65.5)
 
 torreResinaArea :: (Float, Float, Float, Float)
-torreResinaArea = (-911,-665,-491.5,-241.5)
+torreResinaArea = (-911,-728,-346.5,-163.5)
 
 mapaArea :: (Float, Float, Float, Float)
-mapaArea = (-320, 320, -400, 240)
+mapaArea = (-440, 440, -495, 385)
 
-{- Função auxiliar que recebe o (xmin,xmax,ymin,ymax) de uma área e recebe (x,y) coordenadas do clique do rato e 
+{-| Função auxiliar que recebe o (xmin,xmax,ymin,ymax) de uma área e recebe (x,y) coordenadas do clique do rato e 
 verifica se o clique do rato está dentro desta área -}
 
 clicouDentro :: (Float, Float, Float, Float) -> (Float, Float) -> Bool
@@ -92,8 +94,8 @@ selecionarTorre (x, y) it
 posEcraParaJogo :: (Float, Float) -> Maybe (Float, Float)
 posEcraParaJogo (x, y)
     | clicouDentro mapaArea (x, y) = let tamanhoQuadrado = 80 -- (visto que o w e o h são ambos 80)
-                                         indiceX = floor ((x + 320) / tamanhoQuadrado) :: Int
-                                         indiceY = floor ((240 - y) / tamanhoQuadrado) :: Int
+                                         indiceX = floor ((x + 440) / tamanhoQuadrado) :: Int
+                                         indiceY = floor ((385 - y) / tamanhoQuadrado) :: Int
                                          posicaoJogoX = fromIntegral indiceX + 0.5 -- para retornar a posição do jogo do centro do quadrado
                                          posicaoJogoY = fromIntegral indiceY + 0.5
                                      in Just (posicaoJogoX, posicaoJogoY)

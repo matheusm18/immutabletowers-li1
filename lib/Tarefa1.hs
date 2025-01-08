@@ -34,7 +34,7 @@ validaPosicaoRelva (x,y) mapa = case t of
     _ -> False
     where t = tipoTerreno (x,y) mapa
 
-{- Função que dada uma posição retorna as posições que estão em volta cujo terreno é Terra
+{-| Função que dada uma posição retorna as posições que estão em volta cujo terreno é Terra
 
 Como a função validaPosicaoTerra (que é utilizada dentro do filter) utiliza a função tipoTerreno, não é necessário verificar se as posições adjacentes são válidas.
      
@@ -56,7 +56,7 @@ verificaCaminho posinicial posfinal mapa = buscaCaminho [posinicial] []
                 adjacentes = filter (`notElem` visitados') (posAdjacentes atual mapa) -- ^ Filtra as posições adjacentes válidas que ainda não foram visitadas
             in buscaCaminho (fila ++ adjacentes) visitados'
 
-{- Função que verifica se existem torres ou base numa dada posição
+{-| Função que verifica se existem torres ou base numa dada posição
 
 Retorna True quando não há sobreposições (torres ou base na posição), retorna False caso contrário -}
 
@@ -66,7 +66,7 @@ verificaSobreposicao (x,y) ((Torre {posicaoTorre = (xt,yt)}):rl) base
             = (x,y) /= (xt,yt) && verificaSobreposicao (x,y) rl base -- ^ recursão para verificar todas as torres
 
 
-{- Função que dada a lista de ondas de um dado portal verifica se há no máximo uma onda iniciada.
+{-| Função que dada a lista de ondas de um dado portal verifica se há no máximo uma onda iniciada.
 
 Retorna True quando há no máximo uma onda iniciada, False caso contrário -}
 
@@ -90,14 +90,14 @@ verificaRestricoes :: Posicao -> Inimigo -> Bool
 verificaRestricoes posPortal Inimigo {posicaoInimigo = posI, vidaInimigo = vida, projeteisInimigo = lprojeteis}
             = posPortal == posI && vida > 0 && (lprojeteis == [])
 
-{- Função auxiliar que dada uma lista de ondas em que cada onda tem uma lista de inimigos, 
+{-| Função auxiliar que dada uma lista de ondas em que cada onda tem uma lista de inimigos, 
 concatena estas listas de inimigos e retorna a lista de inimigos concatenada -}
 
 concatenaInimigos :: [Onda] -> [Inimigo]
 concatenaInimigos [] = []
 concatenaInimigos (onda:rl) = (inimigosOnda onda) ++ concatenaInimigos rl
 
-{- Função auxiliar que verifica se um inimigo está sobreposto a alguma torre
+{-| Função auxiliar que verifica se um inimigo está sobreposto a alguma torre
 
 Retorna True quando o inimigo não está sobreposto a nenhuma torre, False caso contrário -}
 
@@ -108,7 +108,7 @@ verificaSobreposicaoInimigoTorres torres inimigo = all (\torre -> (posicaoTorre 
 validaVelocidade :: Inimigo -> Bool
 validaVelocidade inimigo = (velocidadeInimigo (inimigo)) >= 0
 
-{- Função que verifica se a lista de projéteis ativos é válida.
+{-| Função que verifica se a lista de projéteis ativos é válida.
 
 Isto é, não pode conter mais do que um projétil do mesmo tipo e não pode conter simultaneamente Fogo e Resina, 
 nem Fogo e Gelo -}
@@ -152,7 +152,7 @@ validaRajadaTorre torre = (rajadaTorre (torre)) > 0
 validaCicloTorre :: Torre -> Bool
 validaCicloTorre torre = (cicloTorre (torre)) >= 0
 
-{- Função que verifica se as torres não estão sobrepostas
+{-| Função que verifica se as torres não estão sobrepostas
 
 Retorna True quando as torres não estão sobrepostas, False caso contrário -}
 
@@ -174,7 +174,7 @@ validaTorres torres mapa =
 validaCreditoBase :: Base -> Bool
 validaCreditoBase base = (creditosBase (base)) >= 0
 
-{- Função que dada a posição da base, a lista das torres e a lista dos portais, 
+{-| Função que dada a posição da base, a lista das torres e a lista dos portais, 
 verifica se a base não está sobreposta a torres ou portais
 
 Retorna True quando a base não está sobreprosta a torres ou portais, False caso contrário -}

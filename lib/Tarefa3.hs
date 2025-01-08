@@ -13,6 +13,7 @@ import LI12425
 import Tarefa1
 import Tarefa2
 import Data.Maybe (fromJust)
+
 -- | Função que com o passar do tempo retorna o portal atualizado juntamente com a lista de inimigos do jogo incluindo os inimigos ativados.
 atualizaPortal :: Tempo -> Portal -> [Inimigo] -> (Portal, [Inimigo])
 atualizaPortal _ portal@(Portal {ondasPortal = []}) inimigos = (portal,inimigos)
@@ -60,7 +61,7 @@ atualizaVidaProjeteis Inimigo {vidaInimigo = vida, projeteisInimigo = lprojeteis
       then vida - (1/30) -- (1/30) para dar 2 de dano por segundo com o fps a 60 (depois temos que testar em jogo)
       else vida
 
-{- | Função para arredondar as posições para obter a posição geral
+{-| Função para arredondar as posições para obter a posição geral
 
 Como sabemos, na matriz toda posição em que o x pertence a [0,1] e o y pertence a [0,1] é a posição (0,0) da matriz, essa função acha essa posição "geral" da matriz.
 -}
@@ -93,7 +94,7 @@ getPosicoesValidas (x,y) dir mapa =
         Este -> filter (\((x,y),_) -> validaPosicaoTerra (x,y) mapa) [((x+0.501,y),Este),((x,y-0.501),Norte),((x,y+0.501),Sul)]
         Oeste -> filter (\((x,y),_) -> validaPosicaoTerra (x,y) mapa) [((x-0.501,y),Oeste),((x,y-0.501),Norte),((x,y+0.501),Sul)]
 
-{- | Função auxiliar que escolhe a direção que o inimigo deve seguir para chegar a base quando há mais de uma direção possível.
+{-| Função auxiliar que escolhe a direção que o inimigo deve seguir para chegar a base quando há mais de uma direção possível.
 
 A primeira lista é a lista das tuplas de posições e direções válidas para o inimigo se mover.
 A segunda lista é a lista de posições do caminho que o inimigo deve seguir.
@@ -103,7 +104,7 @@ A segunda lista é a lista de posições do caminho que o inimigo deve seguir.
 escolheDirecao :: [(Posicao,Direcao)] -> [Posicao] -> Maybe Direcao
 escolheDirecao [] _ = Nothing
 escolheDirecao _ [] = Nothing
-escolheDirecao posDirValidas@((pos,d):rl) caminho
+escolheDirecao ((pos,d):rl) caminho
     | elem (posicaoArredondada pos) caminho = Just d
     | otherwise = escolheDirecao rl caminho
     where posicaoArredondada :: Posicao -> Posicao
@@ -116,12 +117,12 @@ pertenceCaminho (x,y) caminho = elem (x',y') caminho
     where (x',y') = (fromIntegral (floor x),fromIntegral (floor y)) -- ^ arredonda para pegar a posição "toda" (a da matriz)
  
 -- | Função que move o inimigo de acordo com a sua direção e velocidade.
-moveInimigo :: Tempo -> Inimigo -> Mapa -> (Direcao,Posicao)
-moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocidadeInimigo = velocidade, projeteisInimigo = lprojeteis} mapa
+moveInimigo :: Tempo -> Inimigo -> Posicao -> Mapa -> (Direcao,Posicao)
+moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocidadeInimigo = velocidade, projeteisInimigo = lprojeteis} posbase mapa
     = if any (\proj -> tipoProjetil proj == Gelo) lprojeteis
       then (direcao,(x,y))
       else
-        let caminho = map (\(x,y) -> (fromIntegral (floor x),fromIntegral(floor y))) (fromJust(encontrarCaminho (x,y) (7.5,1.5) mapa)) -- ^ passa o caminho para as posições "gerais"
+        let caminho = map (\(x,y) -> (fromIntegral (floor x),fromIntegral(floor y))) (fromJust(encontrarCaminho (x,y) (posbase) mapa)) -- ^ passa o caminho para as posições "gerais"
             posicoesvalidas = getPosicoesValidas (x,y) direcao mapa
         in case direcao of
             Norte -> if pertenceCaminho (x,y-0.501) caminho
@@ -153,8 +154,8 @@ duracaoExpirou Projetil {duracaoProjetil = Finita 0} = True
 duracaoExpirou _ = False
 
 -- | Função auxiliar que atualiza os inimigos que já sofreram o dano da torre, isto é, movimentação, dano dos projéteis, etc.
-atualizaInimigo :: Tempo -> Mapa -> Inimigo -> Inimigo
-atualizaInimigo t mapa i
+atualizaInimigo :: Tempo -> Mapa -> Posicao -> Inimigo -> Inimigo
+atualizaInimigo t mapa posbase i
     = i {posicaoInimigo = posnova, 
          direcaoInimigo = direcaonova, 
          vidaInimigo = vidanova, 
@@ -162,7 +163,7 @@ atualizaInimigo t mapa i
          projeteisInimigo = lprojeteisnova}
     where lprojeteis = projeteisInimigo i
           velocidade = velocidadeInimigo i
-          (direcaonova,posnova) = moveInimigo t i mapa
+          (direcaonova,posnova) = moveInimigo t i posbase mapa
           vidanova = atualizaVidaProjeteis i
           velocidadenova = if any (\p -> tipoProjetil p == Resina) (lprojeteis) && not (any (\p -> tipoProjetil p == Resina) lprojeteisnova)
                            then velocidade * 2
@@ -172,7 +173,7 @@ atualizaInimigo t mapa i
 -- | Função que atualiza os inimigos do jogo (aplica dano, movimenta, etc) e no fim retorna uma tupla com a lista de inimigos atualizadas, o dano dos inimigos a base e o butim dos inimigos mortos.
 atualizaInimigos :: Tempo -> Mapa -> Base -> [Inimigo] -> ([Inimigo], Float, Creditos)
 atualizaInimigos t mapa base inimigos =
-    let inimigosatualizados = map (atualizaInimigo t mapa) inimigos
+    let inimigosatualizados = map (atualizaInimigo t mapa (posicaoBase base)) inimigos
         danobase = getDanoNaBase inimigosatualizados base
         butim = getButim inimigosatualizados
     in (filter (\i -> vidaInimigo i > 0 && dist(posicaoInimigo i) (posicaoBase base) > 0.35) inimigosatualizados, danobase, butim)
@@ -194,7 +195,7 @@ atualizaBase :: Tempo -> Base -> Float -> Creditos -> Base
 atualizaBase _ base danobase butim
     = base {vidaBase = max 0 (vidaBase base - danobase), creditosBase = creditosBase base + butim}
 
-{- A função 'atualizaJogo' é a função principal da Tarefa 3.
+{-| A função 'atualizaJogo' é a função principal da Tarefa 3.
 
 Esta função atualiza o jogo com base no tempo que passou desde a última atualização.
 De modo a retornar a base, os portais, as torres e os inimigos atualizados.

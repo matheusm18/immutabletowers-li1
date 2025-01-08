@@ -19,34 +19,13 @@ getImagem s lista = case lookup s lista of
 getPosDirProjetil :: Inimigo -> (Posicao, Direcao, [Projetil])
 getPosDirProjetil i = (invertePos (posicaoInimigo i),direcaoInimigo i, projeteisInimigo i)
 
--- | Função principal para desenhar o mapa
-desenha :: ImmutableTowers -> Picture
-desenha ImmutableTowers {menu = MenuInicial Jogar, imagens = limagens} = getImagem "menujogar" limagens
-desenha ImmutableTowers {menu = MenuInicial Sair, imagens = limagens} = getImagem "menusair" limagens
-desenha ImmutableTowers {menu = ModoJogo GanhouJogo, imagens = limagens} = getImagem "menuganhou" limagens
-desenha ImmutableTowers {menu = ModoJogo PerdeuJogo, imagens = limagens} = getImagem "menuperdeu" limagens
-desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens torreSelecionada)
-            =  Pictures [getBg torreSelecionada limagens,
-                       (Translate (-320) (240) $ Pictures $ [desenhaMapa picterrenos mapa] ++ [desenhaBase picbase posbase] ++ (map (desenhaTorres torres) lpostiposTorres) ++ (map (desenhaPortais portal) lposportais) ++ (map (desenhaInimigo picinimigos) dadosInimigos)),
-                         picvida,
-                         piccreditos]
-            where
-                dadosInimigos = map getPosDirProjetil linimigos
-                lposportais = map (\i -> invertePos(posicaoPortal i)) lportais
-                (lpostorres, ltipoprojtorres) = (map (\t -> invertePos(posicaoTorre t)) ltorres, map (\p -> tipoProjetil p) (map (\t -> projetilTorre t) ltorres))
-                lpostiposTorres = zip lpostorres ltipoprojtorres
-                posbase = invertePos(posicaoBase base)
-                picvida = Scale 0.5 0.5 $ Translate (1150) (50) $ desenhaVida (vidaBase base)
-                piccreditos = Scale 0.5 0.5 $ Translate 1250 (-550) $ desenhaCreditos (creditosBase base)
-                inimigosNorte = filter (\(s,_) -> s == "inimigoNorte" || s == "inimigofogoNorte" || s == "inimigoresinaNorte" || s == "inimigogeloNorte") limagens
-                inimigosEste = filter (\(s,_) -> s == "inimigoEste" || s == "inimigofogoEste" || s == "inimigoresinaEste" || s == "inimigogeloEste") limagens
-                inimigosOeste = filter (\(s,_) -> s == "inimigoOeste" || s == "inimigofogoOeste" || s == "inimigoresinaOeste" || s == "inimigogeloOeste") limagens
-                inimigosSul = filter (\(s,_) -> s == "inimigoSul" || s == "inimigofogoSul" || s == "inimigoresinaSul" || s == "inimigogeloSul") limagens
-                picinimigos = inimigosNorte ++ inimigosEste ++ inimigosOeste ++ inimigosSul
-                torres = filter (\(s,_) -> s == "torrefogo" || s == "torreresina" || s == "torregelo") limagens
-                portal = getImagem "portal" limagens
-                picbase = getImagem "base" limagens
-                picterrenos = filter (\(s,_) -> s == "terrenoagua" || s == "terrenorelva" || s == "terrenoterra") limagens
+-- | Função auxiliar que retorna a lista de imagens dos inimigos
+getPicInimigos :: [(String,Picture)] -> [(String,Picture)]
+getPicInimigos imagens = 
+    filter (\(s,_) -> s == "inimigoNorte" || s == "inimigofogoNorte" || s == "inimigoresinaNorte" || s == "inimigogeloNorte" || 
+                      s == "inimigoSul" || s == "inimigofogoSul" || s == "inimigoresinaSul" || s == "inimigogeloSul" ||
+                      s == "inimigoEste" || s == "inimigofogoEste" || s == "inimigoresinaEste" || s == "inimigogeloEste" || 
+                      s == "inimigoOeste" || s == "inimigofogoOeste" ||  s == "inimigoresinaOeste" || s == "inimigogeloOeste") imagens
 
 -- | Função que retorna a imagem de fundo dependendo da torre selecionada
 getBg :: Maybe Torre -> [(String,Picture)] -> Picture
@@ -56,6 +35,31 @@ getBg (Just t) limagens = case tipoProjetil (projetilTorre t) of
     Resina -> getImagem "bgjogoresina" limagens
     Gelo -> getImagem "bgjogogelo" limagens
 
+-- | Função principal para desenhar o mapa
+desenha :: ImmutableTowers -> Picture
+desenha ImmutableTowers {menu = MenuInicial Jogar, imagens = limagens} = getImagem "menujogar" limagens
+desenha ImmutableTowers {menu = MenuInicial Sair, imagens = limagens} = getImagem "menusair" limagens
+desenha ImmutableTowers {menu = ModoJogo GanhouJogo, imagens = limagens} = getImagem "menuganhou" limagens
+desenha ImmutableTowers {menu = ModoJogo PerdeuJogo, imagens = limagens} = getImagem "menuperdeu" limagens
+desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens torreSelecionada)
+            =  Pictures [getBg torreSelecionada limagens,
+                       (Translate (-440) (385) $ Pictures $ [desenhaMapa picTerrenos mapa] ++ [desenhaBase picBase posbase] ++ (map (desenhaTorres picTorres) lpostiposTorres) ++ (map (desenhaPortais picPortal) lposportais) ++ (map (desenhaInimigo picInimigos) dadosInimigos)),
+                         picVida,
+                         picCreditos]
+            where
+                dadosInimigos = map getPosDirProjetil linimigos
+                lposportais = map (\i -> invertePos(posicaoPortal i)) lportais
+                (lpostorres, ltipoprojtorres) = (map (\t -> invertePos(posicaoTorre t)) ltorres, map (\p -> tipoProjetil p) (map (\t -> projetilTorre t) ltorres))
+                lpostiposTorres = zip lpostorres ltipoprojtorres
+                posbase = invertePos(posicaoBase base)
+                picVida = Scale 0.5 0.5 $ Translate (1275) (100) $ desenhaVida (vidaBase base)
+                picCreditos = Scale 0.5 0.5 $ Translate 1325 (-525) $ desenhaCreditos (creditosBase base)
+                picInimigos = getPicInimigos limagens
+                picTorres = filter (\(s,_) -> s == "torrefogo" || s == "torreresina" || s == "torregelo") limagens
+                picPortal = getImagem "portal" limagens
+                picBase = getImagem "base" limagens
+                picTerrenos = filter (\(s,_) -> s == "terrenoagua" || s == "terrenorelva" || s == "terrenoterra") limagens
+
 -- | Função que desenha a vida da base
 desenhaVida :: Float -> Picture
 desenhaVida v = Pictures [Color red $ translate 0 0 $ Text (show v)]
@@ -64,7 +68,7 @@ desenhaVida v = Pictures [Color red $ translate 0 0 $ Text (show v)]
 desenhaCreditos :: Int -> Picture
 desenhaCreditos c = Pictures [Color (orange) $ translate 0 (-20) $ Text (show c)]
 
-{- Função que recebe a lista de imagens e o mapa e retorna a imagem do mapa
+{-| Função que recebe a lista de imagens e o mapa e retorna a imagem do mapa
 
 Fazemos zip com a lista [0, -1..] porque o eixo do gloss cresce pra cima), então decidimos passar as coordenadas do y simétricas para o gloss
 
@@ -150,14 +154,17 @@ desenhaBase base (x,y) = Translate (x * w) (y * w) $ Scale (2/9) (2/9) $ base
 -- | Mapa do jogo
 mapa01 :: Mapa
 mapa01 =
-    [ [t,t,a,a,r,r,r,r],
-      [a,t,a,a,r,t,t,t],
-      [a,t,r,r,r,t,r,a],
-      [a,t,r,a,r,t,r,a],
-      [a,t,a,a,r,t,t,a],
-      [a,t,r,r,r,r,t,a],
-      [a,t,t,t,t,t,t,a],
-      [a,t,a,a,a,a,a,a]
+    [ [a,a,a,a,a,a,a,a,a,a,a],
+      [r,r,r,r,r,r,r,r,r,a,a],
+      [r,t,t,t,t,t,t,t,r,a,a],
+      [r,t,r,r,r,r,r,t,r,r,r],
+      [t,t,a,a,a,a,a,t,t,t,r],
+      [a,a,a,a,a,a,a,a,r,t,t],
+      [t,t,a,a,a,a,a,t,t,t,r],
+      [r,t,r,r,r,r,r,t,r,r,r],
+      [r,t,t,t,t,t,t,t,r,a,a],
+      [r,r,r,r,r,r,r,r,r,a,a],
+      [a,a,a,a,a,a,a,a,a,a,a]
     ]
   where
     t = Terra

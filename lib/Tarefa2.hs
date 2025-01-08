@@ -15,7 +15,7 @@ import LI12425
 dist :: Posicao -> Posicao -> Float
 dist (x1,y1) (x2,y2) = sqrt ((x2-x1)^2 + (y2-y1)^2)
 
-{- Função auxiliar que recebe uma torre e a lista de inimigos presentes no jogo e 
+{-| Função auxiliar que recebe uma torre e a lista de inimigos presentes no jogo e 
 retorna a lista de inimigos que estão no alcance da torre. -}
 
 inimigosNoAlcance :: Torre -> [Inimigo] -> [Inimigo]
@@ -49,7 +49,7 @@ somaDuracao (Projetil _ Infinita) (Projetil _ _ ) = Infinita
 somaDuracao (Projetil _ _) (Projetil _ Infinita) = Infinita
 somaDuracao (Projetil _ (Finita d1)) (Projetil _ (Finita d2)) = Finita (d1 + d2)
 
-{- Função que recebe um projetil incidente e uma outra lista de projeteis ativos e retorna a lista de projeteis normalizada.
+{-| Função que recebe um projetil incidente e uma outra lista de projeteis ativos e retorna a lista de projeteis normalizada.
 
 Isto é, normaliza de acordo com as sinergias e pela ordem de precedência referida no enunciado do projeto.
 
@@ -86,7 +86,7 @@ atualizaProjeteis pinc (p:rp) =
             where pr = head rp
          (Resina, Resina) -> (Projetil Resina (somaDuracao pinc p)) : rp
 
-{- Função que dada uma torre e o inimigo que será atingido pela torre, retorna o inimigo
+{-| Função que dada uma torre e o inimigo que será atingido pela torre, retorna o inimigo
 com a vida atualizada e com a lista de projetéis atualizada.
 
 No caso da resina, a velocidade do inimigo também é atualizada. -}
@@ -103,7 +103,7 @@ atingeInimigo Torre {danoTorre = dano, projetilTorre = projetil} i
                                          else velocidadeInimigo i / 2}
         _ -> i {vidaInimigo = vidaInimigo i - dano, projeteisInimigo = atualizaProjeteis projetil (projeteisInimigo i)}
 
-{- Função que dada uma torre e a lista de inimigos ativos no jogo, 
+{-| Função que dada uma torre e a lista de inimigos ativos no jogo, 
 retorna uma tupla com o portal atualizado após a ativação do inimigo e a nova lista de inimigos ativos no jogo (adição do inimigo ativado) 
 -}
 
@@ -122,7 +122,7 @@ ativaInimigo portal inimigos =
 terminouJogo :: Jogo -> Bool
 terminouJogo jogo = ganhouJogo (jogo) || perdeuJogo (jogo)
 
-{- Função que dado um jogo verifica se o jogador ganhou.
+{-| Função que dado um jogo verifica se o jogador ganhou.
 
 O jogador ganha quando a vida da base é positiva e não existam ondas nem inimigos ativos no jogo.
 -}
@@ -134,7 +134,7 @@ ganhouJogo jogo = vida > 0 && null ondas && null inimigos
             ondas = concatMap (ondasPortal) (portaisJogo (jogo))
             inimigos = inimigosJogo (jogo)
 
-{- Função que dado um jogo verifica se o jogador perdeu.
+{-| Função que dado um jogo verifica se o jogador perdeu.
 
 O jogador perde quando a vida da base deixa de ser positiva.
 -}

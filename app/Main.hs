@@ -25,7 +25,7 @@ main = do
   imagens <- imagensLoad
   play janela fundo fr (ImmutableTowers jogoInicio jogoInicio (MenuInicial Jogar) imagens Nothing) desenha reageEventos reageTempo
 
-{- Função que carrega as imagens do jogo de modo a estas estarem armazenadas numa lista de tuplas com a string igual o nome da imagem e a imagem em si, 
+{-| Função que carrega as imagens do jogo de modo a estas estarem armazenadas numa lista de tuplas com a string igual o nome da imagem e a imagem em si, 
 para facilita rdepois a busca pela imagem correta nas outras funções -}
 
 imagensLoad :: IO [(String, Picture)]
@@ -101,17 +101,17 @@ jogoInicio :: Jogo
 jogoInicio = Jogo {
     baseJogo = Base {
         vidaBase = 150,
-        posicaoBase = (7.5, 1.5),
+        posicaoBase = (10.5, 5.5),
         creditosBase = 400
     },
     portaisJogo = [
         Portal {
-            posicaoPortal = (0.5, 0.5),
+            posicaoPortal = (0.5, 4.5),
             ondasPortal = [
                 Onda {
                     inimigosOnda = [
                         Inimigo {
-                            posicaoInimigo = (0.5, 0.5),
+                            posicaoInimigo = (0.5, 4.5),
                             direcaoInimigo = Este,
                             vidaInimigo = 100,
                             velocidadeInimigo = 1,
@@ -120,7 +120,7 @@ jogoInicio = Jogo {
                             projeteisInimigo = []
                         },
                         Inimigo {
-                            posicaoInimigo = (0.5, 0.5),
+                            posicaoInimigo = (0.5, 4.5),
                             direcaoInimigo = Este,
                             vidaInimigo = 90,
                             velocidadeInimigo = 1,
@@ -136,7 +136,7 @@ jogoInicio = Jogo {
                 Onda {
                     inimigosOnda = [
                         Inimigo {
-                            posicaoInimigo = (0.5, 0.5),
+                            posicaoInimigo = (0.5, 4.5),
                             direcaoInimigo = Este,
                             vidaInimigo = 250,
                             velocidadeInimigo = 1,
@@ -145,7 +145,7 @@ jogoInicio = Jogo {
                             projeteisInimigo = []
                         },
                         Inimigo {
-                            posicaoInimigo = (0.5, 0.5),
+                            posicaoInimigo = (0.5, 4.5),
                             direcaoInimigo = Este,
                             vidaInimigo = 150,
                             velocidadeInimigo = 1,
@@ -161,12 +161,12 @@ jogoInicio = Jogo {
             ]
         },
         Portal {
-            posicaoPortal = (1.5, 7.5),
+            posicaoPortal = (0.5, 6.5),
             ondasPortal = [
                 Onda {
                     inimigosOnda = [
                         Inimigo {
-                            posicaoInimigo = (1.5, 7.5),
+                            posicaoInimigo = (0.5, 6.5),
                             direcaoInimigo = Norte,
                             vidaInimigo = 100,
                             velocidadeInimigo = 1,
@@ -175,7 +175,7 @@ jogoInicio = Jogo {
                             projeteisInimigo = []
                         },
                         Inimigo {
-                            posicaoInimigo = (1.5, 7.5),
+                            posicaoInimigo = (0.5, 6.5),
                             direcaoInimigo = Norte,
                             vidaInimigo = 90,
                             velocidadeInimigo = 1,
