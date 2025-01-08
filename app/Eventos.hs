@@ -5,6 +5,10 @@ import ImmutableTowers
 import LI12425
 import Tarefa1 (validaPosicaoRelva)
 import Data.Maybe (fromJust)
+import Data.List (find)
+import Debug.Trace (trace)
+
+
 
 {-| Função auxiliar que reage aos eventos do teclado quando o jogo está no menu inicial
 
@@ -31,6 +35,11 @@ reageEventos (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTo
                                              where torrenova = torre {posicaoTorre = (xc,yc)}
                                                    custotorre = getCustoTorre torre (lojaJogo jogo)
                                                    base = baseJogo jogo
+reageEventos (EventKey (MouseButton RightButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo}) =
+    case clicouEmTorre posMouse (torresJogo jogo) of
+        Just t -> it {infoTorre = Just t}
+        Nothing -> it {infoTorre = Nothing}
+
 reageEventos k it@(ImmutableTowers {menu = MenuInicial m}) = reageEventosMenu k (it {menu = MenuInicial m})
 reageEventos k it@(ImmutableTowers {menu = ModoJogo m}) = reageEventosMenu k (it {menu = ModoJogo m})
 reageEventos _ it = it
@@ -107,3 +116,12 @@ podeAdicionarTorre pos it =
     let torres = torresJogo (jogoAtual it)
         posicoesExistentesTorres = map posicaoTorre torres
     in not (elem pos posicoesExistentesTorres) && validaPosicaoRelva pos (mapaJogo (jogoAtual it))
+
+
+clicouEmTorre :: Posicao -> [Torre] -> Maybe Torre
+clicouEmTorre posMouse [] = Nothing
+clicouEmTorre posMouse (torre:resto) =
+    case posEcraParaJogo posMouse of
+        Just (x,y) -> if (x,y) == (posicaoTorre torre) then Just torre else clicouEmTorre posMouse resto
+        Nothing -> Nothing
+

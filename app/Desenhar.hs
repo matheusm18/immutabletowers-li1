@@ -41,16 +41,17 @@ desenha ImmutableTowers {menu = MenuInicial Jogar, imagens = limagens} = getImag
 desenha ImmutableTowers {menu = MenuInicial Sair, imagens = limagens} = getImagem "menusair" limagens
 desenha ImmutableTowers {menu = ModoJogo GanhouJogo, imagens = limagens} = getImagem "menuganhou" limagens
 desenha ImmutableTowers {menu = ModoJogo PerdeuJogo, imagens = limagens} = getImagem "menuperdeu" limagens
-desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens torreSelecionada)
+desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens torreSelecionada infoTorre)
             =  Pictures [getBg torreSelecionada limagens,
                        (Translate (-440) (385) $ Pictures $ [desenhaMapa picTerrenos mapa] ++ [desenhaBase picBase posbase] ++ (map (desenhaTorres picTorres) lpostiposTorres) ++ (map (desenhaPortais picPortal) lposportais) ++ (map (desenhaInimigo picInimigos) dadosInimigos)),
                          picVida,
-                         picCreditos]
+                         picCreditos,
+                         desenhaInfoTorre picUpgrade infoTorre]
             where
                 dadosInimigos = map getPosDirProjetil linimigos
                 lposportais = map (\i -> invertePos(posicaoPortal i)) lportais
-                (lpostorres, ltipoprojtorres, lalcancetorres) = (map (\t -> invertePos(posicaoTorre t)) ltorres, map (\p -> tipoProjetil p) (map (\t -> projetilTorre t) ltorres), map (\a -> alcanceTorre a) ltorres)
-                lpostiposTorres = zipThree lpostorres ltipoprojtorres lalcancetorres
+                (lpostorres, ltipoprojtorres) = (map (\t -> invertePos(posicaoTorre t)) ltorres, map (\p -> tipoProjetil p) (map (\t -> projetilTorre t) ltorres))
+                lpostiposTorres = zip lpostorres ltipoprojtorres
                 posbase = invertePos(posicaoBase base)
                 picVida = Scale 0.5 0.5 $ Translate (1275) (100) $ desenhaVida (vidaBase base)
                 picCreditos = Scale 0.5 0.5 $ Translate 1325 (-525) $ desenhaCreditos (creditosBase base)
@@ -59,6 +60,7 @@ desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torres
                 picPortal = getImagem "portal" limagens
                 picBase = getImagem "base" limagens
                 picTerrenos = filter (\(s,_) -> s == "terrenoagua" || s == "terrenorelva" || s == "terrenoterra") limagens
+                picUpgrade = filter (\(s,_) -> s == "iconetorregelonivel2") limagens
 
 
 zipThree :: [a] -> [b] -> [c] -> [(a,b,c)]
@@ -132,10 +134,10 @@ desenhaPortais :: Picture -> Posicao -> Picture
 desenhaPortais portal (x,y) = Translate (x * w) (y * h) $ Scale (2/9) (2/9) $ portal
 
 -- | Função que desenha as torres de acordo com o tipo de projétil que elas possuem
-desenhaTorres :: [(String,Picture)] -> (Posicao, TipoProjetil, Float) -> Picture
-desenhaTorres torres ((x,y), Fogo, alcance) = Pictures [desenhaTorreFogo (getImagem "torrefogo" torres) (x,y), Color (makeColor 0.7 0.7 0.7 0.2) $ Translate (x * w) (y * w) $ circleSolid (w*alcance)]
-desenhaTorres torres ((x,y), Resina, alcance) = Pictures [desenhaTorreResina (getImagem "torreresina" torres) (x,y), Color (makeColor 0.7 0.7 0.7 0.2) $ Translate (x * w) (y * w) $ circleSolid (w*alcance)]
-desenhaTorres torres ((x,y), Gelo, alcance) = Pictures [desenhaTorreGelo (getImagem "torregelo" torres) (x,y), Color (makeColor 0.7 0.7 0.7 0.2) $ Translate (x * w) (y * w) $ circleSolid (w*alcance)]
+desenhaTorres :: [(String,Picture)] -> (Posicao, TipoProjetil) -> Picture
+desenhaTorres torres ((x,y), Fogo) = Pictures [desenhaTorreFogo (getImagem "torrefogo" torres) (x,y)]
+desenhaTorres torres ((x,y), Resina) = Pictures [desenhaTorreResina (getImagem "torreresina" torres) (x,y)]
+desenhaTorres torres ((x,y), Gelo) = Pictures [desenhaTorreGelo (getImagem "torregelo" torres) (x,y)]
 
 -- | Função auxiliar que desenha a torre de fogo
 desenhaTorreFogo :: Picture -> Posicao -> Picture
@@ -156,9 +158,11 @@ desenhaTorreGelo torregelo (x, y) = Pictures
 desenhaBase :: Picture -> Posicao -> Picture
 desenhaBase base (x,y) = Translate (x * w) (y * w) $ Scale (2/9) (2/9) $ base
 
-desenhaInfoTorre :: Maybe Torre -> Picture
-desenhaInfoTorre Nothing = Blank
-desenhaInfoTorre (Just (Torre {posicaoTorre = (x,y)})) = Color black $ translate (x * w) ((y * h) +40) $ rectangleSolid 70 40
+desenhaInfoTorre :: [(String,Picture)] -> Maybe Torre -> Picture
+desenhaInfoTorre _ Nothing = Blank
+desenhaInfoTorre lPicUpgrade (Just (Torre {posicaoTorre = (x,y), alcanceTorre = alcance})) = Translate (-440) 385 $ Pictures [imagem, Color (makeColor 0.7 0.7 0.7 0.4) $ Translate (x * w) (-y * w) $ circleSolid (w*alcance)]
+    where
+        imagem = getImagem ("iconetorregelonivel2") lPicUpgrade
 
 -- | Mapa do jogo
 mapa01 :: Mapa

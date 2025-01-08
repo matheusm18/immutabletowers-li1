@@ -23,7 +23,7 @@ fr = 60
 main :: IO ()
 main = do
   imagens <- imagensLoad
-  play janela fundo fr (ImmutableTowers jogoInicio jogoInicio (MenuInicial Jogar) imagens Nothing) desenha reageEventos reageTempo
+  play janela fundo fr (ImmutableTowers jogoInicio jogoInicio (MenuInicial Jogar) imagens Nothing Nothing) desenha reageEventos reageTempo
 
 {-| Função que carrega as imagens do jogo de modo a estas estarem armazenadas numa lista de tuplas com a string igual o nome da imagem e a imagem em si, 
 para facilita rdepois a busca pela imagem correta nas outras funções -}
@@ -62,6 +62,7 @@ imagensLoad = do
     terrenoagua <- loadBMP "imgs/terrenoagua.bmp"
     terrenorelva <- loadBMP "imgs/terrenorelva.bmp"
     terrenoterra <- loadBMP "imgs/terrenoterra.bmp"
+    iconetorregelonivel2 <- loadBMP "imgs/iciconetorregelonivel1.bmp"
     return [("menujogar", menujogar), 
            ("menusair", menusair), 
            ("menuganhou", menuganhou), 
@@ -93,7 +94,8 @@ imagensLoad = do
            ("base",base),
            ("terrenoagua", terrenoagua),
            ("terrenorelva", terrenorelva),
-           ("terrenoterra", terrenoterra)]
+           ("terrenoterra", terrenoterra),
+           ("iconetorregelonivel2", iconetorregelonivel2)]
 
 
 -- | Estado do jogo inicial
