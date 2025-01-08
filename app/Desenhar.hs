@@ -153,11 +153,11 @@ mapa01 =
     [ [t,t,a,a,r,r,r,r],
       [a,t,a,a,r,t,t,t],
       [a,t,r,r,r,t,r,a],
-      [t,t,r,a,r,t,r,a],
+      [a,t,r,a,r,t,r,a],
       [a,t,a,a,r,t,t,a],
       [a,t,r,r,r,r,t,a],
       [a,t,t,t,t,t,t,a],
-      [a,a,t,a,a,a,a,a]
+      [a,t,a,a,a,a,a,a]
     ]
   where
     t = Terra

@@ -12,7 +12,7 @@ module Tarefa3 where
 import LI12425
 import Tarefa1
 import Tarefa2
-
+import Data.Maybe (fromJust)
 -- | Função que com o passar do tempo retorna o portal atualizado juntamente com a lista de inimigos do jogo incluindo os inimigos ativados.
 atualizaPortal :: Tempo -> Portal -> [Inimigo] -> (Portal, [Inimigo])
 atualizaPortal _ portal@(Portal {ondasPortal = []}) inimigos = (portal,inimigos)
@@ -60,36 +60,85 @@ atualizaVidaProjeteis Inimigo {vidaInimigo = vida, projeteisInimigo = lprojeteis
       then vida - (1/30) -- (1/30) para dar 2 de dano por segundo com o fps a 60 (depois temos que testar em jogo)
       else vida
 
--- | Função auxiliar que move o inimigo de acordo com a sua direção e velocidade.
+{- | Função para arredondar as posições para obter a posição geral
+
+Como sabemos, na matriz toda posição em que o x pertence a [0,1] e o y pertence a [0,1] é a posição (0,0) da matriz, essa função acha essa posição "geral" da matriz.
+-}
+
+arredondarPosicao :: Posicao -> (Int, Int)
+arredondarPosicao (x, y) = (floor x,floor y)
+
+-- | Função que encontra o caminho mais curto entre as duas posições (semelhante a função da Tarefa 1)
+encontrarCaminho :: Posicao -> Posicao -> Mapa -> Maybe [Posicao]
+encontrarCaminho posinicial posfinal mapa = encontrarCaminhoAux [[posinicial]] []
+  where
+    encontrarCaminhoAux :: [[Posicao]] -> [Posicao] -> Maybe [Posicao]
+    encontrarCaminhoAux [] _ = Nothing
+    encontrarCaminhoAux (caminho:fila) visitados
+        | arredondarPosicao atual == arredondarPosicao posfinal = Just caminho -- ^ verificar se tá na mesma posição geral do quadrado da posição final
+        | atual `elem` visitados = encontrarCaminhoAux fila visitados
+        | otherwise =
+            let visitados' = atual : visitados
+                adjacentes = filter (`notElem` visitados') (posAdjacentes atual mapa) -- ^ pos adjacentes são de terra
+                novosCaminhos = [caminho ++ [adj] | adj <- adjacentes] -- ^ lista de caminhos (cada caminho é uma lista de posições)
+            in (encontrarCaminhoAux (fila ++ novosCaminhos) visitados')
+        where atual = last caminho -- ^ a pos final de um caminho é a que interessa para comparar 
+
+-- | Função auxiliar que retorna as posições válidas para o inimigo se mover (nunca voltar para trás).
+getPosicoesValidas :: Posicao -> Direcao -> Mapa -> [(Posicao,Direcao)]
+getPosicoesValidas (x,y) dir mapa = 
+    case dir of
+        Norte -> filter (\((x,y),_) -> validaPosicaoTerra (x,y) mapa) [((x,y-0.501),Norte),((x+0.501,y),Este),((x-0.501,y),Oeste)]
+        Sul -> filter (\((x,y),_) -> validaPosicaoTerra (x,y) mapa) [((x,y+0.501),Sul),((x+0.501,y),Este),((x-0.501,y),Oeste)]
+        Este -> filter (\((x,y),_) -> validaPosicaoTerra (x,y) mapa) [((x+0.501,y),Este),((x,y-0.501),Norte),((x,y+0.501),Sul)]
+        Oeste -> filter (\((x,y),_) -> validaPosicaoTerra (x,y) mapa) [((x-0.501,y),Oeste),((x,y-0.501),Norte),((x,y+0.501),Sul)]
+
+{- | Função auxiliar que escolhe a direção que o inimigo deve seguir para chegar a base quando há mais de uma direção possível.
+
+A primeira lista é a lista das tuplas de posições e direções válidas para o inimigo se mover.
+A segunda lista é a lista de posições do caminho que o inimigo deve seguir.
+
+-}
+
+escolheDirecao :: [(Posicao,Direcao)] -> [Posicao] -> Maybe Direcao
+escolheDirecao [] _ = Nothing
+escolheDirecao _ [] = Nothing
+escolheDirecao posDirValidas@((pos,d):rl) caminho
+    | elem (posicaoArredondada pos) caminho = Just d
+    | otherwise = escolheDirecao rl caminho
+    where posicaoArredondada :: Posicao -> Posicao
+          posicaoArredondada (x,y) = (fromIntegral (floor x),fromIntegral (floor y))
+
+-- | Função auxiliar que verifica se uma dada posição pertence ao caminho que o inimigo deve seguir.
+pertenceCaminho :: Posicao -> [Posicao] -> Bool
+pertenceCaminho _ [] = False
+pertenceCaminho (x,y) caminho = elem (x',y') caminho
+    where (x',y') = (fromIntegral (floor x),fromIntegral (floor y)) -- ^ arredonda para pegar a posição "toda" (a da matriz)
+ 
+-- | Função que move o inimigo de acordo com a sua direção e velocidade.
 moveInimigo :: Tempo -> Inimigo -> Mapa -> (Direcao,Posicao)
 moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocidadeInimigo = velocidade, projeteisInimigo = lprojeteis} mapa
     = if any (\proj -> tipoProjetil proj == Gelo) lprojeteis
       then (direcao,(x,y))
       else
-        case direcao of
-            Norte -> if validaPosicaoTerra (x,y-0.501) mapa
+        let caminho = map (\(x,y) -> (fromIntegral (floor x),fromIntegral(floor y))) (fromJust(encontrarCaminho (x,y) (7.5,1.5) mapa)) -- ^ passa o caminho para as posições "gerais"
+            posicoesvalidas = getPosicoesValidas (x,y) direcao mapa
+        in case direcao of
+            Norte -> if pertenceCaminho (x,y-0.501) caminho
                      then (direcao,(x,y-(velocidade*t)))
-                     else if validaPosicaoTerra (x+0.501,y) mapa
-                     then (Este,(x,y))
-                     else (Oeste,(x,y))
+                     else (fromJust (escolheDirecao posicoesvalidas caminho), (x,y)) -- ^ tomada de decisão (mais de uma direção possível e a direção Norte não leva a base)
 
-            Sul ->  if validaPosicaoTerra (x,(y+0.501)) mapa
+            Sul ->  if pertenceCaminho (x,(y+0.501)) caminho
                     then (direcao,(x,y+(velocidade*t)))
-                    else if validaPosicaoTerra (x+0.501,y) mapa
-                    then (Este,(x,y))
-                    else (Oeste,(x,y))
+                    else (fromJust (escolheDirecao posicoesvalidas caminho), (x,y))
 
-            Este -> if validaPosicaoTerra (x+0.501,y) mapa
+            Este -> if pertenceCaminho (x+0.501,y) caminho
                     then (direcao,(x+(velocidade*t),y))
-                    else if validaPosicaoTerra (x,y-0.501) mapa
-                    then (Norte,(x,y))
-                    else (Sul,(x,y))
+                    else (fromJust (escolheDirecao posicoesvalidas caminho), (x,y))
 
-            Oeste -> if validaPosicaoTerra (x-0.501,y) mapa
+            Oeste -> if pertenceCaminho (x-0.501,y) caminho
                      then (direcao,(x-(velocidade*t),y))
-                     else if validaPosicaoTerra (x,y-0.501) mapa
-                     then (Norte,(x,y))
-                     else (Sul,(x,y))
+                     else (fromJust (escolheDirecao posicoesvalidas caminho), (x,y))
 
 -- | Função que atualiza a duração de um projétil com o passar do tempo.
 atualizaDurProjetil :: Tempo -> Projetil -> Projetil

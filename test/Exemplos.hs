@@ -1,5 +1,4 @@
 module Exemplos where
-
 import LI12425
 
 -- Mapas:

@@ -161,12 +161,12 @@ jogoInicio = Jogo {
             ]
         },
         Portal {
-            posicaoPortal = (2.5, 7.5),
+            posicaoPortal = (1.5, 7.5),
             ondasPortal = [
                 Onda {
                     inimigosOnda = [
                         Inimigo {
-                            posicaoInimigo = (2.5, 7.5),
+                            posicaoInimigo = (1.5, 7.5),
                             direcaoInimigo = Norte,
                             vidaInimigo = 100,
                             velocidadeInimigo = 1,
@@ -175,7 +175,7 @@ jogoInicio = Jogo {
                             projeteisInimigo = []
                         },
                         Inimigo {
-                            posicaoInimigo = (2.5, 7.5),
+                            posicaoInimigo = (1.5, 7.5),
                             direcaoInimigo = Norte,
                             vidaInimigo = 90,
                             velocidadeInimigo = 1,
