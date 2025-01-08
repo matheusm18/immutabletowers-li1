@@ -204,7 +204,8 @@ jogoInicio = Jogo {
             projetilTorre = Projetil {
                 tipoProjetil = Gelo,
                 duracaoProjetil = Finita 2.0
-            }
+            },
+            nivel = 1
         }),
         (50, Torre {
             posicaoTorre = (0, 0),
@@ -216,7 +217,8 @@ jogoInicio = Jogo {
             projetilTorre = Projetil {
                 tipoProjetil = Fogo,
                 duracaoProjetil = Finita 2.0
-            }
+            },
+            nivel = 1
         }),
         (50, Torre {
             posicaoTorre = (0, 0),
@@ -228,7 +230,8 @@ jogoInicio = Jogo {
             projetilTorre = Projetil {
                 tipoProjetil = Resina,
                 duracaoProjetil = Finita 2.0
-            }
+            },
+            nivel = 1
         })
     ]
 }

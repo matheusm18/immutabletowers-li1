@@ -84,9 +84,13 @@ data Torre = Torre
     -- | Tempo restante para a próxima rajada de tiros.
     tempoTorre :: Tempo,
     -- | Efeito secundário associado ao tipo de projétil da torre.
-    projetilTorre :: Projetil
+    projetilTorre :: Projetil,
+    -- | Quanto maior mais forte a torre
+    nivel :: Int
   }
   deriving (Eq,Show)
+
+
 
 -- | Loja de torres disponíveis para construir por uma quantidade de créditos.
 type Loja = [(Creditos, Torre)]
