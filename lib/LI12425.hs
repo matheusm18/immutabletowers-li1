@@ -69,6 +69,9 @@ data Duracao
     Infinita
   deriving (Eq, Show, Ord)
 
+-- | Nível de uma torre.
+type Nivel = Int
+
 -- | Torre que dispara projéteis contra inimigos.
 data Torre = Torre
   { -- | Posição da torre no mapa.
@@ -85,15 +88,20 @@ data Torre = Torre
     tempoTorre :: Tempo,
     -- | Efeito secundário associado ao tipo de projétil da torre.
     projetilTorre :: Projetil,
-    -- | Quanto maior mais forte a torre
-    nivel :: Int
+    -- | Quanto maior o nível mais forte é a torre.
+    nivelTorre :: Nivel
   }
   deriving (Eq,Show)
 
-
-
 -- | Loja de torres disponíveis para construir por uma quantidade de créditos.
 type Loja = [(Creditos, Torre)]
+
+{-| Decidimos incluir o extra de melhoria para as torres, em que ao aumentar o nível da torre um certo atributo da torre é melhorado.
+
+Este tipo representa a lista dos preços dos upgrades de uma torre (depende do nível e do tipo de projétil da torre).
+
+Se o Nível for 1, o primeiro elemento da tupla é o preço em créditos para dar upgrade do nível 1 para o 2 -}
+type PrecoUpgrades = [(Creditos,Nivel,TipoProjetil)]
 
 -- | Tipo de projétil disparado por uma torre.
 data TipoProjetil = Fogo | Gelo | Resina
@@ -170,7 +178,9 @@ data Jogo = Jogo
     -- | Inimigos em movimento no mapa.
     inimigosJogo :: [Inimigo],
     -- | Loja de torres disponíveis para construir.
-    lojaJogo :: Loja
+    lojaJogo :: Loja,
+    -- | Preços dos upgrades das torres.
+    precoUpgrades :: PrecoUpgrades
   }
   deriving (Eq,Show)
 

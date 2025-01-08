@@ -5,10 +5,6 @@ import ImmutableTowers
 import LI12425
 import Tarefa1 (validaPosicaoRelva)
 import Data.Maybe (fromJust)
-import Data.List (find)
-import Debug.Trace (trace)
-
-
 
 {-| Função auxiliar que reage aos eventos do teclado quando o jogo está no menu inicial
 
@@ -25,6 +21,17 @@ reageEventosMenu _ it = it
 -- | Função principal que reage aos eventos do jogador (ações do teclado e do rato)
 reageEventos :: Event -> ImmutableTowers -> ImmutableTowers
 reageEventos (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo}) =
+    if clicouDentro botaoMelhoriaArea posMouse
+    then case infoTorre it of
+            Nothing -> it
+            Just torre -> if nivelTorre torre <= 3 && podeComprarMelhoriaTorre it
+                          then it {jogoAtual = jogo {torresJogo = map (\t -> if t == torre then darUpgradeTorre torre else t) (torresJogo jogo), 
+                                                     baseJogo = base {creditosBase = creditosBase base - customelhoriatorre}}, 
+                                                     infoTorre = Just (darUpgradeTorre torre)}
+                          else it
+                           where customelhoriatorre = getCustoMelhoriaTorre it torre
+                                 base = baseJogo jogo
+    else
     case torreSelecionada it of 
             Nothing -> selecionarTorre posMouse it
             Just torre -> case posEcraParaJogo posMouse of
@@ -35,11 +42,12 @@ reageEventos (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTo
                                              where torrenova = torre {posicaoTorre = (xc,yc)}
                                                    custotorre = getCustoTorre torre (lojaJogo jogo)
                                                    base = baseJogo jogo
-reageEventos (EventKey (MouseButton RightButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo}) =
+reageEventos (EventKey (MouseButton RightButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo, infoTorre = info}) =
     case clicouEmTorre posMouse (torresJogo jogo) of
-        Just t -> it {infoTorre = Just t}
+        Just t -> case info of
+                    Nothing -> it {infoTorre = Just t}
+                    Just t' -> if t' == t then it {infoTorre = Nothing} else it {infoTorre = Just t}
         Nothing -> it {infoTorre = Nothing}
-
 reageEventos k it@(ImmutableTowers {menu = MenuInicial m}) = reageEventosMenu k (it {menu = MenuInicial m})
 reageEventos k it@(ImmutableTowers {menu = ModoJogo m}) = reageEventosMenu k (it {menu = ModoJogo m})
 reageEventos _ it = it
@@ -63,6 +71,10 @@ torreResinaArea = (-911,-728,-346.5,-163.5)
 mapaArea :: (Float, Float, Float, Float)
 mapaArea = (-440, 440, -495, 385)
 
+botaoMelhoriaArea :: (Float, Float, Float, Float)
+botaoMelhoriaArea = (608, 909, 124.5, 264.5)
+
+
 {-| Função auxiliar que recebe o (xmin,xmax,ymin,ymax) de uma área e recebe (x,y) coordenadas do clique do rato e 
 verifica se o clique do rato está dentro desta área -}
 
@@ -80,6 +92,23 @@ podeComprarTorre :: ImmutableTowers -> Bool
 podeComprarTorre it = case torreSelecionada it of
                          Nothing -> False
                          Just torre -> creditosBase (baseJogo (jogoAtual it)) >= getCustoTorre torre (lojaJogo (jogoAtual it))
+
+-- | Função que retorna o custo de uma determinada melhoria de torre
+getCustoMelhoriaTorre :: ImmutableTowers -> Torre -> Creditos
+getCustoMelhoriaTorre it torre = let nivelatual = nivelTorre torre
+                                     tipoTorre = tipoProjetil (projetilTorre torre)
+                                     listaprecos = (precoUpgrades (jogoAtual it))
+                                     fstTripla (c,n,t) = c
+                                 in fstTripla $ head (filter (\(c,n,t) -> n == nivelatual && t == tipoTorre) listaprecos)
+
+
+-- | Função que verifica se o jogador pode comprar uma torre (se tem créditos suficientes)
+podeComprarMelhoriaTorre :: ImmutableTowers -> Bool
+podeComprarMelhoriaTorre it = case infoTorre it of
+                         Nothing -> False
+                         Just torre -> if nivelTorre torre == 4 
+                                       then False
+                                       else creditosBase (baseJogo (jogoAtual it)) >= getCustoMelhoriaTorre it torre
 
 -- | Função que seleciona a torre que o jogador clicou (ou deseleciona se já estava selecionada)
 selecionarTorre :: (Float, Float) -> ImmutableTowers -> ImmutableTowers
@@ -117,11 +146,18 @@ podeAdicionarTorre pos it =
         posicoesExistentesTorres = map posicaoTorre torres
     in not (elem pos posicoesExistentesTorres) && validaPosicaoRelva pos (mapaJogo (jogoAtual it))
 
-
+-- | Função que verifica se o jogador clicou em alguma torre do mapa
 clicouEmTorre :: Posicao -> [Torre] -> Maybe Torre
-clicouEmTorre posMouse [] = Nothing
+clicouEmTorre _ [] = Nothing
 clicouEmTorre posMouse (torre:resto) =
     case posEcraParaJogo posMouse of
         Just (x,y) -> if (x,y) == (posicaoTorre torre) then Just torre else clicouEmTorre posMouse resto
         Nothing -> Nothing
 
+-- | Função que da upgrade a uma torre
+darUpgradeTorre :: Torre -> Torre
+darUpgradeTorre torre = case nivelTorre torre of
+                            1 -> torre {danoTorre = danoTorre torre + 10, nivelTorre = nivelTorre torre + 1}
+                            2 -> torre {danoTorre = danoTorre torre + 10, nivelTorre = nivelTorre torre + 1}
+                            3 -> torre {danoTorre = danoTorre torre + 10, alcanceTorre = alcanceTorre torre + 1, nivelTorre = nivelTorre torre + 1}
+                            _ -> torre

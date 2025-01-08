@@ -62,7 +62,18 @@ imagensLoad = do
     terrenoagua <- loadBMP "imgs/terrenoagua.bmp"
     terrenorelva <- loadBMP "imgs/terrenorelva.bmp"
     terrenoterra <- loadBMP "imgs/terrenoterra.bmp"
-    iconetorregelonivel2 <- loadBMP "imgs/iciconetorregelonivel1.bmp"
+    melhoriaGelo1 <- loadBMP "imgs/melhoriagelo1.bmp"
+    melhoriaGelo2 <- loadBMP "imgs/melhoriagelo2.bmp"
+    melhoriaGelo3 <- loadBMP "imgs/melhoriagelo3.bmp"
+    melhoriaGelo4 <- loadBMP "imgs/melhoriagelo4.bmp"
+    melhoriaFogo1 <- loadBMP "imgs/melhoriafogo1.bmp"
+    melhoriaFogo2 <- loadBMP "imgs/melhoriafogo2.bmp"
+    melhoriaFogo3 <- loadBMP "imgs/melhoriafogo3.bmp"
+    melhoriaFogo4 <- loadBMP "imgs/melhoriafogo4.bmp"
+    melhoriaResina1 <- loadBMP "imgs/melhoriaresina1.bmp"
+    melhoriaResina2 <- loadBMP "imgs/melhoriaresina2.bmp"
+    melhoriaResina3 <- loadBMP "imgs/melhoriaresina3.bmp"
+    melhoriaResina4 <- loadBMP "imgs/melhoriaresina4.bmp"
     return [("menujogar", menujogar), 
            ("menusair", menusair), 
            ("menuganhou", menuganhou), 
@@ -95,7 +106,18 @@ imagensLoad = do
            ("terrenoagua", terrenoagua),
            ("terrenorelva", terrenorelva),
            ("terrenoterra", terrenoterra),
-           ("iconetorregelonivel2", iconetorregelonivel2)]
+           ("melhoriaGelo1", melhoriaGelo1),
+           ("melhoriaGelo2", melhoriaGelo2),
+           ("melhoriaGelo3", melhoriaGelo3),
+           ("melhoriaGelo4", melhoriaGelo4),
+           ("melhoriaFogo1", melhoriaFogo1),
+           ("melhoriaFogo2", melhoriaFogo2),
+           ("melhoriaFogo3", melhoriaFogo3),
+           ("melhoriaFogo4", melhoriaFogo4),
+           ("melhoriaResina1", melhoriaResina1),
+           ("melhoriaResina2", melhoriaResina2),
+           ("melhoriaResina3", melhoriaResina3),
+           ("melhoriaResina4", melhoriaResina4)]
 
 
 -- | Estado do jogo inicial
@@ -207,7 +229,7 @@ jogoInicio = Jogo {
                 tipoProjetil = Gelo,
                 duracaoProjetil = Finita 2.0
             },
-            nivel = 1
+            nivelTorre = 1
         }),
         (50, Torre {
             posicaoTorre = (0, 0),
@@ -220,7 +242,7 @@ jogoInicio = Jogo {
                 tipoProjetil = Fogo,
                 duracaoProjetil = Finita 2.0
             },
-            nivel = 1
+            nivelTorre = 1
         }),
         (50, Torre {
             posicaoTorre = (0, 0),
@@ -233,7 +255,18 @@ jogoInicio = Jogo {
                 tipoProjetil = Resina,
                 duracaoProjetil = Finita 2.0
             },
-            nivel = 1
+            nivelTorre = 1
         })
+    ],
+    precoUpgrades = [
+        (50, 1, Gelo),
+        (50,1,Fogo),
+        (50,1,Resina),
+        (75,2,Gelo),
+        (75,2,Fogo),
+        (75,2,Resina),
+        (100,3,Gelo),
+        (100,3,Fogo),
+        (100,3,Resina)
     ]
 }

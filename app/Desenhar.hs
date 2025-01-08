@@ -27,6 +27,12 @@ getPicInimigos imagens =
                       s == "inimigoEste" || s == "inimigofogoEste" || s == "inimigoresinaEste" || s == "inimigogeloEste" || 
                       s == "inimigoOeste" || s == "inimigofogoOeste" ||  s == "inimigoresinaOeste" || s == "inimigogeloOeste") imagens
 
+-- | Função auxiliar que retorna a lista de imagens das melhorias das torres
+getMelhoriasTorres :: [(String,Picture)] -> [(String,Picture)]
+getMelhoriasTorres imagens = filter (\(s,_) -> s == "melhoriaGelo1" || s == "melhoriaGelo2" || s == "melhoriaGelo3" || s == "melhoriaGelo4" ||
+                                                s == "melhoriaFogo1" || s == "melhoriaFogo2" || s == "melhoriaFogo3" || s == "melhoriaFogo4" ||
+                                                s == "melhoriaResina1" || s == "melhoriaResina2" || s == "melhoriaResina3" || s == "melhoriaResina4") imagens
+
 -- | Função que retorna a imagem de fundo dependendo da torre selecionada
 getBg :: Maybe Torre -> [(String,Picture)] -> Picture
 getBg Nothing limagens = getImagem "bgjogo" limagens
@@ -46,25 +52,27 @@ desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torres
                        (Translate (-440) (385) $ Pictures $ [desenhaMapa picTerrenos mapa] ++ [desenhaBase picBase posbase] ++ (map (desenhaTorres picTorres) lpostiposTorres) ++ (map (desenhaPortais picPortal) lposportais) ++ (map (desenhaInimigo picInimigos) dadosInimigos)),
                          picVida,
                          picCreditos,
-                         desenhaInfoTorre picUpgrade infoTorre]
+                         desenhaInfoTorre picMelhoriasTorres infoTorre]
             where
                 dadosInimigos = map getPosDirProjetil linimigos
                 lposportais = map (\i -> invertePos(posicaoPortal i)) lportais
                 (lpostorres, ltipoprojtorres) = (map (\t -> invertePos(posicaoTorre t)) ltorres, map (\p -> tipoProjetil p) (map (\t -> projetilTorre t) ltorres))
                 lpostiposTorres = zip lpostorres ltipoprojtorres
                 posbase = invertePos(posicaoBase base)
-                picVida = Scale 0.5 0.5 $ Translate (1275) (100) $ desenhaVida (vidaBase base)
-                picCreditos = Scale 0.5 0.5 $ Translate 1325 (-525) $ desenhaCreditos (creditosBase base)
+                picVida = Scale 0.5 0.5 $ Translate (1275) (-175) $ desenhaVida (vidaBase base)
+                picCreditos = Scale 0.5 0.5 $ Translate 1325 (-655) $ desenhaCreditos (creditosBase base)
                 picInimigos = getPicInimigos limagens
                 picTorres = filter (\(s,_) -> s == "torrefogo" || s == "torreresina" || s == "torregelo") limagens
                 picPortal = getImagem "portal" limagens
                 picBase = getImagem "base" limagens
                 picTerrenos = filter (\(s,_) -> s == "terrenoagua" || s == "terrenorelva" || s == "terrenoterra") limagens
-                picUpgrade = filter (\(s,_) -> s == "iconetorregelonivel2") limagens
+                picMelhoriasTorres = getMelhoriasTorres limagens
 
-
+-- | Função que zipa 3 listas em tuplas
 zipThree :: [a] -> [b] -> [c] -> [(a,b,c)]
-zipThree [] [] [] = []
+zipThree [] _ _ = []
+zipThree _ [] _ = []
+zipThree _ _ [] = []
 zipThree (x:xs) (y:ys) (z:zs) = (x,y,z) : zipThree xs ys zs
 
 -- | Função que desenha a vida da base
@@ -158,11 +166,14 @@ desenhaTorreGelo torregelo (x, y) = Pictures
 desenhaBase :: Picture -> Posicao -> Picture
 desenhaBase base (x,y) = Translate (x * w) (y * w) $ Scale (2/9) (2/9) $ base
 
+-- | Função que desenha as informações da torre (alcance e imagem da melhoria)
 desenhaInfoTorre :: [(String,Picture)] -> Maybe Torre -> Picture
 desenhaInfoTorre _ Nothing = Blank
-desenhaInfoTorre lPicUpgrade (Just (Torre {posicaoTorre = (x,y), alcanceTorre = alcance})) = Translate (-440) 385 $ Pictures [imagem, Color (makeColor 0.7 0.7 0.7 0.4) $ Translate (x * w) (-y * w) $ circleSolid (w*alcance)]
+desenhaInfoTorre picsMelhoriasTorres (Just (Torre {posicaoTorre = (x,y), alcanceTorre = alcance, projetilTorre = projetil, nivelTorre = nivel})) 
+    = Translate (-440) 385 $ Pictures [Translate (1125) (-150) $ imagem, Color (makeColor 0.7 0.7 0.7 0.4) $ Translate (x * w) (-y * w) $ circleSolid (w*alcance)]
     where
-        imagem = getImagem ("iconetorregelonivel2") lPicUpgrade
+        tipo = tipoProjetil projetil
+        imagem = getImagem ("melhoria" ++ (show tipo) ++ (show nivel)) picsMelhoriasTorres
 
 -- | Mapa do jogo
 mapa01 :: Mapa
