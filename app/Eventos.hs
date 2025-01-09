@@ -31,7 +31,7 @@ reageMelhoriaTorre it@(ImmutableTowers {jogoAtual = jogo, menu = ModoJogo EmAnda
     case infoTorre it of
             Nothing -> it
             Just torre -> if nivelTorre torre <= 3 && podeComprarMelhoriaTorre it
-                          then it {jogoAtual = jogo {torresJogo = map (\t -> if t == torre then darUpgradeTorre torre else t) (torresJogo jogo), 
+                          then it {jogoAtual = jogo {torresJogo = map (\t -> if (posicaoTorre t) == (posicaoTorre torre) then darUpgradeTorre torre else t) (torresJogo jogo), 
                                                      baseJogo = base {creditosBase = creditosBase base - customelhoriatorre}}, 
                                                      infoTorre = Just (darUpgradeTorre torre)}
                           else it
