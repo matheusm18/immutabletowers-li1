@@ -157,11 +157,16 @@ jogoInicio = Jogo {
                         inimigoPortal1,
                         inimigoPortal1,
                         inimigoPortal1,
+                        inimigoPortal1,
+                        inimigoPortal1,
+                        inimigoPortal1,
+                        inimigoPortal1,
+                        inimigoPortal1,
                         inimigoPortal1
                     ],
                     cicloOnda = 1.0,
                     tempoOnda = 5.0,
-                    entradaOnda = 15.0
+                    entradaOnda = 30.0
                 }
             ]
         },
@@ -228,27 +233,27 @@ jogoInicio = Jogo {
         }),
         (50, Torre {
             posicaoTorre = (0, 0),
-            danoTorre = 30,
+            danoTorre = 40,
             alcanceTorre = 1.5,
-            rajadaTorre = 2,
-            cicloTorre = 3,
+            rajadaTorre = 5,
+            cicloTorre = 4,
             tempoTorre = 0,
             projetilTorre = Projetil {
                 tipoProjetil = Fogo,
-                duracaoProjetil = Finita 2.0
+                duracaoProjetil = Finita 3.0
             },
             nivelTorre = 1
         }),
         (50, Torre {
             posicaoTorre = (0, 0),
-            danoTorre = 30,
-            alcanceTorre = 1.5,
-            rajadaTorre = 2,
-            cicloTorre = 3,
+            danoTorre = 10,
+            alcanceTorre = 2,
+            rajadaTorre = 3,
+            cicloTorre = 2,
             tempoTorre = 0,
             projetilTorre = Projetil {
                 tipoProjetil = Resina,
-                duracaoProjetil = Finita 2.0
+                duracaoProjetil = Finita 1.5
             },
             nivelTorre = 1
         })
@@ -283,3 +288,4 @@ inimigoPortal2 = Inimigo {posicaoInimigo = (0.5, 6.5),
                           butimInimigo = 25,
                           projeteisInimigo = []
                          }
+
