@@ -116,6 +116,19 @@ pertenceCaminho _ [] = False
 pertenceCaminho (x,y) caminho = elem (x',y') caminho
     where (x',y') = (fromIntegral (floor x),fromIntegral (floor y)) -- ^ arredonda para pegar a posição "toda" (a da matriz)
  
+{-| Função auxiliar que retorna a posição do centro do quadrado para evitar bug de movimento 
+
+Sem essa função, antes na moveInimigo, quando o inimigo não podia continuar na mesma direção e tinha de fazer uma tomada de decisão,
+aconteciam casos em que o inimigo havia passado do centro do quadrado, por ex: estava em (9.55,4.55), 
+o inimigo deveria ir pra Sul mas a função getPosicoesValida retornava
+tanto a parte do Norte desse mesmo quadrado quanto a posicao imediatamente em baixo, o que causava bug.
+
+Ao chamar a função posicaoCentroQuadrado para a posicao (x,y) que queremos usar na getPosicoesValidas, a moveInimigo funciona.
+-}
+
+getPosCentroQuadrado :: Posicao -> Posicao
+getPosCentroQuadrado (x,y) = (fromIntegral (floor x) + 0.5, fromIntegral (floor y) + 0.5)
+
 -- | Função que move o inimigo de acordo com a sua direção e velocidade.
 moveInimigo :: Tempo -> Inimigo -> Posicao -> Mapa -> (Direcao,Posicao)
 moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocidadeInimigo = velocidade, projeteisInimigo = lprojeteis} posbase mapa
@@ -123,7 +136,7 @@ moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocid
       then (direcao,(x,y))
       else
         let caminho = map (\(x,y) -> (fromIntegral (floor x),fromIntegral(floor y))) (fromJust(encontrarCaminho (x,y) (posbase) mapa)) -- ^ passa o caminho para as posições "gerais"
-            posicoesvalidas = getPosicoesValidas (x,y) direcao mapa
+            posicoesvalidas = getPosicoesValidas (getPosCentroQuadrado (x,y)) direcao mapa -- ^ com a posicaoCentroQuadrado não buga mais o movimento
         in case direcao of
             Norte -> if pertenceCaminho (x,y-0.501) caminho
                      then (direcao,(x,y-(velocidade*t)))

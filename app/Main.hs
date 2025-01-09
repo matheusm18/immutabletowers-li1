@@ -25,8 +25,8 @@ main = do
   imagens <- imagensLoad
   play janela fundo fr (ImmutableTowers jogoInicio jogoInicio (MenuInicial Jogar) imagens Nothing Nothing) desenha reageEventos reageTempo
 
-{-| Função que carrega as imagens do jogo de modo a estas estarem armazenadas numa lista de tuplas com a string igual o nome da imagem e a imagem em si, 
-para facilita rdepois a busca pela imagem correta nas outras funções -}
+{-| Função que carrega as imagens do jogo de modo a passar estas para Picture e armazena-las
+ numa lista de tuplas com a string igual o nome da imagem e a imagem em si, para facilitar a busca pela imagem correta nas outras funções -}
 
 imagensLoad :: IO [(String, Picture)]
 imagensLoad = do
@@ -210,7 +210,7 @@ jogoInicio = Jogo {
                     ],
                     cicloOnda = 2.0,
                     tempoOnda = 5.0,
-                    entradaOnda = 5.0
+                    entradaOnda = 255.0
                 }]}
     ],
     torresJogo = [

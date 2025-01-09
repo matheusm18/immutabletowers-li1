@@ -59,8 +59,8 @@ desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torres
                 (lpostorres, ltipoprojtorres) = (map (\t -> invertePos(posicaoTorre t)) ltorres, map (\p -> tipoProjetil p) (map (\t -> projetilTorre t) ltorres))
                 lpostiposTorres = zip lpostorres ltipoprojtorres
                 posbase = invertePos(posicaoBase base)
-                picVida = Scale 0.5 0.5 $ Translate (1275) (-175) $ desenhaVida (vidaBase base)
-                picCreditos = Scale 0.5 0.5 $ Translate 1325 (-655) $ desenhaCreditos (creditosBase base)
+                picVida = desenhaVida (vidaBase base)
+                picCreditos = desenhaCreditos (creditosBase base)
                 picInimigos = getPicInimigos limagens
                 picTorres = filter (\(s,_) -> s == "torrefogo" || s == "torreresina" || s == "torregelo") limagens
                 picPortal = getImagem "portal" limagens
@@ -77,11 +77,11 @@ zipThree (x:xs) (y:ys) (z:zs) = (x,y,z) : zipThree xs ys zs
 
 -- | Função que desenha a vida da base
 desenhaVida :: Float -> Picture
-desenhaVida v = Pictures [Color red $ translate 0 0 $ Text (show v)]
+desenhaVida v = Color red $ Scale 0.5 0.5 $ translate (1275) (-175) $ Text (show v)
 
 -- | Função que desenha os créditos da base
 desenhaCreditos :: Int -> Picture
-desenhaCreditos c = Pictures [Color (orange) $ translate 0 (-20) $ Text (show c)]
+desenhaCreditos c = Pictures [Color (orange) $ Scale 0.5 0.5 $ translate 1325 (-675) $ Text (show c)]
 
 {-| Função que recebe a lista de imagens e o mapa e retorna a imagem do mapa
 

@@ -5,22 +5,26 @@ import ImmutableTowers
 import LI12425
 import Tarefa1 (validaPosicaoRelva)
 import Data.Maybe (fromJust)
+import Debug.Trace
 
 {-| Função auxiliar que reage aos eventos do teclado quando o jogo está no menu inicial
 
 Decidimos adicionar este extra com o menu inicial para tornar o jogo mais intuitivo e não aparecer logo o jogo -}
 reageEventosMenu :: Event -> ImmutableTowers -> ImmutableTowers
 reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) it@(ImmutableTowers {menu = MenuInicial Jogar}) = it {menu = ModoJogo EmAndamento}
+reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {menu = MenuInicial Jogar}) = if clicouDentro botaoJogarMenuInicial posMouse then it {menu = ModoJogo EmAndamento} else if clicouDentro botaoSairMenuInicial posMouse then error "Jogo fechado." else it
 reageEventosMenu (EventKey (SpecialKey KeyDown) Down _ _) it@(ImmutableTowers {menu = MenuInicial Jogar}) = it {menu = MenuInicial Sair}
 reageEventosMenu (EventKey (SpecialKey KeyUp) Down _ _) it@(ImmutableTowers {menu = MenuInicial Sair}) = it {menu = MenuInicial Jogar}
-reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) it@(ImmutableTowers {jogoInicial = jogoInicio, menu = ModoJogo PerdeuJogo}) = it {jogoAtual = jogoInicio, menu = MenuInicial Jogar}
-reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) it@(ImmutableTowers {jogoInicial = jogoInicio, menu = ModoJogo GanhouJogo}) = it {jogoAtual = jogoInicio, menu = MenuInicial Jogar}
+reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) it@(ImmutableTowers {jogoInicial = jogoInicio, menu = ModoJogo PerdeuJogo}) = it {jogoAtual = jogoInicio, menu = MenuInicial Jogar, torreSelecionada = Nothing, infoTorre = Nothing}
+reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {jogoInicial = jogoInicio, menu = ModoJogo PerdeuJogo}) = if clicouDentro botaoSairMenuPerdeu posMouse then it {jogoAtual = jogoInicio, menu = MenuInicial Jogar, torreSelecionada = Nothing, infoTorre = Nothing} else it
+reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) it@(ImmutableTowers {jogoInicial = jogoInicio, menu = ModoJogo GanhouJogo}) = it {jogoAtual = jogoInicio, menu = MenuInicial Jogar, torreSelecionada = Nothing, infoTorre = Nothing}
 reageEventosMenu (EventKey (SpecialKey KeyEnter) Down _ _) (ImmutableTowers {menu = MenuInicial Sair})  = error "Jogo fechado."
 reageEventosMenu _ it = it
 
 -- | Função principal que reage aos eventos do jogador (ações do teclado e do rato)
 reageEventos :: Event -> ImmutableTowers -> ImmutableTowers
-reageEventos (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo}) =
+reageEventos (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo, menu = ModoJogo EmAndamento}) =
+    trace (show posMouse) $
     if clicouDentro botaoMelhoriaArea posMouse
     then case infoTorre it of
             Nothing -> it
@@ -42,7 +46,7 @@ reageEventos (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTo
                                              where torrenova = torre {posicaoTorre = (xc,yc)}
                                                    custotorre = getCustoTorre torre (lojaJogo jogo)
                                                    base = baseJogo jogo
-reageEventos (EventKey (MouseButton RightButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo, infoTorre = info}) =
+reageEventos (EventKey (MouseButton RightButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo, infoTorre = info, menu = ModoJogo EmAndamento}) =
     case clicouEmTorre posMouse (torresJogo jogo) of
         Just t -> case info of
                     Nothing -> it {infoTorre = Just t}
@@ -71,6 +75,15 @@ torreResinaArea = (-911,-728,-346.5,-163.5)
 mapaArea :: (Float, Float, Float, Float)
 mapaArea = (-440, 440, -495, 385)
 
+botaoJogarMenuInicial :: (Float, Float, Float, Float)
+botaoJogarMenuInicial = (-215,215,-24.5,68.5)
+
+botaoSairMenuInicial :: (Float, Float, Float, Float)
+botaoSairMenuInicial = (-215,215,-191.5,-98.5)
+
+botaoSairMenuPerdeu :: (Float, Float, Float, Float)
+botaoSairMenuPerdeu = (-215,215,-171.5,-78.5)
+
 botaoMelhoriaArea :: (Float, Float, Float, Float)
 botaoMelhoriaArea = (608, 909, 124.5, 264.5)
 
@@ -98,7 +111,7 @@ getCustoMelhoriaTorre :: ImmutableTowers -> Torre -> Creditos
 getCustoMelhoriaTorre it torre = let nivelatual = nivelTorre torre
                                      tipoTorre = tipoProjetil (projetilTorre torre)
                                      listaprecos = (precoUpgrades (jogoAtual it))
-                                     fstTripla (c,n,t) = c
+                                     fstTripla (c,_,_) = c
                                  in fstTripla $ head (filter (\(c,n,t) -> n == nivelatual && t == tipoTorre) listaprecos)
 
 
@@ -154,7 +167,10 @@ clicouEmTorre posMouse (torre:resto) =
         Just (x,y) -> if (x,y) == (posicaoTorre torre) then Just torre else clicouEmTorre posMouse resto
         Nothing -> Nothing
 
--- | Função que da upgrade a uma torre
+{-| Função que da upgrade a uma torre
+
+Neste caso, nós decidimos que as melhorias para cada nível seriam estas mudanças, mas poderiam ser outras -}
+
 darUpgradeTorre :: Torre -> Torre
 darUpgradeTorre torre = case nivelTorre torre of
                             1 -> torre {danoTorre = danoTorre torre + 10, nivelTorre = nivelTorre torre + 1}
