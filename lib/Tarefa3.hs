@@ -135,23 +135,24 @@ moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocid
     = if any (\proj -> tipoProjetil proj == Gelo) lprojeteis
       then (direcao,(x,y))
       else
-        let caminho = map (\(x,y) -> (fromIntegral (floor x),fromIntegral(floor y))) (fromJust(encontrarCaminho (x,y) (posbase) mapa)) -- ^ passa o caminho para as posições "gerais"
+        let velocidadeAtual = if any (\proj -> tipoProjetil proj == Resina) lprojeteis then velocidade/2 else velocidade
+            caminho = map (\(x,y) -> (fromIntegral (floor x),fromIntegral(floor y))) (fromJust(encontrarCaminho (x,y) (posbase) mapa)) -- ^ passa o caminho para as posições "gerais"
             posicoesvalidas = getPosicoesValidas (getPosCentroQuadrado (x,y)) direcao mapa -- ^ com a posicaoCentroQuadrado não buga mais o movimento
         in case direcao of
             Norte -> if pertenceCaminho (x,y-0.501) caminho
-                     then (direcao,(x,y-(velocidade*t)))
+                     then (direcao,(x,y-(velocidadeAtual*t)))
                      else (fromJust (escolheDirecao posicoesvalidas caminho), (x,y)) -- ^ tomada de decisão (mais de uma direção possível e a direção Norte não leva a base)
 
             Sul ->  if pertenceCaminho (x,(y+0.501)) caminho
-                    then (direcao,(x,y+(velocidade*t)))
+                    then (direcao,(x,y+(velocidadeAtual*t)))
                     else (fromJust (escolheDirecao posicoesvalidas caminho), (x,y))
 
             Este -> if pertenceCaminho (x+0.501,y) caminho
-                    then (direcao,(x+(velocidade*t),y))
+                    then (direcao,(x+(velocidadeAtual*t),y))
                     else (fromJust (escolheDirecao posicoesvalidas caminho), (x,y))
 
             Oeste -> if pertenceCaminho (x-0.501,y) caminho
-                     then (direcao,(x-(velocidade*t),y))
+                     then (direcao,(x-(velocidadeAtual*t),y))
                      else (fromJust (escolheDirecao posicoesvalidas caminho), (x,y))
 
 -- | Função que atualiza a duração de um projétil com o passar do tempo.
@@ -171,16 +172,11 @@ atualizaInimigo :: Tempo -> Mapa -> Posicao -> Inimigo -> Inimigo
 atualizaInimigo t mapa posbase i
     = i {posicaoInimigo = posnova, 
          direcaoInimigo = direcaonova, 
-         vidaInimigo = vidanova, 
-         velocidadeInimigo = velocidadenova, 
+         vidaInimigo = vidanova,
          projeteisInimigo = lprojeteisnova}
     where lprojeteis = projeteisInimigo i
-          velocidade = velocidadeInimigo i
           (direcaonova,posnova) = moveInimigo t i posbase mapa
           vidanova = atualizaVidaProjeteis i
-          velocidadenova = if any (\p -> tipoProjetil p == Resina) (lprojeteis) && not (any (\p -> tipoProjetil p == Resina) lprojeteisnova)
-                           then velocidade * 2
-                           else velocidade
           lprojeteisnova = filter (\p -> not (duracaoExpirou p)) (map (atualizaDurProjetil t) lprojeteis) -- ^ atualiza e remove os expirados
 
 -- | Função que atualiza os inimigos do jogo (aplica dano, movimenta, etc) e no fim retorna uma tupla com a lista de inimigos atualizadas, o dano dos inimigos a base e o butim dos inimigos mortos.

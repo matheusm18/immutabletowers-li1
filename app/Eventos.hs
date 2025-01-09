@@ -71,7 +71,7 @@ reageEventos (EventKey (MouseButton RightButton) Down _ posMouse) it@(ImmutableT
     case clicouEmTorre posMouse (torresJogo jogo) of
         Just t -> case info of
                     Nothing -> it {infoTorre = Just t}
-                    Just t' -> if t' == t then it {infoTorre = Nothing} else it {infoTorre = Just t}
+                    Just t' -> if (posicaoTorre t') == (posicaoTorre t) then it {infoTorre = Nothing} else it {infoTorre = Just t}
         Nothing -> it {infoTorre = Nothing}
 reageEventos k it@(ImmutableTowers {menu = MenuInicial _}) = reageEventosMenu k it
 reageEventos k it@(ImmutableTowers {menu = ModoJogo _}) = reageEventosMenu k it

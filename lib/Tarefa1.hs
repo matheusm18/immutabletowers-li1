@@ -37,7 +37,7 @@ validaPosicaoRelva (x,y) mapa = case t of
 {-| Função que dada uma posição retorna as posições que estão em volta cujo terreno é Terra
 
 Como a função validaPosicaoTerra (que é utilizada dentro do filter) utiliza a função tipoTerreno, não é necessário verificar se as posições adjacentes são válidas.
-     
+
 -}   
 
 posAdjacentes :: Posicao -> Mapa -> [Posicao]

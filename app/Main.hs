@@ -124,9 +124,9 @@ imagensLoad = do
 jogoInicio :: Jogo
 jogoInicio = Jogo {
     baseJogo = Base {
-        vidaBase = 150,
+        vidaBase = 2000,
         posicaoBase = (10.5, 5.5),
-        creditosBase = 400
+        creditosBase = 200
     },
     portaisJogo = [
         Portal {
@@ -134,53 +134,34 @@ jogoInicio = Jogo {
             ondasPortal = [
                 Onda {
                     inimigosOnda = [
-                        Inimigo {
-                            posicaoInimigo = (0.5, 4.5),
-                            direcaoInimigo = Este,
-                            vidaInimigo = 100,
-                            velocidadeInimigo = 1,
-                            ataqueInimigo = 5,
-                            butimInimigo = 25,
-                            projeteisInimigo = []
-                        },
-                        Inimigo {
-                            posicaoInimigo = (0.5, 4.5),
-                            direcaoInimigo = Este,
-                            vidaInimigo = 90,
-                            velocidadeInimigo = 1,
-                            ataqueInimigo = 5,
-                            butimInimigo = 25,
-                            projeteisInimigo = []
-                        }
-                    ],
-                    cicloOnda = 2.0,
-                    tempoOnda = 5.0,
-                    entradaOnda = 5.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        Inimigo {
-                            posicaoInimigo = (0.5, 4.5),
-                            direcaoInimigo = Este,
-                            vidaInimigo = 250,
-                            velocidadeInimigo = 1,
-                            ataqueInimigo = 200,
-                            butimInimigo = 25,
-                            projeteisInimigo = []
-                        },
-                        Inimigo {
-                            posicaoInimigo = (0.5, 4.5),
-                            direcaoInimigo = Este,
-                            vidaInimigo = 150,
-                            velocidadeInimigo = 1,
-                            ataqueInimigo = 5,
-                            butimInimigo = 25,
-                            projeteisInimigo = []
-                        }
+                        inimigoPortal1,
+                        inimigoPortal1
                     ],
                     cicloOnda = 1.0,
                     tempoOnda = 5.0,
-                    entradaOnda = 5.0
+                    entradaOnda = 10.0
+                },
+                Onda {
+                    inimigosOnda = [
+                        inimigoPortal1,
+                        inimigoPortal1,
+                        inimigoPortal1
+                    ],
+                    cicloOnda = 1.0,
+                    tempoOnda = 5.0,
+                    entradaOnda = 10.0
+                },
+                Onda {
+                    inimigosOnda = [
+                        inimigoPortal1,
+                        inimigoPortal1,
+                        inimigoPortal1,
+                        inimigoPortal1,
+                        inimigoPortal1
+                    ],
+                    cicloOnda = 1.0,
+                    tempoOnda = 5.0,
+                    entradaOnda = 15.0
                 }
             ]
         },
@@ -189,29 +170,43 @@ jogoInicio = Jogo {
             ondasPortal = [
                 Onda {
                     inimigosOnda = [
-                        Inimigo {
-                            posicaoInimigo = (0.5, 6.5),
-                            direcaoInimigo = Norte,
-                            vidaInimigo = 100,
-                            velocidadeInimigo = 1,
-                            ataqueInimigo = 5,
-                            butimInimigo = 25,
-                            projeteisInimigo = []
-                        },
-                        Inimigo {
-                            posicaoInimigo = (0.5, 6.5),
-                            direcaoInimigo = Norte,
-                            vidaInimigo = 100,
-                            velocidadeInimigo = 1,
-                            ataqueInimigo = 5,
-                            butimInimigo = 25,
-                            projeteisInimigo = []
-                        }
+                        inimigoPortal2,
+                        inimigoPortal2
                     ],
-                    cicloOnda = 2.0,
+                    cicloOnda = 1.0,
                     tempoOnda = 5.0,
-                    entradaOnda = 5.0
-                }]}
+                    entradaOnda = 10.0
+                },                
+                Onda {
+                    inimigosOnda = [
+                        inimigoPortal2,
+                        inimigoPortal2,
+                        inimigoPortal2
+                    ],
+                    cicloOnda = 1.0,
+                    tempoOnda = 5.0,
+                    entradaOnda = 10.0
+                },
+                Onda {
+                    inimigosOnda = [
+                        inimigoPortal2,
+                        inimigoPortal2,
+                        inimigoPortal2,
+                        inimigoPortal2,
+                        inimigoPortal2,
+                        inimigoPortal2,
+                        inimigoPortal2,
+                        inimigoPortal2,
+                        inimigoPortal2,
+                        inimigoPortal2
+                    ],
+                    cicloOnda = 1.0,
+                    tempoOnda = 5.0,
+                    entradaOnda = 10.0
+                }
+                ]}
+                
+
     ],
     torresJogo = [
     ],
@@ -227,7 +222,7 @@ jogoInicio = Jogo {
             tempoTorre = 0,
             projetilTorre = Projetil {
                 tipoProjetil = Gelo,
-                duracaoProjetil = Finita 2.0
+                duracaoProjetil = Finita 1.5
             },
             nivelTorre = 1
         }),
@@ -270,3 +265,21 @@ jogoInicio = Jogo {
         (100,3,Resina)
     ]
 }
+
+inimigoPortal1 = Inimigo {posicaoInimigo = (0.5, 4.5),
+                          direcaoInimigo = Este,
+                          vidaInimigo = 100,
+                          velocidadeInimigo = 1,
+                          ataqueInimigo = 10,
+                          butimInimigo = 25,
+                          projeteisInimigo = []
+                         }
+
+inimigoPortal2 = Inimigo {posicaoInimigo = (0.5, 6.5),
+                          direcaoInimigo = Este,
+                          vidaInimigo = 100,
+                          velocidadeInimigo = 1,
+                          ataqueInimigo = 5,
+                          butimInimigo = 25,
+                          projeteisInimigo = []
+                         }

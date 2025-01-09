@@ -89,19 +89,11 @@ atualizaProjeteis pinc (p:rp) =
 {-| Função que dada uma torre e o inimigo que será atingido pela torre, retorna o inimigo
 com a vida atualizada e com a lista de projetéis atualizada.
 
-No caso da resina, a velocidade do inimigo também é atualizada. -}
+-}
 
 atingeInimigo :: Torre -> Inimigo -> Inimigo
-atingeInimigo Torre {danoTorre = dano, projetilTorre = projetil} i
-    = case tipoProjetil projetil of 
-        Resina -> i {vidaInimigo = vidaInimigo i - dano, 
-                     projeteisInimigo = atualizaProjeteis projetil (projeteisInimigo i), 
-                     velocidadeInimigo = if verificaFogo (projeteisInimigo i) -- ^ se existia fogo, não haverá resina
-                                         then velocidadeInimigo i
-                                         else if verificaResina (projeteisInimigo i) -- ^ se existia resina, a velocidade já estava reduzida
-                                         then velocidadeInimigo i 
-                                         else velocidadeInimigo i / 2}
-        _ -> i {vidaInimigo = vidaInimigo i - dano, projeteisInimigo = atualizaProjeteis projetil (projeteisInimigo i)}
+atingeInimigo Torre {danoTorre = dano, projetilTorre = projetil} i = 
+    i {vidaInimigo = vidaInimigo i - dano, projeteisInimigo = atualizaProjeteis projetil (projeteisInimigo i)}
 
 {-| Função que dada uma torre e a lista de inimigos ativos no jogo, 
 retorna uma tupla com o portal atualizado após a ativação do inimigo e a nova lista de inimigos ativos no jogo (adição do inimigo ativado) 
