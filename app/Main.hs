@@ -180,7 +180,7 @@ jogoInicio = Jogo {
                     ],
                     cicloOnda = 1.0,
                     tempoOnda = 5.0,
-                    entradaOnda = 10.0
+                    entradaOnda = 100.0
                 },                
                 Onda {
                     inimigosOnda = [

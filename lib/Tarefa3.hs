@@ -61,22 +61,26 @@ atualizaVidaProjeteis Inimigo {vidaInimigo = vida, projeteisInimigo = lprojeteis
       then vida - (1/30) -- (1/30) para dar 2 de dano por segundo com o fps a 60 (depois temos que testar em jogo)
       else vida
 
-{-| Função para arredondar as posições para obter a posição geral
+{-| Função para dar floor nas componentes x e y das posições para obter a "posição geral"
 
 Como sabemos, na matriz toda posição em que o x pertence a [0,1] e o y pertence a [0,1] é a posição (0,0) da matriz, essa função acha essa posição "geral" da matriz.
 -}
 
-arredondarPosicao :: Posicao -> (Int, Int)
-arredondarPosicao (x, y) = (floor x,floor y)
+floorPosicao :: Posicao -> (Int, Int)
+floorPosicao (x, y) = (floor x,floor y)
 
--- | Função que encontra o caminho mais curto entre as duas posições (semelhante a função da Tarefa 1)
+{-| Função que encontra o caminho mais curto entre as duas posições (semelhante a função da Tarefa 1)
+
+Para essa função funcionar corretamente precisamos dar as posições do centro do quadrado da posição inicial e final.
+
+-}
 encontrarCaminho :: Posicao -> Posicao -> Mapa -> Maybe [Posicao]
 encontrarCaminho posinicial posfinal mapa = encontrarCaminhoAux [[posinicial]] []
   where
     encontrarCaminhoAux :: [[Posicao]] -> [Posicao] -> Maybe [Posicao]
     encontrarCaminhoAux [] _ = Nothing
     encontrarCaminhoAux (caminho:fila) visitados
-        | arredondarPosicao atual == arredondarPosicao posfinal = Just caminho -- ^ verificar se tá na mesma posição geral do quadrado da posição final
+        | floorPosicao atual == floorPosicao posfinal = Just caminho -- ^ verificar se tá na mesma posição geral do quadrado da posição final
         | atual `elem` visitados = encontrarCaminhoAux fila visitados
         | otherwise =
             let visitados' = atual : visitados
@@ -136,7 +140,7 @@ moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocid
       then (direcao,(x,y))
       else
         let velocidadeAtual = if any (\proj -> tipoProjetil proj == Resina) lprojeteis then velocidade/2 else velocidade
-            caminho = map (\(x,y) -> (fromIntegral (floor x),fromIntegral(floor y))) (fromJust(encontrarCaminho (x,y) (posbase) mapa)) -- ^ passa o caminho para as posições "gerais"
+            caminho = map (\(x,y) -> (fromIntegral (floor x),fromIntegral(floor y))) (fromJust(encontrarCaminho (getPosCentroQuadrado (x,y)) (posbase) mapa)) -- ^ passa o caminho para as posições "gerais"
             posicoesvalidas = getPosicoesValidas (getPosCentroQuadrado (x,y)) direcao mapa -- ^ com a posicaoCentroQuadrado não buga mais o movimento
         in case direcao of
             Norte -> if pertenceCaminho (x,y-0.501) caminho
