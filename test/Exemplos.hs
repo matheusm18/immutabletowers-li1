@@ -46,7 +46,8 @@ torre01 = Torre { posicaoTorre = (2.5, 5.5),
                   rajadaTorre = 3,
                   cicloTorre = 5,
                   tempoTorre = 3,
-                  projetilTorre = Projetil Fogo (Finita 5)
+                  projetilTorre = Projetil Fogo (Finita 5),
+                  nivelTorre = 1
                 }
 
 torre02 :: Torre
@@ -56,7 +57,8 @@ torre02 = Torre { posicaoTorre = (1.5, 4.5),
                   rajadaTorre = 4,
                   cicloTorre = 4,
                   tempoTorre = 2,
-                  projetilTorre = Projetil Gelo (Finita 10)
+                  projetilTorre = Projetil Gelo (Finita 10),
+                  nivelTorre = 1
                 }
 
 torre03 :: Torre
@@ -66,7 +68,8 @@ torre03 = Torre { posicaoTorre = (4.5, 4.5),
                   rajadaTorre = 4,
                   cicloTorre = 5,
                   tempoTorre = 0,
-                  projetilTorre = Projetil Resina (Finita 10)
+                  projetilTorre = Projetil Resina (Finita 10),
+                  nivelTorre = 1
                 }      
 
 torreInvalida :: Torre
@@ -76,7 +79,8 @@ torreInvalida = Torre { posicaoTorre = (4.5, 8.5),
                         rajadaTorre = -2,
                         cicloTorre = 5,
                         tempoTorre = 3,
-                        projetilTorre = Projetil Fogo (Finita 5)
+                        projetilTorre = Projetil Fogo (Finita 5),
+                        nivelTorre = 1
                       }
 
 -- Bases:
@@ -212,7 +216,8 @@ jogo01 = Jogo { baseJogo = base01,
                 torresJogo = [torre01],
                 mapaJogo = mapa01,
                 inimigosJogo = [inimigoEmJogo01],
-                lojaJogo = [(50, torre01), (50, torre02), (50, torre03)]
+                lojaJogo = [(50, torre01), (50, torre02), (50, torre03)],
+                precoUpgrades = [(50, 1, Gelo),(50,1,Fogo),(50,1,Resina),(75,2,Gelo),(75,2,Fogo),(75,2,Resina),(100,3,Gelo),(100,3,Fogo),(100,3,Resina)]
               }
 
 jogo02 :: Jogo
@@ -221,7 +226,8 @@ jogo02 = Jogo { baseJogo = base02,
                 torresJogo = [torre02,torre03],
                 mapaJogo = mapa02,
                 inimigosJogo = [inimigoEmJogo02],
-                lojaJogo = [(50, torre01), (50, torre02), (50, torre03)]
+                lojaJogo = [(50, torre01), (50, torre02), (50, torre03)],
+                precoUpgrades = [(50, 1, Gelo),(50,1,Fogo),(50,1,Resina),(75,2,Gelo),(75,2,Fogo),(75,2,Resina),(100,3,Gelo),(100,3,Fogo),(100,3,Resina)]
               }
 
 jogoInvalido :: Jogo
@@ -230,7 +236,8 @@ jogoInvalido = Jogo { baseJogo = base01,
                       torresJogo = [torre01],
                       mapaJogo = mapa02,
                       inimigosJogo = [],
-                      lojaJogo = [(50, torre01), (50, torre02), (50, torre03)]
+                      lojaJogo = [(50, torre01), (50, torre02), (50, torre03)],
+                      precoUpgrades = [(50, 1, Gelo),(50,1,Fogo),(50,1,Resina),(75,2,Gelo),(75,2,Fogo),(75,2,Resina),(100,3,Gelo),(100,3,Fogo),(100,3,Resina)]
                     }
 
 jogoGanho :: Jogo
@@ -239,7 +246,8 @@ jogoGanho = Jogo { baseJogo = base01,
                    torresJogo = [torre01],
                    mapaJogo = mapa01,
                    inimigosJogo = [],
-                   lojaJogo = [(50, torre01), (50, torre02), (50, torre03)]
+                   lojaJogo = [(50, torre01), (50, torre02), (50, torre03)],
+                   precoUpgrades = [(50, 1, Gelo),(50,1,Fogo),(50,1,Resina),(75,2,Gelo),(75,2,Fogo),(75,2,Resina),(100,3,Gelo),(100,3,Fogo),(100,3,Resina)]
                  }
 
 jogoPerdido :: Jogo
@@ -248,7 +256,8 @@ jogoPerdido = Jogo { baseJogo = baseSemVida,
                      torresJogo = [torre01],
                      mapaJogo = mapa01,
                      inimigosJogo = [inimigoEmJogo01],
-                     lojaJogo = [(50, torre01), (50, torre02), (50, torre03)]
+                     lojaJogo = [(50, torre01), (50, torre02), (50, torre03)],
+                     precoUpgrades = [(50, 1, Gelo),(50,1,Fogo),(50,1,Resina),(75,2,Gelo),(75,2,Fogo),(75,2,Resina),(100,3,Gelo),(100,3,Fogo),(100,3,Resina)]
                    }
 
 -- | Jogo esperado após atualização do jogo01 com tempo = 0.5
@@ -258,5 +267,6 @@ jogoAposAtualizaJogo01 = Jogo { baseJogo = base01,
                                torresJogo = [torre01 {tempoTorre = 2.5}],
                                mapaJogo = mapa01,
                                inimigosJogo = [inimigoEmJogo01 {posicaoInimigo = (1.5, 6.5), direcaoInimigo = Sul, vidaInimigo = 100.0, projeteisInimigo = []}],
-                               lojaJogo = [(50, torre01), (50, torre02), (50, torre03)]
+                               lojaJogo = [(50, torre01), (50, torre02), (50, torre03)],
+                               precoUpgrades = [(50, 1, Gelo),(50,1,Fogo),(50,1,Resina),(75,2,Gelo),(75,2,Fogo),(75,2,Resina),(100,3,Gelo),(100,3,Fogo),(100,3,Resina)]
                              }

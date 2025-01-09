@@ -13,5 +13,5 @@ data ImmutableTowers = ImmutableTowers { jogoInicial :: Jogo,
                                          jogoAtual :: Jogo, 
                                          menu :: Menu, 
                                          imagens :: [(String,Picture)],
-                                         torreSelecionada :: Maybe Torre,
+                                         torreSelecionadaLoja :: Maybe Torre,
                                          infoTorre :: Maybe Torre}

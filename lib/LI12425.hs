@@ -17,7 +17,7 @@ module LI12425 (
     -- ** Entidades
     Base(..), Torre(..), Portal(..), Inimigo(..), TipoProjetil(..), Projetil(..),
     -- ** Jogo
-    Jogo(..), Onda(..), Loja,
+    Jogo(..), Onda(..), Loja, PrecoUpgrades,
     -- * Funções auxiliares
     geraAleatorios
     ) where

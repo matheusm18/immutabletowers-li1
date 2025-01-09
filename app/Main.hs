@@ -201,7 +201,7 @@ jogoInicio = Jogo {
                         Inimigo {
                             posicaoInimigo = (0.5, 6.5),
                             direcaoInimigo = Norte,
-                            vidaInimigo = 90,
+                            vidaInimigo = 100,
                             velocidadeInimigo = 1,
                             ataqueInimigo = 5,
                             butimInimigo = 25,
@@ -210,7 +210,7 @@ jogoInicio = Jogo {
                     ],
                     cicloOnda = 2.0,
                     tempoOnda = 5.0,
-                    entradaOnda = 255.0
+                    entradaOnda = 5.0
                 }]}
     ],
     torresJogo = [
@@ -220,10 +220,10 @@ jogoInicio = Jogo {
     lojaJogo = [
         (50, Torre {
             posicaoTorre = (0, 0),
-            danoTorre = 25,
+            danoTorre = 30,
             alcanceTorre = 1.5,
             rajadaTorre = 2,
-            cicloTorre = 5,
+            cicloTorre = 3,
             tempoTorre = 0,
             projetilTorre = Projetil {
                 tipoProjetil = Gelo,
@@ -233,10 +233,10 @@ jogoInicio = Jogo {
         }),
         (50, Torre {
             posicaoTorre = (0, 0),
-            danoTorre = 25,
+            danoTorre = 30,
             alcanceTorre = 1.5,
             rajadaTorre = 2,
-            cicloTorre = 5,
+            cicloTorre = 3,
             tempoTorre = 0,
             projetilTorre = Projetil {
                 tipoProjetil = Fogo,
@@ -246,10 +246,10 @@ jogoInicio = Jogo {
         }),
         (50, Torre {
             posicaoTorre = (0, 0),
-            danoTorre = 25,
+            danoTorre = 30,
             alcanceTorre = 1.5,
             rajadaTorre = 2,
-            cicloTorre = 5,
+            cicloTorre = 3,
             tempoTorre = 0,
             projetilTorre = Projetil {
                 tipoProjetil = Resina,
