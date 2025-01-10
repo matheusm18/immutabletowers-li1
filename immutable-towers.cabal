@@ -67,6 +67,7 @@ executable immutable-towers
         Desenhar
         Eventos
         Tempo
+        Dados
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:

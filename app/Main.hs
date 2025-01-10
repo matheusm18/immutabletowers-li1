@@ -5,11 +5,11 @@ import Eventos
 import Graphics.Gloss
 import ImmutableTowers
 import Tempo
-import LI12425
+import Dados
 
 -- | Janela do jogo
 janela :: Display
-janela = InWindow "Immutable Towers" (1920, 1080) (0, 0)
+janela = FullScreen
 
 -- | Background, escolhemos a cor cinza mas acabará por não aparecer, substituimos depois o fundo por imagens na função desenha
 fundo :: Color
@@ -23,7 +23,7 @@ fr = 60
 main :: IO ()
 main = do
   imagens <- imagensLoad
-  play janela fundo fr (ImmutableTowers jogoInicio jogoInicio (MenuInicial Jogar) imagens Nothing Nothing) desenha reageEventos reageTempo
+  play janela fundo fr (ImmutableTowers jogoInicio01 (MenuInicial) imagens Nothing Nothing 1) desenha reageEventos reageTempo
 
 {-| Função que carrega as imagens do jogo de modo a passar estas para Picture e armazena-las
  numa lista de tuplas com a string igual o nome da imagem e a imagem em si, para facilitar a busca pela imagem correta nas outras funções -}
@@ -31,9 +31,11 @@ main = do
 imagensLoad :: IO [(String, Picture)]
 imagensLoad = do
     menujogar <- loadBMP "imgs/menujogar.bmp"
-    menusair <- loadBMP "imgs/menusair.bmp"
     menuganhou <- loadBMP "imgs/ganhou.bmp"
     menuperdeu <- loadBMP "imgs/perdeu.bmp"
+    menuniveis1 <- loadBMP "imgs/menuniveis1.bmp"
+    menuniveis2 <- loadBMP "imgs/menuniveis2.bmp"
+    menuniveis3 <- loadBMP "imgs/menuniveis3.bmp"
     bgjogo <- loadBMP "imgs/bgjogo.bmp"
     bgjogogelo <- loadBMP "imgs/bgjogogelo.bmp"
     bgjogofogo <- loadBMP "imgs/bgjogofogo.bmp"
@@ -78,10 +80,12 @@ imagensLoad = do
     melhoriaResina2 <- loadBMP "imgs/melhoriaresina2.bmp"
     melhoriaResina3 <- loadBMP "imgs/melhoriaresina3.bmp"
     melhoriaResina4 <- loadBMP "imgs/melhoriaresina4.bmp"
-    return [("menujogar", menujogar), 
-           ("menusair", menusair), 
+    return [("menujogar", menujogar),
            ("menuganhou", menuganhou), 
-           ("menuperdeu", menuperdeu), 
+           ("menuperdeu", menuperdeu),
+           ("menuniveis1", menuniveis1),
+           ("menuniveis2", menuniveis2),
+           ("menuniveis3", menuniveis3),
            ("bgjogo", bgjogo),
            ("bgjogogelo", bgjogogelo),
            ("bgjogofogo", bgjogofogo),
@@ -126,368 +130,3 @@ imagensLoad = do
            ("melhoriaResina2", melhoriaResina2),
            ("melhoriaResina3", melhoriaResina3),
            ("melhoriaResina4", melhoriaResina4)]
-
-
--- | Estado do jogo inicial
-jogoInicio :: Jogo
-jogoInicio = Jogo {
-    baseJogo = Base {
-        vidaBase = 100,
-        posicaoBase = (10.5, 5.5),
-        creditosBase = 200
-    },
-    portaisJogo = [
-        Portal {
-            posicaoPortal = (0.5, 4.5),
-            ondasPortal = [
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase1Portal1,
-                        inimigoFase1Portal1
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 5.0,
-                    entradaOnda = 10.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase1Portal1,
-                        inimigoFase1Portal1,
-                        inimigoFase1Portal1,
-                        inimigoFase1Portal1
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 15.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 15.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 8.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 15.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 8.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 15.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1,
-                        inimigoFase2Portal1
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 8.0
-                }
-            ]
-        },
-        Portal {
-            posicaoPortal = (0.5, 6.5),
-            ondasPortal = [
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase1Portal2,
-                        inimigoFase1Portal2
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 5.0,
-                    entradaOnda = 10.0
-                },                
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase1Portal2,
-                        inimigoFase1Portal2,
-                        inimigoFase1Portal2,
-                        inimigoFase1Portal2
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 15.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 15.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 8.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 15.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 8.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 15.0
-                },
-                Onda {
-                    inimigosOnda = [
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2,
-                        inimigoFase2Portal2
-                    ],
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 8.0
-                }
-                ]}
-                
-
-    ],
-    torresJogo = [
-    ],
-    mapaJogo = mapa01,
-    inimigosJogo = [],
-    lojaJogo = [
-        (50, Torre {
-            posicaoTorre = (0, 0),
-            danoTorre = 30,
-            alcanceTorre = 1.5,
-            rajadaTorre = 2,
-            cicloTorre = 4,
-            tempoTorre = 0,
-            projetilTorre = Projetil {
-                tipoProjetil = Gelo,
-                duracaoProjetil = Finita 1.5
-            },
-            nivelTorre = 1
-        }),
-        (40, Torre {
-            posicaoTorre = (0, 0),
-            danoTorre = 30,
-            alcanceTorre = 1.5,
-            rajadaTorre = 5,
-            cicloTorre = 4,
-            tempoTorre = 0,
-            projetilTorre = Projetil {
-                tipoProjetil = Fogo,
-                duracaoProjetil = Finita 2.0
-            },
-            nivelTorre = 1
-        }),
-        (50, Torre {
-            posicaoTorre = (0, 0),
-            danoTorre = 10,
-            alcanceTorre = 2.1,
-            rajadaTorre = 3,
-            cicloTorre = 2,
-            tempoTorre = 0,
-            projetilTorre = Projetil {
-                tipoProjetil = Resina,
-                duracaoProjetil = Finita 2.1
-            },
-            nivelTorre = 1
-        })
-    ],
-    precoUpgrades = [
-        (50, 1, Gelo),
-        (50,1,Fogo),
-        (50,1,Resina),
-        (75,2,Gelo),
-        (75,2,Fogo),
-        (75,2,Resina),
-        (100,3,Gelo),
-        (100,3,Fogo),
-        (100,3,Resina)
-    ]
-}
-
-inimigoFase1Portal1 :: Inimigo
-inimigoFase1Portal1 = Inimigo {posicaoInimigo = (0.5, 4.5),
-                          direcaoInimigo = Este,
-                          vidaInimigo = 100,
-                          velocidadeInimigo = 1,
-                          ataqueInimigo = 10,
-                          butimInimigo = 25,
-                          projeteisInimigo = [],
-                          tipoInimigo = Normal
-                         }
-
-inimigoFase2Portal1 :: Inimigo
-inimigoFase2Portal1 = Inimigo {posicaoInimigo = (0.5, 4.5),
-                          direcaoInimigo = Este,
-                          vidaInimigo = 150,
-                          velocidadeInimigo = 1,
-                          ataqueInimigo = 10,
-                          butimInimigo = 25,
-                          projeteisInimigo = [],
-                          tipoInimigo = Normal
-                         }
-
-inimigoFase1Portal2 :: Inimigo
-inimigoFase1Portal2 = Inimigo {posicaoInimigo = (0.5, 6.5),
-                          direcaoInimigo = Este,
-                          vidaInimigo = 100,
-                          velocidadeInimigo = 1,
-                          ataqueInimigo = 10,
-                          butimInimigo = 25,
-                          projeteisInimigo = [],
-                          tipoInimigo = Normal
-                         }
-
-inimigoFase2Portal2 :: Inimigo
-inimigoFase2Portal2 = Inimigo {posicaoInimigo = (0.5, 6.5),
-                          direcaoInimigo = Este,
-                          vidaInimigo = 150,
-                          velocidadeInimigo = 1,
-                          ataqueInimigo = 10,
-                          butimInimigo = 25,
-                          projeteisInimigo = [],
-                          tipoInimigo = Blindado
-                         }
-

@@ -44,11 +44,14 @@ getBg (Just t) limagens = case tipoProjetil (projetilTorre t) of
 
 -- | Função principal para desenhar o mapa
 desenha :: ImmutableTowers -> Picture
-desenha ImmutableTowers {menu = MenuInicial Jogar, imagens = limagens} = getImagem "menujogar" limagens
-desenha ImmutableTowers {menu = MenuInicial Sair, imagens = limagens} = getImagem "menusair" limagens
+desenha ImmutableTowers {menu = MenuInicial, imagens = limagens} = getImagem "menujogar" limagens
+desenha it@(ImmutableTowers {menu = ModoJogo EscolherNivel, imagens = limagens}) = case nivelAtual it of 
+                                                                                    1 -> getImagem "menuniveis1" limagens
+                                                                                    2 -> getImagem "menuniveis2" limagens
+                                                                                    _ -> getImagem "menuniveis3" limagens
 desenha ImmutableTowers {menu = ModoJogo GanhouJogo, imagens = limagens} = getImagem "menuganhou" limagens
 desenha ImmutableTowers {menu = ModoJogo PerdeuJogo, imagens = limagens} = getImagem "menuperdeu" limagens
-desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens torreSelecionada infoTorre)
+desenha (ImmutableTowers Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens torreSelecionada infoTorre _)
             =  Pictures [getBg torreSelecionada limagens,
                        (Translate (-440) (385) $ Pictures $ [desenhaMapa picTerrenos mapa] ++ [desenhaBase picBase posbase] ++ (map (desenhaTorres picTorres) lpostiposTorres) ++ (map (desenhaPortais picPortal) lposportais) ++ (map (desenhaInimigo picInimigos) dadosInimigos)),
                          picVida,
@@ -64,17 +67,10 @@ desenha (ImmutableTowers _ Jogo {baseJogo = base, portaisJogo = lportais, torres
                 picCreditos = desenhaCreditos (creditosBase base)
                 picInimigos = getPicInimigos limagens
                 picTorres = filter (\(s,_) -> s == "torrefogo" || s == "torreresina" || s == "torregelo") limagens
+                picTerrenos = filter (\(s,_) -> s == "terrenoagua" || s == "terrenorelva" || s == "terrenoterra") limagens
                 picPortal = getImagem "portal" limagens
                 picBase = getImagem "base" limagens
-                picTerrenos = filter (\(s,_) -> s == "terrenoagua" || s == "terrenorelva" || s == "terrenoterra") limagens
                 picMelhoriasTorres = getMelhoriasTorres limagens
-
--- | Função que zipa 3 listas em tuplas
-zipThree :: [a] -> [b] -> [c] -> [(a,b,c)]
-zipThree [] _ _ = []
-zipThree _ [] _ = []
-zipThree _ _ [] = []
-zipThree (x:xs) (y:ys) (z:zs) = (x,y,z) : zipThree xs ys zs
 
 -- | Função que desenha a vida da base
 desenhaVida :: Float -> Picture
@@ -179,9 +175,49 @@ desenhaInfoTorre picsMelhoriasTorres (Just (Torre {posicaoTorre = (x,y), alcance
         tipo = tipoProjetil projetil
         imagem = getImagem ("melhoria" ++ (show tipo) ++ (show nivel)) picsMelhoriasTorres
 
--- | Mapa do jogo
+-- | Mapa do jogo (nível 1)
 mapa01 :: Mapa
 mapa01 =
+    [ [a,a,a,a,a,a,a,a,a,a,a],
+      [r,r,r,a,a,a,r,r,r,r,a],
+      [t,t,t,r,a,a,r,t,t,t,r],
+      [r,r,t,r,a,r,r,t,r,t,r],
+      [a,r,t,r,r,r,t,t,r,t,r],
+      [a,r,t,t,r,t,t,r,r,t,r],
+      [a,r,r,t,r,t,r,r,t,t,r],
+      [a,r,r,t,t,t,r,r,t,a,a],
+      [a,a,r,r,r,r,r,r,t,t,t],
+      [a,a,a,a,a,a,a,r,r,r,r],
+      [a,a,a,a,a,a,a,a,a,a,a]
+    ]
+  where
+    t = Terra
+    r = Relva
+    a = Agua
+
+-- | Mapa do jogo (nível 2)
+mapa02 :: Mapa
+mapa02 =
+    [ [a,a,a,a,a,r,r,r,r,r,r],
+      [a,t,t,t,t,t,t,t,t,t,t],
+      [a,a,a,a,a,r,r,r,r,r,t],
+      [t,t,t,t,t,t,t,t,t,t,t],
+      [t,r,r,a,r,r,a,r,r,r,r],
+      [t,t,t,t,t,t,t,t,t,t,t],
+      [r,r,r,a,r,r,a,r,r,r,t],
+      [t,t,t,t,t,t,t,t,t,t,t],
+      [t,r,r,r,r,r,a,a,a,a,a],
+      [t,t,t,t,t,t,t,t,t,t,a],
+      [r,r,r,r,r,r,a,a,a,a,a]
+    ]
+  where
+    t = Terra
+    r = Relva
+    a = Agua
+
+-- | Mapa do jogo (nível 3)
+mapa03 :: Mapa
+mapa03 =
     [ [a,a,a,a,a,a,a,a,a,a,a],
       [r,r,r,r,r,r,r,r,r,a,a],
       [r,t,t,t,t,t,t,t,r,a,a],

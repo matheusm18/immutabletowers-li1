@@ -70,7 +70,7 @@ data Duracao
   deriving (Eq, Show, Ord)
 
 -- | Nível de uma torre.
-type Nivel = Int
+type NivelTorre = Int
 
 -- | Torre que dispara projéteis contra inimigos.
 data Torre = Torre
@@ -89,7 +89,7 @@ data Torre = Torre
     -- | Efeito secundário associado ao tipo de projétil da torre.
     projetilTorre :: Projetil,
     -- | Quanto maior o nível mais forte é a torre.
-    nivelTorre :: Nivel
+    nivelTorre :: NivelTorre
   }
   deriving (Eq,Show)
 
@@ -101,7 +101,7 @@ type Loja = [(Creditos, Torre)]
 Este tipo representa a lista dos preços dos upgrades de uma torre (depende do nível e do tipo de projétil da torre).
 
 Se o Nível for 1, o primeiro elemento da tupla é o preço em créditos para dar upgrade do nível 1 para o 2 -}
-type PrecoUpgrades = [(Creditos,Nivel,TipoProjetil)]
+type PrecoUpgrades = [(Creditos,NivelTorre,TipoProjetil)]
 
 -- | Tipo de projétil disparado por uma torre.
 data TipoProjetil = Fogo | Gelo | Resina

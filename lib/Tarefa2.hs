@@ -88,7 +88,6 @@ atualizaProjeteis pinc (p:rp) =
 
 {-| Função que dada uma torre e o inimigo que será atingido pela torre, retorna o inimigo
 com a vida atualizada e com a lista de projetéis atualizada.
-
 -}
 
 atingeInimigo :: Torre -> Inimigo -> Inimigo
