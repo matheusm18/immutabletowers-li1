@@ -15,9 +15,9 @@ getImagem s lista = case lookup s lista of
     Just p -> p
     Nothing -> Blank
 
--- | Função auxiliar que já retorna a posição do inimigo convertida para o gloss e a lista de projeteis do inimigo
-getPosDirProjetil :: Inimigo -> (Posicao, Direcao, [Projetil])
-getPosDirProjetil i = (invertePos (posicaoInimigo i),direcaoInimigo i, projeteisInimigo i)
+-- | Função auxiliar que já retorna a posição do inimigo convertida para o gloss, direção, tipo e a lista de projeteis do inimigo
+getPosDirProjetil :: Inimigo -> (Posicao, Direcao, [Projetil], TipoInimigo)
+getPosDirProjetil i = (invertePos (posicaoInimigo i),direcaoInimigo i, projeteisInimigo i, tipoInimigo i)
 
 -- | Função auxiliar que retorna a lista de imagens dos inimigos
 getPicInimigos :: [(String,Picture)] -> [(String,Picture)]
@@ -25,7 +25,8 @@ getPicInimigos imagens =
     filter (\(s,_) -> s == "inimigoNorte" || s == "inimigofogoNorte" || s == "inimigoresinaNorte" || s == "inimigogeloNorte" || 
                       s == "inimigoSul" || s == "inimigofogoSul" || s == "inimigoresinaSul" || s == "inimigogeloSul" ||
                       s == "inimigoEste" || s == "inimigofogoEste" || s == "inimigoresinaEste" || s == "inimigogeloEste" || 
-                      s == "inimigoOeste" || s == "inimigofogoOeste" ||  s == "inimigoresinaOeste" || s == "inimigogeloOeste") imagens
+                      s == "inimigoOeste" || s == "inimigofogoOeste" ||  s == "inimigoresinaOeste" || s == "inimigogeloOeste" ||
+                      s == "blindadoNorte" || s == "blindadoSul" || s == "blindadoEste" || s == "blindadoOeste") imagens
 
 -- | Função auxiliar que retorna a lista de imagens das melhorias das torres
 getMelhoriasTorres :: [(String,Picture)] -> [(String,Picture)]
@@ -119,19 +120,22 @@ h :: Float
 h = 80
 
 -- | Função que desenha o inimigo de acordo com a imagem que ele deve ter (depende dos projéteis ativos)
-desenhaInimigo :: [(String,Picture)] -> (Posicao,Direcao,[Projetil]) -> Picture
-desenhaInimigo picinimigos ((x,y),dir,lp) =
+desenhaInimigo :: [(String,Picture)] -> (Posicao,Direcao,[Projetil], TipoInimigo) -> Picture
+desenhaInimigo picinimigos ((x,y),dir,lp, tipoInim) =
     let inimigoGelo = getImagem ("inimigogelo" ++ (show dir)) picinimigos
         inimigoFogo = getImagem ("inimigofogo" ++ (show dir)) picinimigos
         inimigoResina = getImagem ("inimigoresina" ++ (show dir)) picinimigos
         inimigo = getImagem ("inimigo" ++ (show dir)) picinimigos
-    in case lp of 
-        [] -> desenhaInimigoAux inimigo (x,y)
-        _ -> if verificaGelo lp
-             then desenhaInimigoAux inimigoGelo (x,y)
-             else if verificaFogo lp
-             then desenhaInimigoAux inimigoFogo (x,y)
-             else desenhaInimigoAux inimigoResina (x,y)
+        blindado = getImagem ("blindado" ++ (show dir)) picinimigos
+    in if tipoInim == Normal then 
+        case lp of 
+         [] -> desenhaInimigoAux inimigo (x,y)
+         _ -> if verificaGelo lp
+              then desenhaInimigoAux inimigoGelo (x,y)
+              else if verificaFogo lp
+              then desenhaInimigoAux inimigoFogo (x,y)
+              else desenhaInimigoAux inimigoResina (x,y)
+       else desenhaInimigoAux blindado (x,y)
 
 -- | Função auxiliar para a desenhaInimigo que faz o translate (posicionar o inimigo na posição certa) e o scale da imagem (passar de 360 px para 80 px)
 desenhaInimigoAux :: Picture -> Posicao -> Picture

@@ -92,8 +92,10 @@ com a vida atualizada e com a lista de projetéis atualizada.
 -}
 
 atingeInimigo :: Torre -> Inimigo -> Inimigo
-atingeInimigo Torre {danoTorre = dano, projetilTorre = projetil} i = 
+atingeInimigo Torre {danoTorre = dano, projetilTorre = projetil} i@(Inimigo {tipoInimigo = Normal}) = 
     i {vidaInimigo = vidaInimigo i - dano, projeteisInimigo = atualizaProjeteis projetil (projeteisInimigo i)}
+atingeInimigo Torre {danoTorre = dano} i@(Inimigo {tipoInimigo = Blindado}) =
+    i {vidaInimigo = vidaInimigo i - dano, projeteisInimigo = []}
 
 {-| Função que dada uma torre e a lista de inimigos ativos no jogo, 
 retorna uma tupla com o portal atualizado após a ativação do inimigo e a nova lista de inimigos ativos no jogo (adição do inimigo ativado) 

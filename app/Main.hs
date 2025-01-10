@@ -54,6 +54,10 @@ imagensLoad = do
     inimigofogoSul <- loadBMP "imgs/SoldadoFogoSul.bmp"
     inimigoresinaSul <- loadBMP "imgs/SoldadoResinaSul.bmp"
     inimigogeloSul <- loadBMP "imgs/SoldadoGeloSul.bmp"
+    blindadoNorte <- loadBMP "imgs/blindadoNorte.bmp"
+    blindadoSul <- loadBMP "imgs/blindadoSul.bmp"
+    blindadoEste <- loadBMP "imgs/blindadoEste.bmp"
+    blindadoOeste <- loadBMP "imgs/blindadoOeste.bmp"
     torrefogo <- loadBMP "imgs/TorreFogo.bmp"
     torreresina <- loadBMP "imgs/TorreResina.bmp"
     torregelo <- loadBMP "imgs/TorreGelo.bmp"
@@ -98,6 +102,10 @@ imagensLoad = do
            ("inimigofogoSul", inimigofogoSul),
            ("inimigoresinaSul", inimigoresinaSul),
            ("inimigogeloSul", inimigogeloSul),
+           ("blindadoNorte", blindadoNorte),
+           ("blindadoSul", blindadoSul),
+           ("blindadoEste", blindadoEste),
+           ("blindadoOeste", blindadoOeste),
            ("torrefogo", torrefogo),
            ("torreresina", torreresina),
            ("torregelo", torregelo),
@@ -399,7 +407,7 @@ jogoInicio = Jogo {
             },
             nivelTorre = 1
         }),
-        (50, Torre {
+        (40, Torre {
             posicaoTorre = (0, 0),
             danoTorre = 30,
             alcanceTorre = 1.5,
@@ -416,12 +424,12 @@ jogoInicio = Jogo {
             posicaoTorre = (0, 0),
             danoTorre = 10,
             alcanceTorre = 2.1,
-            rajadaTorre = 2,
+            rajadaTorre = 3,
             cicloTorre = 2,
             tempoTorre = 0,
             projetilTorre = Projetil {
                 tipoProjetil = Resina,
-                duracaoProjetil = Finita 3
+                duracaoProjetil = Finita 2.1
             },
             nivelTorre = 1
         })
@@ -439,39 +447,47 @@ jogoInicio = Jogo {
     ]
 }
 
+inimigoFase1Portal1 :: Inimigo
 inimigoFase1Portal1 = Inimigo {posicaoInimigo = (0.5, 4.5),
                           direcaoInimigo = Este,
                           vidaInimigo = 100,
                           velocidadeInimigo = 1,
                           ataqueInimigo = 10,
                           butimInimigo = 25,
-                          projeteisInimigo = []
+                          projeteisInimigo = [],
+                          tipoInimigo = Normal
                          }
 
+inimigoFase2Portal1 :: Inimigo
 inimigoFase2Portal1 = Inimigo {posicaoInimigo = (0.5, 4.5),
                           direcaoInimigo = Este,
                           vidaInimigo = 150,
                           velocidadeInimigo = 1,
                           ataqueInimigo = 10,
                           butimInimigo = 25,
-                          projeteisInimigo = []
+                          projeteisInimigo = [],
+                          tipoInimigo = Normal
                          }
 
+inimigoFase1Portal2 :: Inimigo
 inimigoFase1Portal2 = Inimigo {posicaoInimigo = (0.5, 6.5),
                           direcaoInimigo = Este,
                           vidaInimigo = 100,
                           velocidadeInimigo = 1,
                           ataqueInimigo = 10,
                           butimInimigo = 25,
-                          projeteisInimigo = []
+                          projeteisInimigo = [],
+                          tipoInimigo = Normal
                          }
 
+inimigoFase2Portal2 :: Inimigo
 inimigoFase2Portal2 = Inimigo {posicaoInimigo = (0.5, 6.5),
                           direcaoInimigo = Este,
                           vidaInimigo = 150,
                           velocidadeInimigo = 1,
                           ataqueInimigo = 10,
                           butimInimigo = 25,
-                          projeteisInimigo = []
+                          projeteisInimigo = [],
+                          tipoInimigo = Blindado
                          }
 

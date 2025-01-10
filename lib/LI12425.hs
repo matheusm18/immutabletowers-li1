@@ -15,7 +15,7 @@ module LI12425 (
     -- ** Mapas
     Mapa, Terreno(..),
     -- ** Entidades
-    Base(..), Torre(..), Portal(..), Inimigo(..), TipoProjetil(..), Projetil(..),
+    Base(..), Torre(..), Portal(..), Inimigo(..), TipoProjetil(..), Projetil(..),TipoInimigo(..),
     -- ** Jogo
     Jogo(..), Onda(..), Loja, PrecoUpgrades,
     -- * Funções auxiliares
@@ -124,6 +124,9 @@ data Direcao
   | Oeste
   deriving (Eq, Show)
 
+data TipoInimigo = Normal | Blindado
+  deriving (Eq, Show)
+
 -- | Inimigo que se move em direção à base do jogador.
 data Inimigo = Inimigo
   { -- | Posição do inimigo no mapa.
@@ -139,7 +142,9 @@ data Inimigo = Inimigo
     -- | Créditos que o jogador recebe ao derrotar o inimigo.
     butimInimigo :: Creditos,
     -- | Efeitos secundários ativos no inimigo.
-    projeteisInimigo :: [Projetil]
+    projeteisInimigo :: [Projetil],
+    -- | Tipo do inimigo.
+    tipoInimigo :: TipoInimigo
   }
   deriving (Show,Eq)
 

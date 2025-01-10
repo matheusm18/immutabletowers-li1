@@ -139,7 +139,8 @@ moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocid
     = if any (\proj -> tipoProjetil proj == Gelo) lprojeteis
       then (direcao,(x,y))
       else
-        let velocidadeAtual = if any (\proj -> tipoProjetil proj == Resina) lprojeteis then velocidade/2 else velocidade
+        let fatorReducao = 0.5 -- ^ fator de reduçãoo de velocidade para a resina
+            velocidadeAtual = if any (\proj -> tipoProjetil proj == Resina) lprojeteis then velocidade*fatorReducao else velocidade
             caminho = map (\(x,y) -> (fromIntegral (floor x),fromIntegral(floor y))) (fromJust(encontrarCaminho (getPosCentroQuadrado (x,y)) (posbase) mapa)) -- ^ passa o caminho para as posições "gerais"
             posicoesvalidas = getPosicoesValidas (getPosCentroQuadrado (x,y)) direcao mapa -- ^ com a posicaoCentroQuadrado não buga mais o movimento
         in case direcao of

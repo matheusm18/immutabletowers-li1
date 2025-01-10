@@ -112,7 +112,8 @@ inimigo01 = Inimigo { posicaoInimigo = (0.5, 0.5),
                       velocidadeInimigo = 2,
                       ataqueInimigo = 20,
                       butimInimigo = 25,
-                      projeteisInimigo = []
+                      projeteisInimigo = [],
+                      tipoInimigo = Normal
                     }
 
 inimigo02 :: Inimigo
@@ -122,7 +123,8 @@ inimigo02 = Inimigo { posicaoInimigo = (0.5, 2.5),
                       velocidadeInimigo = 1,
                       ataqueInimigo = 5,
                       butimInimigo = 10,
-                      projeteisInimigo = []
+                      projeteisInimigo = [],
+                      tipoInimigo = Normal
                     }
 
 inimigo03 :: Inimigo
@@ -132,7 +134,8 @@ inimigo03 = Inimigo { posicaoInimigo = (0.5, 2.5),
                       velocidadeInimigo = 2.5,
                       ataqueInimigo = 10,
                       butimInimigo = 15,
-                      projeteisInimigo = []
+                      projeteisInimigo = [],
+                      tipoInimigo = Normal
                     }
 
 inimigo04 :: Inimigo
@@ -142,7 +145,8 @@ inimigo04 = Inimigo { posicaoInimigo = (3.5, 8.5),
                       velocidadeInimigo = 3,
                       ataqueInimigo = 15,
                       butimInimigo = 20,
-                      projeteisInimigo = []
+                      projeteisInimigo = [],
+                      tipoInimigo = Normal
                     }
 
 inimigoEmJogo01 :: Inimigo
@@ -152,7 +156,8 @@ inimigoEmJogo01 = Inimigo { posicaoInimigo = (1.5, 5.5),
                             velocidadeInimigo = 2,
                             ataqueInimigo = 20,
                             butimInimigo = 25,
-                            projeteisInimigo = []
+                            projeteisInimigo = [],
+                            tipoInimigo = Normal
                           }
 
 inimigoEmJogo02 :: Inimigo
@@ -162,7 +167,8 @@ inimigoEmJogo02 = Inimigo { posicaoInimigo = (8.5, 6.5),
                             velocidadeInimigo = 1,
                             ataqueInimigo = 20,
                             butimInimigo = 25,
-                            projeteisInimigo = []
+                            projeteisInimigo = [],
+                            tipoInimigo = Normal
                           }
 -- Ondas:
 

@@ -44,12 +44,13 @@ reageMelhoriaTorre it = it
 Isto é, reage quando o jogador clica dentro de uma áreas das torres da loja ou então se clica dentro do mapa (para posicionar a torreSelecionada)
 
 -}
+
 reageCompraTorre :: (Float,Float) -> ImmutableTowers -> ImmutableTowers
 reageCompraTorre posMouse it@(ImmutableTowers {jogoAtual = jogo, menu = ModoJogo EmAndamento}) =
     case torreSelecionadaLoja it of
-            Nothing -> selecionarTorre posMouse it
+            Nothing -> selecionarTorreLoja posMouse it
             Just torre -> if clicouDentro torreGeloArea posMouse || clicouDentro torreFogoArea posMouse || clicouDentro torreResinaArea posMouse
-                          then selecionarTorre posMouse it -- ^ deseleciona a torre selecionada
+                          then selecionarTorreLoja posMouse it -- ^ deseleciona a torre selecionada
                           else if podeAdicionarTorre (xc,yc) it && podeComprarTorre it
                           then it {torreSelecionadaLoja = Nothing,jogoAtual = jogo {torresJogo = torresJogo jogo ++ [torrenova], baseJogo = base {creditosBase = creditosBase base - custotorre}}}
                           else it
@@ -144,9 +145,9 @@ podeComprarMelhoriaTorre it = case infoTorre it of
                                        then False
                                        else creditosBase (baseJogo (jogoAtual it)) >= getCustoMelhoriaTorre it torre
 
--- | Função que seleciona a torre que o jogador clicou (ou deseleciona se já estava selecionada)
-selecionarTorre :: (Float, Float) -> ImmutableTowers -> ImmutableTowers
-selecionarTorre (x, y) it
+-- | Função que seleciona a torre que o jogador clicou na loja (ou deseleciona se já estava selecionada)
+selecionarTorreLoja :: (Float, Float) -> ImmutableTowers -> ImmutableTowers
+selecionarTorreLoja (x, y) it
     | clicouDentro torreGeloArea (x, y) = if torreSelecionadaLoja it == Just torregelo 
                                           then it {torreSelecionadaLoja = Nothing} 
                                           else it {torreSelecionadaLoja = Just torregelo}
@@ -182,8 +183,7 @@ clicouEmTorre :: Posicao -> [Torre] -> Maybe Torre
 clicouEmTorre _ [] = Nothing
 clicouEmTorre posMouse (torre:resto) =
     if clicouDentro mapaArea posMouse
-    then let posicaoCliqueJogo = posEcraParaJogo posMouse
-         in if posicaoCliqueJogo == posicaoTorre torre then Just torre else clicouEmTorre posMouse resto
+    then (if (posEcraParaJogo posMouse) == posicaoTorre torre then Just torre else clicouEmTorre posMouse resto)
     else Nothing
 
 {-| Função que da upgrade a uma torre
