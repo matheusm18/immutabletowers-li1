@@ -198,17 +198,17 @@ mapa01 =
 -- | Mapa do jogo (nível 2)
 mapa02 :: Mapa
 mapa02 =
-    [ [a,a,a,a,a,r,r,r,r,r,r],
+    [ [a,a,a,r,r,r,r,r,a,a,a],
       [a,t,t,t,t,t,t,t,t,t,t],
-      [a,a,a,a,a,r,r,r,r,r,t],
+      [a,a,a,a,r,r,r,a,a,a,t],
       [t,t,t,t,t,t,t,t,t,t,t],
-      [t,r,r,a,r,r,a,r,r,r,r],
+      [t,a,r,a,a,r,a,a,r,a,a],
       [t,t,t,t,t,t,t,t,t,t,t],
-      [r,r,r,a,r,r,a,r,r,r,t],
+      [a,a,r,a,a,r,a,a,r,a,t],
       [t,t,t,t,t,t,t,t,t,t,t],
-      [t,r,r,r,r,r,a,a,a,a,a],
+      [t,a,a,a,r,r,r,a,a,a,a],
       [t,t,t,t,t,t,t,t,t,t,a],
-      [r,r,r,r,r,r,a,a,a,a,a]
+      [a,a,a,r,r,r,r,r,a,a,a]
     ]
   where
     t = Terra
