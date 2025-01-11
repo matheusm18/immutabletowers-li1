@@ -87,7 +87,7 @@ jogoInicio01 = Jogo {
             },
             nivelTorre = 1
         }),
-        (40, Torre {
+        (50, Torre {
             posicaoTorre = (0, 0),
             danoTorre = 30,
             alcanceTorre = 1.5,
@@ -259,7 +259,7 @@ jogoInicio02 = Jogo {
             },
             nivelTorre = 1
         }),
-        (40, Torre {
+        (50, Torre {
             posicaoTorre = (0, 0),
             danoTorre = 30,
             alcanceTorre = 1.5,
@@ -431,7 +431,7 @@ jogoInicio03 = Jogo {
             },
             nivelTorre = 1
         }),
-        (40, Torre {
+        (50, Torre {
             posicaoTorre = (0, 0),
             danoTorre = 30,
             alcanceTorre = 1.5,
