@@ -61,7 +61,7 @@ jogoInicio01 = Jogo {
             posicaoTorre = (0, 0),
             danoTorre = 35,
             alcanceTorre = 1.5,
-            rajadaTorre = 2,
+            rajadaTorre = 4,
             cicloTorre = 4,
             tempoTorre = 0,
             projetilTorre = Projetil {
@@ -135,40 +135,22 @@ jogoInicio02 = Jogo {
                     entradaOnda = 15.0
                 },
                 Onda {
-                    inimigosOnda = replicate 3 inimJogo2Fase2Portal1,
+                    inimigosOnda = replicate 3 inimJogo2Fase2Portal1 ++ replicate 1 inimBlinJogo2Portal1 ++ replicate 3 inimJogo2Fase2Portal1,
                     cicloOnda = 1.0,
                     tempoOnda = 1.0,
                     entradaOnda = 15.0
                 },
                 Onda {
-                    inimigosOnda = replicate 3 inimJogo2Fase2Portal1,
+                    inimigosOnda = replicate 5 inimJogo2Fase2Portal1 ++ replicate 3 inimBlinJogo2Portal1 ++ replicate 5 inimJogo2Fase2Portal1,
                     cicloOnda = 1.0,
                     tempoOnda = 1.0,
-                    entradaOnda = 8.0
+                    entradaOnda = 20.0
                 },
                 Onda {
-                    inimigosOnda = replicate 6 inimJogo2Fase2Portal1,
+                    inimigosOnda = replicate 5 inimBlinJogo2Portal1 ++ replicate 10 inimJogo2Fase2Portal1 ++ replicate 5 inimBlinJogo2Portal1,
                     cicloOnda = 1.0,
                     tempoOnda = 1.0,
-                    entradaOnda = 15.0
-                },
-                Onda {
-                    inimigosOnda = replicate 6 inimJogo2Fase2Portal1,
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 8.0
-                },
-                Onda {
-                    inimigosOnda = replicate 20 inimJogo2Fase2Portal1,
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 15.0
-                },
-                Onda {
-                    inimigosOnda = replicate 20 inimJogo2Fase2Portal1,
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 8.0
+                    entradaOnda = 20.0
                 }
             ]
         },
@@ -180,7 +162,7 @@ jogoInicio02 = Jogo {
                     cicloOnda = 1.0,
                     tempoOnda = 5.0,
                     entradaOnda = 10.0
-                },                
+                },
                 Onda {
                     inimigosOnda = replicate 4 inimJogo2Fase1Portal2,
                     cicloOnda = 1.0,
@@ -188,40 +170,22 @@ jogoInicio02 = Jogo {
                     entradaOnda = 15.0
                 },
                 Onda {
-                    inimigosOnda = replicate 3 inimJogo2Fase2Portal2,
+                    inimigosOnda = replicate 3 inimJogo2Fase2Portal2 ++ replicate 1 inimBlinJogo2Portal2 ++ replicate 3 inimJogo2Fase2Portal2,
                     cicloOnda = 1.0,
                     tempoOnda = 1.0,
                     entradaOnda = 15.0
                 },
                 Onda {
-                    inimigosOnda = replicate 3 inimJogo2Fase2Portal2,
+                    inimigosOnda = replicate 5 inimJogo2Fase2Portal2 ++ replicate 3 inimBlinJogo2Portal2 ++ replicate 5 inimJogo2Fase2Portal2,
                     cicloOnda = 1.0,
                     tempoOnda = 1.0,
-                    entradaOnda = 8.0
+                    entradaOnda = 20.0
                 },
                 Onda {
-                    inimigosOnda = replicate 6 inimJogo2Fase2Portal2,
+                    inimigosOnda = replicate 5 inimBlinJogo2Portal2 ++ replicate 10 inimJogo2Fase2Portal2 ++ replicate 5 inimBlinJogo2Portal2,
                     cicloOnda = 1.0,
                     tempoOnda = 1.0,
-                    entradaOnda = 15.0
-                },
-                Onda {
-                    inimigosOnda = replicate 6 inimJogo2Fase2Portal2,
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 8.0
-                },
-                Onda {
-                    inimigosOnda = replicate 20 inimJogo2Fase2Portal2,
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 15.0
-                },
-                Onda {
-                    inimigosOnda = replicate 20 inimJogo2Fase2Portal2,
-                    cicloOnda = 1.0,
-                    tempoOnda = 1.0,
-                    entradaOnda = 8.0
+                    entradaOnda = 20.0
                 }
                 ]}    
     ],
@@ -233,7 +197,7 @@ jogoInicio02 = Jogo {
             posicaoTorre = (0, 0),
             danoTorre = 35,
             alcanceTorre = 1.5,
-            rajadaTorre = 2,
+            rajadaTorre = 4,
             cicloTorre = 4,
             tempoTorre = 0,
             projetilTorre = Projetil {
@@ -429,7 +393,7 @@ jogoInicio03 = Jogo {
             posicaoTorre = (0, 0),
             danoTorre = 35,
             alcanceTorre = 1.5,
-            rajadaTorre = 3,
+            rajadaTorre = 4,
             cicloTorre = 4,
             tempoTorre = 0,
             projetilTorre = Projetil {
@@ -506,7 +470,7 @@ inimBlinJogo1Portal1 :: Inimigo
 inimBlinJogo1Portal1 = Inimigo {posicaoInimigo = (0.5, 2.5),
                           direcaoInimigo = Este,
                           vidaInimigo = 350,
-                          velocidadeInimigo = 0.5,
+                          velocidadeInimigo = 0.65,
                           ataqueInimigo = 30,
                           butimInimigo = 50,
                           projeteisInimigo = [],
@@ -522,27 +486,16 @@ inimJogo2Fase2Portal1 :: Inimigo
 inimJogo2Fase2Portal1 = inimJogo1Fase2Portal1 {posicaoInimigo = (1.5, 1.5)}
 
 inimJogo2Fase1Portal2 :: Inimigo
-inimJogo2Fase1Portal2 = Inimigo {posicaoInimigo = (9.5, 9.5),
-                          direcaoInimigo = Oeste,
-                          vidaInimigo = 100,
-                          velocidadeInimigo = 1,
-                          ataqueInimigo = 10,
-                          butimInimigo = 25,
-                          projeteisInimigo = [],
-                          tipoInimigo = Normal
-                         }
+inimJogo2Fase1Portal2 = inimJogo2Fase1Portal1 {posicaoInimigo = (9.5, 9.5), direcaoInimigo = Oeste}
 
 inimJogo2Fase2Portal2 :: Inimigo
-inimJogo2Fase2Portal2 = Inimigo {posicaoInimigo = (9.5, 9.5),
-                          direcaoInimigo = Oeste,
-                          vidaInimigo = 150,
-                          velocidadeInimigo = 1,
-                          ataqueInimigo = 10,
-                          butimInimigo = 25,
-                          projeteisInimigo = [],
-                          tipoInimigo = Blindado
-                         }
+inimJogo2Fase2Portal2 = inimJogo2Fase2Portal1 {posicaoInimigo = (9.5, 9.5), direcaoInimigo = Oeste}
 
+inimBlinJogo2Portal1 :: Inimigo
+inimBlinJogo2Portal1 = inimBlinJogo1Portal1 {posicaoInimigo = (1.5, 1.5)}
+
+inimBlinJogo2Portal2 :: Inimigo
+inimBlinJogo2Portal2 = inimBlinJogo1Portal1 {posicaoInimigo = (9.5, 9.5), direcaoInimigo = Oeste}
 
 -- | Inimigos para o jogo3:
 
@@ -572,7 +525,7 @@ inimBlinJogo3Portal1 :: Inimigo
 inimBlinJogo3Portal1 = Inimigo {posicaoInimigo = (0.5, 4.5),
                           direcaoInimigo = Este,
                           vidaInimigo = 350,
-                          velocidadeInimigo = 0.5,
+                          velocidadeInimigo = 0.65,
                           ataqueInimigo = 30,
                           butimInimigo = 50,
                           projeteisInimigo = [],
@@ -605,7 +558,7 @@ inimBlinJogo3Portal2 :: Inimigo
 inimBlinJogo3Portal2 = Inimigo {posicaoInimigo = (0.5, 6.5),
                           direcaoInimigo = Este,
                           vidaInimigo = 350,
-                          velocidadeInimigo = 0.5,
+                          velocidadeInimigo = 0.65,
                           ataqueInimigo = 30,
                           butimInimigo = 50,
                           projeteisInimigo = [],
