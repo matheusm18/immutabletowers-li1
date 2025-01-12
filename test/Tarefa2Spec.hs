@@ -66,7 +66,7 @@ testeAtualizaProjeteis = TestList
 testeAtingeInimigo :: Test
 testeAtingeInimigo = TestList
   [ "atingeInimigo torre01 inimigoEmJogo01" ~: inimigoEmJogo01 {vidaInimigo = 75, projeteisInimigo = [Projetil Fogo (Finita 5)]} ~=? atingeInimigo torre01 inimigoEmJogo01,
-    "atingeInimigo torre03 inimigoEmJogo02" ~: inimigoEmJogo02 {vidaInimigo = 110, projeteisInimigo = [Projetil Resina (Finita 10)], velocidadeInimigo = 0.5} ~=? atingeInimigo torre03 inimigoEmJogo02
+    "atingeInimigo torre03 inimigoEmJogo02" ~: inimigoEmJogo02 {vidaInimigo = 110, projeteisInimigo = [Projetil Resina (Finita 10)]} ~=? atingeInimigo torre03 inimigoEmJogo02
   ]
 
 -- | Testes para a função ativaInimigo

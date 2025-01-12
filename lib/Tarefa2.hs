@@ -11,12 +11,23 @@ module Tarefa2 where
 
 import LI12425
 
--- | Função auxiliar que calcula a distância entre duas posições.
+{-| Função auxiliar que calcula a distância entre duas posições.
+
+== Exemplos:
+
+>>> dist (0,0) (0,2)
+2.0
+
+>>> dist (0,0) (3,4)
+5.0
+-}
+
 dist :: Posicao -> Posicao -> Float
 dist (x1,y1) (x2,y2) = sqrt ((x2-x1)^2 + (y2-y1)^2)
 
 {-| Função auxiliar que recebe uma torre e a lista de inimigos presentes no jogo e 
-retorna a lista de inimigos que estão no alcance da torre. -}
+retorna a lista de inimigos que estão no alcance da torre. 
+-}
 
 inimigosNoAlcance :: Torre -> [Inimigo] -> [Inimigo]
 inimigosNoAlcance _ [] = []
@@ -24,26 +35,74 @@ inimigosNoAlcance torre inimigos = filter (\i -> dist (x,y) (posicaoInimigo i) <
     where (x,y) = posicaoTorre torre
           r = alcanceTorre torre
 
--- | Função auxiliar que verifica se há projéteis do tipo Gelo na lista de projéteis.
+{-| Função auxiliar que verifica se há projéteis do tipo Gelo na lista de projéteis.
+
+== Exemplos:
+
+>>> verificaGelo [Projetil Resina (Finita 5),Projetil Gelo (Finita 3)]
+True
+
+>>> verificaGelo []
+False
+-}
+
 verificaGelo :: [Projetil] -> Bool
 verificaGelo listaprojetil = any (\p -> tipoProjetil p == Gelo) listaprojetil
 
+{-| Função auxiliar que verifica se há projéteis do tipo Fogo na lista de projéteis.
 
--- | Função auxiliar que verifica se há projéteis do tipo Fogo na lista de projéteis.
+== Exemplos:
+
+>>> verificaFogo [Projetil Fogo (Finita 5)]
+True
+
+>>> verificaFogo [Projetil Gelo (Finita 3)]
+False
+-}
+
 verificaFogo :: [Projetil] -> Bool
 verificaFogo listaprojetil = any (\p -> tipoProjetil p == Fogo) listaprojetil
 
+{-| Função auxiliar que verifica se há projéteis do tipo Resina na lista de projéteis.
 
--- | Função auxiliar que verifica se há projéteis do tipo Resina na lista de projéteis.
+== Exemplos:
+
+>>> verificaResina [Projetil Gelo (Finita 3), Projetil Resina (Finita 5)]
+True
+
+>>> verificaResina [Projetil Fogo (Finita 5)]
+False
+-}
+
 verificaResina :: [Projetil] -> Bool
 verificaResina listaprojetil = any (\p -> tipoProjetil p == Resina) listaprojetil
 
--- | Função auxiliar que dobra a duração de um projétil.
+{-| Função auxiliar que dobra a duração de um projétil.
+
+== Exemplos:
+
+>>> dobraDuracao (Projetil Fogo (Finita 5))
+Finita 10
+
+>>> dobraDuracao (Projetil Gelo Infinita)
+Infinita
+-}
+
 dobraDuracao :: Projetil -> Duracao
 dobraDuracao (Projetil _ Infinita) = Infinita
 dobraDuracao (Projetil _ (Finita d)) = Finita (2*d)
 
--- | Função auxiliar que soma a duração de dois projéteis.
+{-| Função auxiliar que soma a duração de dois projéteis.
+
+== Exemplos:
+
+>>> somaDuracao (Projetil Fogo Infinita) (Projetil Fogo (Finita 3))
+Infinita
+
+>>> somaDuracao (Projetil Gelo (Finita 3)) (Projetil Gelo (Finita 5))
+Finita 8
+-}
+
 somaDuracao :: Projetil -> Projetil -> Duracao
 somaDuracao (Projetil _ Infinita) (Projetil _ _ ) = Infinita
 somaDuracao (Projetil _ _) (Projetil _ Infinita) = Infinita
@@ -59,6 +118,14 @@ A lista de projetéis contém no máximo 2 elementos, as combinações possiveis
 * Gelo
 * Resina
 * Resina e Gelo
+
+== Exemplos:
+
+>>> atualizaProjeteis (Projetil Fogo (Finita 5)) [Projetil Resina (Finita 10)]
+[Projetil Fogo (Finita 10)]
+
+>>> atualizaProjeteis (Projetil Fogo (Finita 5)) [Projetil Resina (Finita 10), Projetil Gelo (Finita 3)]
+[Projetil Resina (Finita 10)]
 -}
 
 atualizaProjeteis :: Projetil -> [Projetil] -> [Projetil]
@@ -97,7 +164,7 @@ atingeInimigo Torre {danoTorre = dano} i@(Inimigo {tipoInimigo = Blindado}) =
     i {vidaInimigo = vidaInimigo i - dano, projeteisInimigo = []}
 
 {-| Função que dada uma torre e a lista de inimigos ativos no jogo, 
-retorna uma tupla com o portal atualizado após a ativação do inimigo e a nova lista de inimigos ativos no jogo (adição do inimigo ativado) 
+retorna uma tupla com o portal atualizado após a ativação do inimigo e a nova lista de inimigos ativos no jogo (adição do inimigo ativado)
 -}
 
 ativaInimigo :: Portal -> [Inimigo] -> (Portal, [Inimigo])

@@ -54,7 +54,16 @@ atualizaTorres t torres inimigos = foldl atualizaAux ([], inimigos) torres
         | otherwise = let torreAtualizada = torre { tempoTorre = max 0 (tempoTorre torre - t) }
                       in (torreAtualizada : acctorres, accinimigos)                          
 
--- | Função que atualiza a vida de um inimigo de acordo com os projeteis ativos.
+{-| Função que atualiza a vida de um inimigo de acordo com os projeteis ativos.
+
+== Exemplos:
+
+>>> atualizaVidaProjeteis (Inimigo {vidaInimigo = 100, projeteisInimigo = [Projetil {duracaoProjetil = Finita 5, tipoProjetil = Fogo}]})
+100 - (1/30)
+
+>>> atualizaVidaProjeteis (Inimigo {vidaInimigo = 75, projeteisInimigo = [Projetil {duracaoProjetil = Finita 3, tipoProjetil = Gelo}]})
+75
+-}
 atualizaVidaProjeteis :: Inimigo -> Float
 atualizaVidaProjeteis Inimigo {vidaInimigo = vida, projeteisInimigo = lprojeteis}
     = if (any (\proj -> tipoProjetil proj == Fogo) lprojeteis)
@@ -64,6 +73,14 @@ atualizaVidaProjeteis Inimigo {vidaInimigo = vida, projeteisInimigo = lprojeteis
 {-| Função para dar floor nas componentes x e y das posições para obter a "posição geral"
 
 Como sabemos, na matriz toda posição em que o x pertence a [0,1] e o y pertence a [0,1] é a posição (0,0) da matriz, essa função acha essa posição "geral" da matriz.
+
+== Exemplos:
+
+>>> floorPosicao (0.5,0.5)
+(0,0)
+
+>>> floorPosicao (1.5,2.5)
+(1,2)
 -}
 
 floorPosicao :: Posicao -> (Int, Int)
@@ -72,8 +89,8 @@ floorPosicao (x, y) = (floor x,floor y)
 {-| Função que encontra o caminho mais curto entre as duas posições (semelhante a função da Tarefa 1)
 
 Para essa função funcionar corretamente precisamos dar as posições do centro do quadrado da posição inicial e final.
-
 -}
+
 encontrarCaminho :: Posicao -> Posicao -> Mapa -> Maybe [Posicao]
 encontrarCaminho posinicial posfinal mapa = encontrarCaminhoAux [[posinicial]] []
   where
@@ -102,7 +119,6 @@ getPosicoesValidas (x,y) dir mapa =
 
 A primeira lista é a lista das tuplas de posições e direções válidas para o inimigo se mover.
 A segunda lista é a lista de posições do caminho que o inimigo deve seguir.
-
 -}
 
 escolheDirecao :: [(Posicao,Direcao)] -> [Posicao] -> Maybe Direcao
@@ -128,6 +144,14 @@ o inimigo deveria ir pra Sul mas a função getPosicoesValida retornava
 tanto a parte do Norte desse mesmo quadrado quanto a posicao imediatamente em baixo, o que causava bug.
 
 Ao chamar a função posicaoCentroQuadrado para a posicao (x,y) que queremos usar na getPosicoesValidas, a moveInimigo funciona.
+
+== Exemplos:
+
+>>> getPosCentroQuadrado (9.0,4.75)
+(9.5,4.5)
+
+>>> getPosCentroQuadrado (0.0,1.0)
+(0.5,1.5)
 -}
 
 getPosCentroQuadrado :: Posicao -> Posicao
@@ -160,14 +184,34 @@ moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocid
                      then (direcao,(x-(velocidadeAtual*t),y))
                      else (fromJust (escolheDirecao posicoesvalidas caminho), (x,y))
 
--- | Função que atualiza a duração de um projétil com o passar do tempo.
+{-| Função que atualiza a duração de um projétil com o passar do tempo.
+
+== Exemplos:
+
+>>> atualizaDurProjetil 3 (Projetil Fogo (Finita 5))
+Projetil Fogo (Finita 2)
+
+>>> atualizaDurProjetil 1 (Projetil Gelo Infinita)
+Projetil Gelo Infinita
+-}
+
 atualizaDurProjetil :: Tempo -> Projetil -> Projetil
 atualizaDurProjetil _ proj@(Projetil {duracaoProjetil = Infinita}) = proj
 atualizaDurProjetil t Projetil {duracaoProjetil = Finita d, tipoProjetil = tp} 
     = if (d-t) >= 0 then Projetil {duracaoProjetil = Finita (d-t), tipoProjetil = tp}
       else Projetil {duracaoProjetil = Finita 0, tipoProjetil = tp}
 
--- | Função que verifica se a duração de um projétil expirou
+{-| Função que verifica se a duração de um projétil expirou
+
+== Exemplos:
+
+>>> duracaoExpirou (Projetil Fogo (Finita 0))
+True
+
+>>> duracaoExpirou (Projetil Gelo (Finita 5))
+False
+-}
+
 duracaoExpirou :: Projetil -> Bool
 duracaoExpirou Projetil {duracaoProjetil = Finita 0} = True
 duracaoExpirou _ = False
@@ -192,19 +236,48 @@ atualizaInimigos t mapa base inimigos =
         butim = getButim inimigosatualizados
     in (filter (\i -> vidaInimigo i > 0 && dist(posicaoInimigo i) (posicaoBase base) > 0.35) inimigosatualizados, danobase, butim)
 
--- | Função auxiliar que retorna o dano que os inimigos que chegaram a base causaram a ela.
+{-| Função auxiliar que retorna o dano que os inimigos que chegaram a base causaram a ela.
+
+== Exemplos:
+
+>>> getDanoNaBase [Inimigo {posicaoInimigo = (0.5,0.5), vidaInimigo = 100, ataqueInimigo = 10}] (Base {vidaBase = 250, posicaoBase = (0.5,0.5), creditosBase = 150})
+Base {vidaBase = 240, posicaoBase = (0.5,0.5), creditosBase = 150}
+
+>>> getDanoNaBase [] (Base {vidaBase = 100, posicaoBase = (7.5,5.5), creditosBase = 150})
+0
+-}
+
 getDanoNaBase :: [Inimigo] -> Base -> Float
 getDanoNaBase inimigos base = danobase
     where inimigosbase = filter (\i -> dist (posicaoInimigo i) (posicaoBase base) <= 0.35) inimigos -- ^ comparar as posições estava a dar erro, então optamos por <= 0.35
           danobase = sum (map (\i -> ataqueInimigo i) inimigosbase)
 
--- | Função auxiliar que retorna os créditos que os inimigos mortos deram a base.
+{-| Função auxiliar que retorna os créditos que os inimigos mortos deram a base.
+
+== Exemplos:
+
+>>> getButim [Inimigo {vidaInimigo = 0, butimInimigo = 50}, Inimigo {vidaInimigo = 0, butimInimigo = 100}]
+150
+
+>>> getButim [Inimigo {vidaInimigo = 100, butimInimigo = 25}]
+0
+-}
+
 getButim :: [Inimigo] -> Creditos
 getButim inimigos = butim
     where inimigosmortos = filter (\i -> vidaInimigo i <= 0) inimigos
           butim = sum (map (\i -> butimInimigo i) inimigosmortos)
 
--- | Função que atualiza a base, i.e, a vida da base e os créditos da base.
+{-| Função que atualiza a base, i.e, a vida da base e os créditos da base.
+
+== Exemplos:
+>>> atualizaBase 1 (Base {vidaBase = 250, posicaoBase = (5.5,4.5), creditosBase = 150}) 20 50
+Base {vidaBase = 230, posicaoBase = (5.5,4.5), creditosBase = 200}
+
+>>> atualizaBase 1 (Base {vidaBase = 250, posicaoBase = (0.5,9.5), creditosBase = 100}) 0 0
+Base {vidaBase = 250, posicaoBase = (0.5,9.5), creditosBase = 100}
+-}
+
 atualizaBase :: Tempo -> Base -> Float -> Creditos -> Base
 atualizaBase _ base danobase butim
     = base {vidaBase = max 0 (vidaBase base - danobase), creditosBase = creditosBase base + butim}

@@ -30,9 +30,9 @@ testeAtacaInimigos = TestList
 testeAtualizaTorres :: Test
 testeAtualizaTorres = TestList
   [ "atualizaTorres 1 [torre01] [inimigoEmJogo01]" ~: ([torre01 {tempoTorre = 2}], [inimigoEmJogo01]) ~=? atualizaTorres 1 [torre01] [inimigoEmJogo01],
-    "atualizaTorres 2 [torre02, torre03] [inimigoEmJogo02]" ~: ([torre03 {tempoTorre = 5}, torre02 {tempoTorre = 0}], [inimigoEmJogo02 {vidaInimigo = 110, velocidadeInimigo = 0.5, projeteisInimigo = [Projetil Resina (Finita 10)]}]) ~=? atualizaTorres 2 [torre02, torre03] [inimigoEmJogo02]
+    "atualizaTorres 2 [torre02, torre03] [inimigoEmJogo02]" ~: ([torre03 {tempoTorre = 5}, torre02 {tempoTorre = 0}], [inimigoEmJogo02 {vidaInimigo = 110, projeteisInimigo = [Projetil Resina (Finita 10)]}]) ~=? atualizaTorres 2 [torre02, torre03] [inimigoEmJogo02]
   ]
-
+  
 -- | Testes para a função atualizaDurProjetil
 testeAtualizaDurProjetil :: Test
 testeAtualizaDurProjetil = TestList

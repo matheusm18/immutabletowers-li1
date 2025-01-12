@@ -9,7 +9,8 @@ import Tarefa3
 
 Recebe o tempo (t) que passou desde a última atualização e o jogo atual e retorna o jogo atualizado.
 
-Como implementamos um menu no jogo, esta função so atualiza o jogo se o jogador se encontrar com o jogo em andamento. -}
+Como implementamos um menu no jogo, esta função so atualiza o jogo se o jogador se encontrar com o jogo em andamento. 
+-}
 
 reageTempo :: Tempo -> ImmutableTowers -> ImmutableTowers
 reageTempo _ it@(ImmutableTowers {menu = MenuInicial}) = it

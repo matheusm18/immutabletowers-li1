@@ -9,11 +9,11 @@ import Dados
 
 {-| Função auxiliar que reage aos eventos do teclado quando o jogo está no menu inicial
 
-Decidimos adicionar este extra com o menu inicial para tornar o jogo mais intuitivo e não aparecer logo o jogo -}
+Decidimos adicionar este extra com o menu inicial para tornar o jogo mais intuitivo e não aparecer logo o jogo
+-}
 
 reageEventosMenu :: Event -> ImmutableTowers -> ImmutableTowers
-reageEventosMenu (EventKey (SpecialKey KeyRight) Down _ _) it@(ImmutableTowers {menu = ModoJogo EscolherNivel}) = it {nivelAtual = 3} -- ^ cheat code para desbloquear niveis
-reageEventosMenu (EventKey (SpecialKey KeyRight) Down _ _) it@(ImmutableTowers {jogoAtual = jogo, menu = ModoJogo EmAndamento}) = it {jogoAtual = jogo {baseJogo = (baseJogo jogo) {creditosBase = 9999}}}
+reageEventosMenu (EventKey (SpecialKey KeyInsert) Down _ _) it@(ImmutableTowers {menu = ModoJogo EscolherNivel}) = it {nivelAtual = 3} -- ^ cheat code para desbloquear niveis
 reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {menu = MenuInicial}) 
     = if clicouDentro botaoJogarMenuInicial posMouse then it {menu = ModoJogo EscolherNivel} else if clicouDentro botaoSairMenuInicial posMouse then error "Jogo fechado." else it
 reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {menu = ModoJogo EscolherNivel})
@@ -23,13 +23,13 @@ reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(Immutab
       else if clicouDentro botaoSairNiveis posMouse then it {menu = MenuInicial}
       else it
 reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {menu = ModoJogo PerdeuJogo}) = 
-    if clicouDentro botaoSairMenuPerdeuGanhou posMouse then it {menu = MenuInicial, torreSelecionadaLoja = Nothing, infoTorre = Nothing} else it
+    if clicouDentro botaoSairMenuPerdeuGanhou posMouse then it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing} else it
 reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {menu = ModoJogo GanhouJogo}) = 
    if clicouDentro botaoSairMenuPerdeuGanhou posMouse 
    then (case nivelAtual it of 
-            1 -> it {menu = MenuInicial, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = 2}
-            2 -> it {menu = MenuInicial, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = 3}
-            _ -> it {menu = MenuInicial, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = 3})
+            1 -> it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = 2}
+            2 -> it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = 3}
+            _ -> it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = 3})
    else it
 reageEventosMenu _ it = it
 
@@ -50,7 +50,6 @@ reageMelhoriaTorre it = it
 {-| Função auxiliar que reage a todos os eventos do rato relacionados a loja:
 
 Isto é, reage quando o jogador clica dentro de uma áreas das torres da loja ou então se clica dentro do mapa (para posicionar a torreSelecionada)
-
 -}
 
 reageCompraTorre :: (Float,Float) -> ImmutableTowers -> ImmutableTowers
@@ -70,6 +69,7 @@ reageCompraTorre _ it = it
 
 -- | Função principal que reage aos eventos do jogador (ações do teclado e do rato)
 reageEventos :: Event -> ImmutableTowers -> ImmutableTowers
+reageEventos (EventKey (SpecialKey KeyInsert) Down _ _) it@(ImmutableTowers {jogoAtual = jogo, menu = ModoJogo EmAndamento}) = it {jogoAtual = jogo {baseJogo = (baseJogo jogo) {creditosBase = 9999}}} -- ^ cheat code para ter créditos
 reageEventos (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo, menu = ModoJogo EmAndamento}) =
     if clicouDentro botaoMelhoriaArea posMouse
     then reageMelhoriaTorre it
@@ -91,7 +91,8 @@ reageEventos _ it = it
 
 As funções que tem "Area" são funções que retornam o (xmin,xmax,ymin,ymax) das áreas destas imagens
 
-Obtivemos as coordenadas destas áreas fazendo o trace na função reageEventos para obter a posição do clique do rato -}
+Obtivemos as coordenadas destas áreas fazendo o trace na função reageEventos para obter a posição do clique do rato 
+-}
 
 torreGeloArea :: (Float, Float, Float, Float)
 torreGeloArea = (-911, -728, 111.5, 294.5)
@@ -131,7 +132,8 @@ botaoMelhoriaArea = (608, 909, 124.5, 264.5)
 
 
 {-| Função auxiliar que recebe o (xmin,xmax,ymin,ymax) de uma área e recebe (x,y) coordenadas do clique do rato e 
-verifica se o clique do rato está dentro desta área -}
+verifica se o clique do rato está dentro desta área 
+-}
 
 clicouDentro :: (Float, Float, Float, Float) -> (Float, Float) -> Bool
 clicouDentro (xmin, xmax, ymin, ymax) (x, y) = x >= xmin && x <= xmax && y >= ymin && y <= ymax
@@ -208,7 +210,8 @@ clicouEmTorre posMouse (torre:resto) =
 
 {-| Função que da upgrade a uma torre
 
-Neste caso, nós decidimos que as melhorias para cada nível seriam estas mudanças, mas poderiam ser outras -}
+Neste caso, nós decidimos que as melhorias para cada nível seriam estas mudanças, mas poderiam ser outras 
+-}
 
 darUpgradeTorre :: Torre -> Torre
 darUpgradeTorre torre = case nivelTorre torre of

@@ -5,7 +5,7 @@ import ImmutableTowers
 import LI12425
 import Tarefa2(verificaGelo,verificaFogo)
 
--- | Função auxiliar que ajuda a converter as posições do jogo para as posições do gloss
+-- | Função auxiliar que transforma a posição para tornar o y simétrico (ajuda a converter as posições do jogo para as posições do gloss)
 invertePos :: Posicao -> Posicao
 invertePos (x,y) = (x,-y)
 
@@ -84,7 +84,8 @@ desenhaCreditos c = Pictures [Color (orange) $ Scale 0.5 0.5 $ translate 1325 (-
 
 Fazemos zip com a lista [0, -1..] porque o eixo do gloss cresce pra cima), então decidimos passar as coordenadas do y simétricas para o gloss
 
-Ou seja, a segunda linha da matriz do mapa irá corresponder a lista das posições cujo y = -2 no gloss (no jogo seria y = 2)  -}
+Ou seja, a segunda linha da matriz do mapa irá corresponder a lista das posições cujo y = -2 no gloss (no jogo seria y = 2)
+-}
 
 desenhaMapa :: [(String,Picture)] -> [[Terreno]] -> Picture
 desenhaMapa limagens mapa = Pictures $ concatMap (desenhaLinha limagens) (zip [0,-1..] mapa)

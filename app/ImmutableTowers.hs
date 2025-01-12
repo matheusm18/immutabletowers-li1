@@ -12,7 +12,7 @@ type Nivel = Int
 data ImmutableTowers = ImmutableTowers { jogoAtual :: Jogo, 
                                          menu :: Menu, 
                                          imagens :: [(String,Picture)],
-                                         torreSelecionadaLoja :: Maybe Torre,
-                                         infoTorre :: Maybe Torre,
+                                         torreSelecionadaLoja :: Maybe Torre, -- ^ torre selecionada na loja
+                                         infoTorre :: Maybe Torre, -- ^ informações sobre a torre clicada 
                                          nivelAtual :: Nivel -- ^ nivel máximo do jogo em que o inimigo pode entrar no momento
                                     }
