@@ -106,6 +106,14 @@ verificaCaminho posinicial posfinal mapa = buscaCaminho [posinicial] []
 {-| Função que verifica se existem torres ou base numa dada posição
 
 Retorna True quando não há sobreposições (torres ou base na posição), retorna False caso contrário 
+
+== Exemplos:
+
+>>> verificaSobreposicao (1,4) [] (Base {posicaoBase = (2,7)})
+True
+
+>>> verificaSobreposicao (2,7) [Torre {posicaoTorre = (2,4)}, Torre {posicaoTorre = (2,7)}] (Base {posicaoBase = (1,3)})
+False
 -}
 
 verificaSobreposicao :: Posicao -> [Torre] -> Base -> Bool
@@ -117,6 +125,15 @@ verificaSobreposicao (x,y) ((Torre {posicaoTorre = (xt,yt)}):rl) base
 {-| Função que dada a lista de ondas de um dado portal verifica se há no máximo uma onda iniciada.
 
 Retorna True quando há no máximo uma onda iniciada, False caso contrário 
+
+== Exemplos:
+
+>>> verificaOndas []
+True
+
+>>> verificaOndas [Onda {entradaOnda = 0}, Onda {entradaOnda = 0}, Onda {entradaOnda = 7}]
+False
+
 -}
 
 verificaOndas :: [Onda] -> Bool
@@ -124,7 +141,18 @@ verificaOndas [] = True
 verificaOndas ondas = length ondasiniciadas == 1 || length ondasiniciadas == 0
     where ondasiniciadas = filter (\onda -> (entradaOnda onda) == 0) ondas
 
--- | Função que verifica se o estado de jogo está válido para os Portais (cumprem todos os critérios)
+{-| Função que verifica se o estado de jogo está válido para os Portais (cumprem todos os critérios)
+
+== Exemplos:
+
+>>> validaPortais [] mapa base torres
+False
+
+>>> validaPortais [Portal {posicaoPortal = (0.5,0.5), ondasPortal = [Onda {entradaOnda = 0}, Onda {entradaOnda = 7}]}] [[Terra, Terra],[Relva,Terra]] (Base {posicaoBase = (1.5, 1.5)}) [Torre {posicaoTorre = (0.5, 1.5)}]
+True
+
+-}
+
 validaPortais :: [Portal] -> Mapa -> Base -> [Torre] -> Bool
 validaPortais [] _ _ _ = False -- ^ Verifica se há pelo menos um portal
 validaPortais portais mapa base torres =
@@ -134,13 +162,36 @@ validaPortais portais mapa base torres =
     all (\p -> verificaOndas (ondasPortal p)) portais -- ^ Verifica se para cada portal tem no máximo uma onda ativa
 
 
--- | Função que dada a posição do portal e um inimigo deste portal(por lançar), verifica se o inimigo cumpre as restrições da alínea a)
+{-| Função que dada a posição do portal e um inimigo deste portal(por lançar), verifica se o inimigo cumpre as restrições da alínea a)
+
+== Exemplos:
+
+>>> verificaRestricoes (4,5) Inimigo {posicaoInimigo = (4,5), vidaInimigo = 100, projeteisInimigo = []}
+True
+
+>>> verificaRestricoes (4,5) Inimigo {posicaoInimigo = (2,1), vidaInimigo = 100, projeteisInimigo = []}
+False
+
+>>> verificaRestricoes (4,5) Inimigo {posicaoInimigo = (4,5), vidaInimigo = 0, projeteisInimigo = []}
+False
+
+>>> verificaRestricoes (4,5) Inimigo {posicaoInimigo = (4,5), vidaInimigo = 100, projeteisInimigo = [Gelo]}
+False
+
+-}
+
 verificaRestricoes :: Posicao -> Inimigo -> Bool
 verificaRestricoes posPortal Inimigo {posicaoInimigo = posI, vidaInimigo = vida, projeteisInimigo = lprojeteis}
             = posPortal == posI && vida > 0 && (lprojeteis == [])
 
 {-| Função auxiliar que dada uma lista de ondas em que cada onda tem uma lista de inimigos, 
 concatena estas listas de inimigos e retorna a lista de inimigos concatenada 
+
+== Exemplos:
+
+>>> concatenaInimigos []
+[]
+
 -}
 
 concatenaInimigos :: [Onda] -> [Inimigo]
@@ -149,7 +200,19 @@ concatenaInimigos (onda:rl) = (inimigosOnda onda) ++ concatenaInimigos rl
 
 {-| Função auxiliar que verifica se um inimigo está sobreposto a alguma torre
 
-Retorna True quando o inimigo não está sobreposto a nenhuma torre, False caso contrário 
+Retorna True quando o inimigo não está sobreposto a nenhuma torre, False caso contrário
+
+== Exemplos:
+
+>>> verificaSobreposicaoInimigoTorres [] inimigo
+True
+
+>>> verificaSobreposicaoInimigoTorres [Torre {posicaoTorre = (4,5)}] (Inimigo {posicaoInimigo = (4,5)})
+False
+
+>>> verificaSobreposicaoInimigoTorres [Torre {posicaoTorre = (7,3)}] (Inimigo {posicaoInimigo = (4,5)})
+True
+
 -}
 
 verificaSobreposicaoInimigoTorres :: [Torre] -> Inimigo -> Bool
@@ -196,13 +259,35 @@ validaProjeteis lp = length(lfogos) <=1 &&
                               lgelos = filter (== Gelo) listaTiposP
                               lresinas = filter (== Resina) listaTiposP
 
--- | Função que verifica se todos os inimigos de todas as ondas de um portal cumprem as restrições da alínea a)
+{-| Função que verifica se todos os inimigos de todas as ondas de um portal cumprem as restrições da alínea a)
+
+== Exemplos:
+
+>>> validaInimigosPortal (1,0) [Onda {inimigosOnda = [Inimigo {posicaoInimigo = (1,0), vidaInimigo = 100, projeteisInimigo = []}]}]
+True
+
+>>> validaInimigosPortal (1,0) [Onda {inimigosOnda = [Inimigo {posicaoInimigo = (2,7), vidaInimigo = 100, projeteisInimigo = []}]}]
+False
+
+-}
+
 validaInimigosPortal :: Posicao -> [Onda] -> Bool
 validaInimigosPortal posPortal ondasPortal =
     all (\i -> verificaRestricoes posPortal i) inimigosPortal
     where inimigosPortal = concatenaInimigos ondasPortal
 
--- | Função que verifica todas as restrições estabelecidas para os inimigos em jogo.
+{-| Função que verifica todas as restrições estabelecidas para os inimigos em jogo.
+
+== Exemplos:
+
+>>> validaInimigosEmJogo [Inimigo {posicaoInimigo = (1.5,0), velocidadeInimigo = 3, projeteisInimigo = []}] [] [[Agua, Terra], [Terra, Relva]]
+True
+
+>>> validaInimigosEmJogo [Inimigo {posicaoInimigo = (0,0), velocidadeInimigo = 3, projeteisInimigo = []}] [] [[Agua, Terra], [Terra, Relva]]
+False
+
+-}
+
 validaInimigosEmJogo :: [Inimigo] -> [Torre] -> Mapa -> Bool
 validaInimigosEmJogo inimigosemjogo torres mapa = 
     all (\i -> validaPosicaoTerra (posicaoInimigo i) mapa) inimigosemjogo &&
@@ -210,21 +295,64 @@ validaInimigosEmJogo inimigosemjogo torres mapa =
     all (\i -> validaVelocidade i) inimigosemjogo &&
     all (\i -> validaProjeteis (projeteisInimigo i)) inimigosemjogo
 
--- | Função que verifica se a torre tem um alcance válido (valor positivo)
+{-| Função que verifica se a torre tem um alcance válido (valor positivo)
+
+== Exemplos:
+
+>>> validaAlcanceTorre (Torre {alcanceTorre = 2})
+True
+
+>>> validaAlcanceTorre (Torre {alcanceTorre = 0})
+False
+
+-}
+
 validaAlcanceTorre :: Torre -> Bool
 validaAlcanceTorre torre = (alcanceTorre (torre)) > 0
 
--- | Função que verifica se a torre tem uma rajada válida (valor positivo)
+{-| Função que verifica se a torre tem uma rajada válida (valor positivo)
+
+== Exemplos:
+
+>>> validaRajadaTorre (Torre {rajadaTorre = 2})
+True
+
+>>> validaRajadaTorre (Torre {rajadaTorre = 0})
+False
+
+-}
+
 validaRajadaTorre :: Torre -> Bool
 validaRajadaTorre torre = (rajadaTorre (torre)) > 0
 
--- | Função que verifica se a torre tem um ciclo válido (valor não negativo)
+{-| Função que verifica se a torre tem um ciclo válido (valor não negativo)
+
+== Exemplos:
+
+>>> validaCicloTorre (Torre {cicloTorre = 2})
+True
+
+>>> validaCicloTorre (Torre {cicloTorre = -1})
+False
+
+-}
+
 validaCicloTorre :: Torre -> Bool
 validaCicloTorre torre = (cicloTorre (torre)) >= 0
 
 {-| Função que verifica se as torres não estão sobrepostas
 
 Retorna True quando as torres não estão sobrepostas, False caso contrário 
+
+
+== Exemplos:
+
+>>> verificaSobreposicaoTorres [] torres
+True
+
+>>> verificaSobreposicaoTorres [Torre {posicaoTorre = (0,0)}, Torre {posicaoTorre = (1,0)}] [Torre {posicaoTorre = (1,0)}, Torre {posicaoTorre = (4,5)}]
+False
+
 -}
 
 verificaSobreposicaoTorres :: [Torre] -> [Torre] -> Bool
@@ -232,7 +360,18 @@ verificaSobreposicaoTorres  [] _ = True
 verificaSobreposicaoTorres (t:r) l  = length (filter (== posicaoTorre t) (posicoesTorres)) == 1 && verificaSobreposicaoTorres r l
     where posicoesTorres = map (posicaoTorre) l
 
--- | Função que verifica se o estado de jogo está válido para os Torres (cumprem todos os critérios)
+{-| Função que verifica se o estado de jogo está válido para os Torres (cumprem todos os critérios)
+
+== Exemplos:
+
+>>> validaTorres [Torre {posicaoTorre = (0,0), alcanceTorre = 2, rajadaTorre = 2, cicloTorre = 2}, Torre {posicaoTorre = (1,0), alcanceTorre = 2, rajadaTorre = 2, cicloTorre = 2}] [[Relva, Relva], [Agua, Relva]]
+True
+
+>>> validaTorres [Torre {posicaoTorre = (3,0), alcanceTorre = 0, rajadaTorre = 2, cicloTorre = 2}, Torre {posicaoTorre = (1,0), alcanceTorre = 2, rajadaTorre = 2, cicloTorre = 2}] [[Relva, Relva], [Agua, Relva]]
+False
+
+-}
+
 validaTorres :: [Torre] -> Mapa -> Bool
 validaTorres torres mapa = 
     all (\torre -> validaPosicaoRelva (posicaoTorre torre) mapa) torres && -- ^ Verifica se as torres estão sobre relva
@@ -241,7 +380,18 @@ validaTorres torres mapa =
     all (\torre -> validaCicloTorre torre) torres &&
     verificaSobreposicaoTorres torres torres
 
--- | Função que verifica se a base tem um crédito válido (valor não negativo)
+{-| Função que verifica se a base tem um crédito válido (valor não negativo)
+
+== Exemplos:
+
+>>> validaCreditoBase (Base {creditosBase = 100})
+True
+
+>>> validaCreditoBase (Base {creditosBase = -12})
+False
+
+-}
+
 validaCreditoBase :: Base -> Bool
 validaCreditoBase base = (creditosBase (base)) >= 0
 
@@ -249,6 +399,15 @@ validaCreditoBase base = (creditosBase (base)) >= 0
 verifica se a base não está sobreposta a torres ou portais
 
 Retorna True quando a base não está sobreprosta a torres ou portais, False caso contrário 
+
+== Exemplos:
+
+>>> verificaSobreposicaoBase (7,5) [] []
+True
+
+>>> verificaSobreposicaoBase (7,5) [Torre {posicaoTorre = (7,5)}] [Portal {posicaoPortal = (1,1)}]
+False
+
 -}
 
 verificaSobreposicaoBase :: Posicao -> [Torre] -> [Portal] -> Bool
@@ -256,14 +415,35 @@ verificaSobreposicaoBase posBase torres portais =
     all (\torre -> (posicaoTorre torre /= posBase)) torres && -- ^ verifica para cada torre
     all (\portal -> (posicaoPortal portal /= posBase)) portais -- ^ verifica para cada portal
 
--- | Função que verifica se o estado de jogo está válido para a Base (cumpre todos os critérios)
+{-| Função que verifica se o estado de jogo está válido para a Base (cumpre todos os critérios)
+
+== Exemplos:
+
+>>> validaBase (Base {creditosBase = 100, posicaoBase = (1,0)}) [[Terra, Terra], [Agua, Agua]] [Torre {posicaoTorre = (7,5)}] [Portal {posicaoPortal = (1,1)}]
+True
+
+>>> validaBase (Base {creditosBase = -123, posicaoBase = (1.5,1.5)}) [[Terra, Terra], [Agua, Agua]] [Torre {posicaoTorre = (1.5,1.5)}] [Portal {posicaoPortal = (1,1)}]
+False
+
+-}
+
 validaBase :: Base -> Mapa -> [Torre] -> [Portal] -> Bool
 validaBase base mapa torres portais =
     validaPosicaoTerra (posicaoBase base) mapa &&
     validaCreditoBase base &&
     verificaSobreposicaoBase (posicaoBase base) torres portais 
 
--- | Função principal que verifica todas as condições estabelecidas para o jogo
+{-| Função principal que verifica todas as condições estabelecidas para o jogo
+
+== Exemplos:
+
+>>> validaJogo (Jogo {baseJogo = Base { vidaBase = 100.0, posicaoBase = (0.5, 0.5), creditosBase = 123}, portaisJogo = [Portal {posicaoPortal = (1.5, 0.5), ondasPortal = [Onda {inimigosOnda = [Inimigo (1.5, 0.5) Norte 10.0 1.0 5.0 10 [] Normal], cicloOnda = 5.0, tempoOnda = 2.0, entradaOnda = 10.0}]}], torresJogo = [], mapaJogo = [[Terra, Terra], [Relva, Relva]], inimigosJogo = [], lojaJogo = [], precoUpgrades = []})
+True
+
+>>> validaJogo (Jogo {baseJogo = Base { vidaBase = 100.0, posicaoBase = (40, 0), creditosBase = -123}, portaisJogo = [], torresJogo = [], mapaJogo = [[Terra, Terra], [Agua, Agua]], inimigosJogo = [], lojaJogo = [], precoUpgrades = []})
+False
+-}
+
 validaJogo :: Jogo -> Bool
 validaJogo Jogo {baseJogo = base, portaisJogo = portais, torresJogo = torres, mapaJogo = mapa, inimigosJogo = inimigos} =
     validaPortais portais mapa base torres &&
@@ -271,3 +451,7 @@ validaJogo Jogo {baseJogo = base, portaisJogo = portais, torresJogo = torres, ma
     validaInimigosEmJogo inimigos torres mapa && -- ^ valida inimigos em jogo
     validaTorres torres mapa &&
     validaBase base mapa torres portais
+
+
+
+
