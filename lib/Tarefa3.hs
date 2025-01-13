@@ -91,7 +91,7 @@ atualizaVidaProjeteis Inimigo {vidaInimigo = vida, projeteisInimigo = lprojeteis
       then vida - (1/30) -- (1/30) para dar 2 de dano por segundo com o fps a 60 (depois temos que testar em jogo)
       else vida
 
-{-| Função para dar floor nas componentes x e y das posições para obter a "posição geral"
+{-| Função para dar floor nas componentes x e y das posições para obter a "posição geral".
 
 Como sabemos, na matriz toda posição em que o x pertence a [0,1] e o y pertence a [0,1] é a posição (0,0) da matriz, essa função acha essa posição "geral" da matriz.
 

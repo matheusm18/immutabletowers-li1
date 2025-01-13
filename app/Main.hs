@@ -7,26 +7,28 @@ import ImmutableTowers
 import Tempo
 import Dados
 
--- | Janela do jogo
+-- | Janela do jogo.
 janela :: Display
 janela = FullScreen
 
--- | Background, escolhemos a cor cinza mas acabará por não aparecer, substituimos depois o fundo por imagens na função desenha
+-- | Background, escolhemos a cor cinza mas acabará por não aparecer, dado que, substituimos depois o fundo por imagens na função desenha.
 fundo :: Color
 fundo = greyN 0.6
 
--- | Frames por segundo (fps)
+-- | Frames por segundo (fps).
 fr :: Int
 fr = 60
 
--- | Função main, é a função principal que inicia o jogo
+-- | Função main, é a função principal que inicia o jogo.
 main :: IO ()
 main = do
   imagens <- imagensLoad
-  play janela fundo fr (ImmutableTowers jogoInicio1 (MenuInicial) imagens Nothing Nothing Nothing 1) desenha reageEventos reageTempo
+  play janela fundo fr (ImmutableTowers jogoInicio1 (MenuInicial) imagens Nothing Nothing Nothing 1 1) desenha reageEventos reageTempo
 
 {-| Função que carrega as imagens do jogo de modo a passar estas para Picture e armazena-las
- numa lista de tuplas com a string igual o nome da imagem e a imagem em si, para facilitar a busca pela imagem correta nas outras funções 
+ numa lista de tuplas. 
+ 
+ A primeira componente da tupla é uma string com o nome da imagem e a segunda componente é a imagem em si, para facilitar a busca pela imagem correta nas outras funções.
 -}
 
 imagensLoad :: IO [(String, Picture)]
@@ -35,6 +37,8 @@ imagensLoad = do
     menupausa <- loadBMP "imgs/menupausa.bmp"
     menuganhou <- loadBMP "imgs/ganhou.bmp"
     menuperdeu <- loadBMP "imgs/perdeu.bmp"
+    menuzerou <- loadBMP "imgs/menuzerou.bmp"
+    menutexturas <- loadBMP "imgs/menutexturas.bmp"
     menuniveis1 <- loadBMP "imgs/menuniveis1.bmp"
     menuniveis2 <- loadBMP "imgs/menuniveis2.bmp"
     menuniveis3 <- loadBMP "imgs/menuniveis3.bmp"
@@ -67,9 +71,12 @@ imagensLoad = do
     torregelo <- loadBMP "imgs/TorreGelo.bmp"
     portal <- loadBMP "imgs/portal.bmp"
     base <- loadBMP "imgs/base.bmp"
-    terrenoagua <- loadBMP "imgs/terrenoagua.bmp"
-    terrenorelva <- loadBMP "imgs/terrenorelva.bmp"
-    terrenoterra <- loadBMP "imgs/terrenoterra.bmp"
+    terrenoagua1 <- loadBMP "imgs/terrenoagua1.bmp"
+    terrenoagua2 <- loadBMP "imgs/terrenoagua2.bmp"
+    terrenorelva1 <- loadBMP "imgs/terrenorelva1.bmp"
+    terrenorelva2 <- loadBMP "imgs/terrenorelva2.bmp"
+    terrenoterra1 <- loadBMP "imgs/terrenoterra1.bmp"
+    terrenoterra2 <- loadBMP "imgs/terrenoterra2.bmp"
     melhoriaGelo1 <- loadBMP "imgs/melhoriagelo1.bmp"
     melhoriaGelo2 <- loadBMP "imgs/melhoriagelo2.bmp"
     melhoriaGelo3 <- loadBMP "imgs/melhoriagelo3.bmp"
@@ -86,6 +93,8 @@ imagensLoad = do
            ("menupausa", menupausa),
            ("menuganhou", menuganhou), 
            ("menuperdeu", menuperdeu),
+           ("menuzerou", menuzerou),
+           ("menutexturas", menutexturas),
            ("menuniveis1", menuniveis1),
            ("menuniveis2", menuniveis2),
            ("menuniveis3", menuniveis3),
@@ -118,9 +127,12 @@ imagensLoad = do
            ("torregelo", torregelo),
            ("portal", portal),
            ("base",base),
-           ("terrenoagua", terrenoagua),
-           ("terrenorelva", terrenorelva),
-           ("terrenoterra", terrenoterra),
+           ("terrenoagua1", terrenoagua1),
+           ("terrenoagua2", terrenoagua2),
+           ("terrenorelva1", terrenorelva1),
+           ("terrenorelva2", terrenorelva2),
+           ("terrenoterra1", terrenoterra1),
+           ("terrenoterra2", terrenoterra2),
            ("melhoriaGelo1", melhoriaGelo1),
            ("melhoriaGelo2", melhoriaGelo2),
            ("melhoriaGelo3", melhoriaGelo3),

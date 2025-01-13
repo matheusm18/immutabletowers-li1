@@ -26,7 +26,7 @@ tipoTerreno :: Posicao -> Mapa -> Maybe Terreno
 tipoTerreno (x,y) mapa
     | y' < 0 || y' >= fromIntegral (length (mapa)) = Nothing
     | x' < 0 || x' >= fromIntegral (length (mapa !! y')) = Nothing
-    | otherwise = Just ((mapa !! y') !! x')  -- Acessa o terreno na coordenada (x, y)
+    | otherwise = Just ((mapa !! y') !! x')  -- ^ acessa o terreno na coordenada (x, y)
     where x' = floor x
           y' = floor y
 
@@ -97,10 +97,10 @@ verificaCaminho posinicial posfinal mapa = buscaCaminho [posinicial] []
     buscaCaminho [] _ = False
     buscaCaminho (atual:fila) visitados
         | atual == posfinal    = True
-        | elem atual visitados = buscaCaminho fila visitados  -- ^ Se a posição atual já foi visitada, passa a procurar para as próximas posições
+        | elem atual visitados = buscaCaminho fila visitados  -- ^ se a posição atual já foi visitada, passa a procurar para as próximas posições
         | otherwise            =
-            let visitados' = atual : visitados  -- ^ Adiciona a posição atual à lista de visitados
-                adjacentes = filter (`notElem` visitados') (posAdjacentes atual mapa) -- ^ Filtra as posições adjacentes válidas que ainda não foram visitadas
+            let visitados' = atual : visitados  -- ^ adiciona a posição atual à lista de visitados
+                adjacentes = filter (`notElem` visitados') (posAdjacentes atual mapa) -- ^ filtra as posições adjacentes válidas que ainda não foram visitadas
             in buscaCaminho (fila ++ adjacentes) visitados'
 
 {-| Função que verifica se existem torres ou base numa dada posição.
