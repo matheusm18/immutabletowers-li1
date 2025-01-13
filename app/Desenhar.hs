@@ -96,7 +96,7 @@ desenhaVida v = Color red $ Scale 0.5 0.5 $ translate (1325) (-175) $ Text (show
 
 -- | Função que desenha os créditos da base.
 desenhaCreditos :: Int -> Picture
-desenhaCreditos c = Pictures [Color (orange) $ Scale 0.5 0.5 $ translate 1325 (-675) $ Text (show c)]
+desenhaCreditos c = Color (orange) $ Scale 0.5 0.5 $ translate 1325 (-675) $ Text (show c)
 
 {-| Função que recebe o numero da textura atual, a lista de imagens e o mapa, de modo a retornar a imagem do mapa.
 
@@ -105,7 +105,7 @@ Fazemos zip com a lista [0, -1..] porque o eixo do gloss cresce pra cima), entã
 Ou seja, a segunda linha da matriz do mapa irá corresponder a lista das posições cujo y = -2 no gloss (no jogo seria y = 2).
 -}
 
-desenhaMapa :: Int -> [(String,Picture)] -> [[Terreno]] -> Picture
+desenhaMapa :: Int -> [(String,Picture)] -> Mapa -> Picture
 desenhaMapa textura limagens mapa = Pictures $ concatMap (desenhaLinha textura limagens) (zip [0,-1..] mapa)
 
 {-| Função que dado o número da textura atual, a lista de imagens e uma tupla que contem a coordenada do y (já correspondente ao gloss) 
@@ -170,24 +170,21 @@ desenhaPortais portal (x,y) = Translate (x * w) (y * h) $ Scale (2/9) (2/9) $ po
 
 -- | Função que desenha as torres de acordo com o tipo de projétil que elas possuem.
 desenhaTorres :: [(String,Picture)] -> (Posicao, TipoProjetil) -> Picture
-desenhaTorres torres ((x,y), Fogo) = Pictures [desenhaTorreFogo (getImagem "torrefogo" torres) (x,y)]
-desenhaTorres torres ((x,y), Resina) = Pictures [desenhaTorreResina (getImagem "torreresina" torres) (x,y)]
-desenhaTorres torres ((x,y), Gelo) = Pictures [desenhaTorreGelo (getImagem "torregelo" torres) (x,y)]
+desenhaTorres torres ((x,y), Fogo) = desenhaTorreFogo (getImagem "torrefogo" torres) (x,y)
+desenhaTorres torres ((x,y), Resina) = desenhaTorreResina (getImagem "torreresina" torres) (x,y)
+desenhaTorres torres ((x,y), Gelo) = desenhaTorreGelo (getImagem "torregelo" torres) (x,y)
 
 -- | Função auxiliar que desenha a torre de fogo.
 desenhaTorreFogo :: Picture -> Posicao -> Picture
-desenhaTorreFogo torrefogo (x, y) = Pictures
-    [Translate (x * w) (y * w) $ Scale (2/9) (2/9) $ torrefogo]
+desenhaTorreFogo torrefogo (x, y) = Translate (x * w) (y * w) $ Scale (2/9) (2/9) $ torrefogo
 
 -- | Função auxiliar que desenha a torre de resina.
 desenhaTorreResina :: Picture -> Posicao -> Picture
-desenhaTorreResina torreresina (x, y) = Pictures
-    [Translate (x * w) (y * w) $ Scale (2/9) (2/9) $ torreresina]
+desenhaTorreResina torreresina (x, y) = Translate (x * w) (y * w) $ Scale (2/9) (2/9) $ torreresina
 
 -- | Função auxiliar que desenha a torre de gelo.
 desenhaTorreGelo :: Picture -> Posicao -> Picture
-desenhaTorreGelo torregelo (x, y) = Pictures
-    [Translate (x * w) (y * w) $ Scale (2/9) (2/9) $ torregelo]
+desenhaTorreGelo torregelo (x, y) = Translate (x * w) (y * w) $ Scale (2/9) (2/9) $ torregelo
 
 -- | Função que desenha a base.
 desenhaBase :: Picture -> Posicao -> Picture
