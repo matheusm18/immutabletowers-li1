@@ -2,7 +2,7 @@
 
 ## Tipos de inimigos diferentes (Extra 3)
 
-No momento, existem dois tipos de inimigo: o inimigo normal e um inimigo mais forte (Blindado), sendo este último imune aos efeitos dos projéteis que as torres atiram, ou seja, sofrem apenas o dano relativo ao impacto do projétil da torre.
+No momento, existem três tipos de inimigo: o inimigo Normal, um inimigo mais forte (Blindado) e o inimigo final do nível 3 (BossBlindado) sendo estes dois últimos imunes aos efeitos dos projéteis que as torres atiram, ou seja, sofrem apenas o dano relativo ao impacto do projétil da torre.
 
 Para efeito, adicionamos um campo ao data type dos Inimigos chamado tipoInimigo que guarda o tipo de cada inimigo do jogo.
 
@@ -26,7 +26,7 @@ Para possibilitar este sistema, adicionamos no data type do ImmutableTowers um c
 
 Decidimos adicionar o extra de disponibilizar mais pacotes de textura para o jogo. É possivel escolher entre dois tipos de textura para o jogo através do menu de texturas: a textura 1 e a textura 2, que permite o jogador alterar o aspeto gráfico do jogo.
 
-Atualmente, as texturas apenas alteram o aspeto gráfico dos terrenos do jogo (Terra,Relva,Agua). No caso da textura 2, achamos válido tornar a textura da Terra como se fosse um pedregulho, visto que, a terra é basicamente o tipo de terreno do caminho que os inimigos percorrem e assim faz com que o jogo tenha um aspeto visual mais diferente.
+Atualmente, as texturas apenas alteram o aspeto gráfico dos terrenos do jogo (Terra,Relva,Agua).
 
 ## Outras funcionalidades gráficas
 
@@ -35,3 +35,5 @@ Além dos outros extras implementados, também achamos interessante adicionar um
 Outra funcionalidade gráfica adicionada foi o efeito de partículas nos inimigos, isto é, quando o inimigo está sobre o efeito de algum projétil, a sua imagem será representada consoante o efeito ativo nele. Se estiver sobre efeito de fogo, haverá chamas em volta do inimigo, se estiver sobre efeito do gelo haverá gelo em volta e se estiver sobre efeito da resina haverá resina em volta.
 
 No caso do inimigo estar com resina e gelo simultaneamente na lista de projéteis, optamos por aplicar a imagem do inimigo com gelo, visto que, se ele estiver congelado, ele nem sequer irá andar, ou seja, não iria fazer sentido aplicar a imagem do inimigo com a resina.
+
+Além disso, implementamos um sistema para quando a vida da base chega a 50, a imagem da base é atualizada para uma imagem em que a base está um pouco destruida e quando a vida da base chega a 25, a imagem da base é atualizada novamente para uma imagem em que a base está bastante destruida e está em chamas.

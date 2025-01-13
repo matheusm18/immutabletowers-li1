@@ -26,7 +26,8 @@ getPicInimigos limagens =
                       s == "inimigoSul" || s == "inimigofogoSul" || s == "inimigoresinaSul" || s == "inimigogeloSul" ||
                       s == "inimigoEste" || s == "inimigofogoEste" || s == "inimigoresinaEste" || s == "inimigogeloEste" || 
                       s == "inimigoOeste" || s == "inimigofogoOeste" ||  s == "inimigoresinaOeste" || s == "inimigogeloOeste" ||
-                      s == "blindadoNorte" || s == "blindadoSul" || s == "blindadoEste" || s == "blindadoOeste") limagens
+                      s == "blindadoNorte" || s == "blindadoSul" || s == "blindadoEste" || s == "blindadoOeste" ||
+                      s == "bossNorte" || s == "bossSul" || s == "bossEste" || s == "bossOeste") limagens
 
 -- | Função auxiliar que retorna a lista de imagens das melhorias das torres.
 getMelhoriasTorres :: [(String,Picture)] -> [(String,Picture)]
@@ -35,11 +36,17 @@ getMelhoriasTorres limagens = filter (\(s,_) -> s == "melhoriaGelo1" || s == "me
                                                 s == "melhoriaResina1" || s == "melhoriaResina2" || s == "melhoriaResina3" || s == "melhoriaResina4") limagens
 
 -- | Função auxiliar que retorna a lista de imagens dos terrenos dependendo da textura selecionada.
-getTerrenos :: Int -> [(String,Picture)] -> [(String,Picture)]
-getTerrenos textura limagens = 
+getPicTerrenos :: Int -> [(String,Picture)] -> [(String,Picture)]
+getPicTerrenos textura limagens = 
   case textura of 
     1 -> filter (\(s,_) -> s == "terrenoagua1" || s == "terrenorelva1" || s == "terrenoterra1") limagens
     _ -> filter (\(s,_) -> s == "terrenoagua2" || s == "terrenorelva2" || s == "terrenoterra2") limagens
+
+-- | Função auxiliar que retorna a Picture da base dependendo da vida dela.
+getPicBase :: Base -> [(String,Picture)] -> Picture
+getPicBase base limagens = if (vidaBase base) <= 25.0 then getImagem "base25vida" limagens
+                        else if (vidaBase base) <= 50.0 then getImagem "base50vida" limagens
+                        else getImagem "base" limagens
 
 -- | Função que retorna a imagem de fundo dependendo da torre selecionada.
 getBg :: Maybe Torre -> [(String,Picture)] -> Picture
@@ -78,14 +85,14 @@ desenha (ImmutableTowers Jogo {baseJogo = base, portaisJogo = lportais, torresJo
                 picCreditos = desenhaCreditos (creditosBase base)
                 picInimigos = getPicInimigos limagens
                 picTorres = filter (\(s,_) -> s == "torrefogo" || s == "torreresina" || s == "torregelo") limagens
-                picTerrenos = getTerrenos textura limagens
+                picTerrenos = getPicTerrenos textura limagens
                 picPortal = getImagem "portal" limagens
-                picBase = getImagem "base" limagens
+                picBase = getPicBase base limagens
                 picMelhoriasTorres = getMelhoriasTorres limagens
 
 -- | Função que desenha a vida da base.
 desenhaVida :: Float -> Picture
-desenhaVida v = Color red $ Scale 0.5 0.5 $ translate (1275) (-175) $ Text (show v)
+desenhaVida v = Color red $ Scale 0.5 0.5 $ translate (1325) (-175) $ Text (show (round v))
 
 -- | Função que desenha os créditos da base.
 desenhaCreditos :: Int -> Picture
@@ -141,6 +148,7 @@ desenhaInimigo picinimigos ((x,y),dir,lp, tipoInim) =
         inimigoResina = getImagem ("inimigoresina" ++ (show dir)) picinimigos
         inimigo = getImagem ("inimigo" ++ (show dir)) picinimigos
         blindado = getImagem ("blindado" ++ (show dir)) picinimigos
+        boss = getImagem ("boss" ++ (show dir)) picinimigos
     in if tipoInim == Normal then 
         case lp of 
          [] -> desenhaInimigoAux inimigo (x,y)
@@ -149,7 +157,8 @@ desenhaInimigo picinimigos ((x,y),dir,lp, tipoInim) =
               else if verificaFogo lp
               then desenhaInimigoAux inimigoFogo (x,y)
               else desenhaInimigoAux inimigoResina (x,y)
-       else desenhaInimigoAux blindado (x,y)
+       else if tipoInim == Blindado then desenhaInimigoAux blindado (x,y)
+       else desenhaInimigoAux boss (x,y)
 
 -- | Função auxiliar para a desenhaInimigo que faz o translate (posicionar o inimigo na posição certa) e o scale da imagem (passar de 360 px para 80 px).
 desenhaInimigoAux :: Picture -> Posicao -> Picture

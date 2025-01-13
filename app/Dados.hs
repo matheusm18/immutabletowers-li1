@@ -307,13 +307,19 @@ jogoInicio3 = Jogo {
                     entradaOnda = 3.0
                 },
                 Onda {
-                    inimigosOnda = replicate 5 inimBlinJogo3Portal1,
+                    inimigosOnda = replicate 5 (inimBlinJogo3Portal1 {vidaInimigo = 500}),
                     cicloOnda = 1.0,
                     tempoOnda = 1.0,
                     entradaOnda = 15.0
                 },
                 Onda {
-                    inimigosOnda = replicate 10 inimBlinJogo3Portal1,
+                    inimigosOnda = replicate 10 (inimBlinJogo3Portal1 {vidaInimigo = 500}),
+                    cicloOnda = 1.0,
+                    tempoOnda = 1.0,
+                    entradaOnda = 10.0
+                },
+                Onda {
+                    inimigosOnda = replicate 3 (inimBlinJogo3Portal1 {vidaInimigo = 500}) ++ replicate 1 inimBossJogo3Portal1 ++ replicate 3 (inimBlinJogo3Portal1 {vidaInimigo = 500}),
                     cicloOnda = 1.0,
                     tempoOnda = 1.0,
                     entradaOnda = 10.0
@@ -372,13 +378,19 @@ jogoInicio3 = Jogo {
                     entradaOnda = 3.0
                 },
                 Onda {
-                    inimigosOnda = replicate 5 inimBlinJogo3Portal2,
+                    inimigosOnda = replicate 5 (inimBlinJogo3Portal2 {vidaInimigo = 500}),
                     cicloOnda = 1.0,
                     tempoOnda = 1.0,
                     entradaOnda = 15.0
                 },
                 Onda {
-                    inimigosOnda = replicate 10 inimBlinJogo3Portal2,
+                    inimigosOnda = replicate 10 (inimBlinJogo3Portal2 {vidaInimigo = 500}),
+                    cicloOnda = 1.0,
+                    tempoOnda = 1.0,
+                    entradaOnda = 10.0
+                },
+                Onda {
+                    inimigosOnda = replicate 3 (inimBlinJogo3Portal2 {vidaInimigo = 500}) ++ replicate 1 inimBossJogo3Portal2 ++ replicate 3 (inimBlinJogo3Portal2 {vidaInimigo = 500}),
                     cicloOnda = 1.0,
                     tempoOnda = 1.0,
                     entradaOnda = 10.0
@@ -532,6 +544,17 @@ inimBlinJogo3Portal1 = Inimigo {posicaoInimigo = (0.5, 4.5),
                           tipoInimigo = Blindado
                           }
 
+inimBossJogo3Portal1 :: Inimigo
+inimBossJogo3Portal1 = Inimigo {posicaoInimigo = (0.5, 4.5),
+                          direcaoInimigo = Este,
+                          vidaInimigo = 1250,
+                          velocidadeInimigo = 0.5,
+                          ataqueInimigo = 50,
+                          butimInimigo = 100,
+                          projeteisInimigo = [],
+                          tipoInimigo = BossBlindado
+                          }
+
 inimJogo3Fase1Portal2 :: Inimigo
 inimJogo3Fase1Portal2 = Inimigo {posicaoInimigo = (0.5, 6.5),
                           direcaoInimigo = Este,
@@ -563,4 +586,15 @@ inimBlinJogo3Portal2 = Inimigo {posicaoInimigo = (0.5, 6.5),
                           butimInimigo = 50,
                           projeteisInimigo = [],
                           tipoInimigo = Blindado
+                          }
+
+inimBossJogo3Portal2 :: Inimigo
+inimBossJogo3Portal2 = Inimigo {posicaoInimigo = (0.5, 6.5),
+                          direcaoInimigo = Este,
+                          vidaInimigo = 1250,
+                          velocidadeInimigo = 0.5,
+                          ataqueInimigo = 50,
+                          butimInimigo = 100,
+                          projeteisInimigo = [],
+                          tipoInimigo = BossBlindado
                           }

@@ -344,8 +344,8 @@ com a lista de inimigos atualizadas, o dano que os inimigos causaram na base e o
 >>> atualizaInimigos 1 [[Terra, Terra, Agua],[Relva,Terra,Agua],[Relva,Terra,Terra]] Base {vidaBase = 100, posicaoBase = (2.5,2.5), creditosBase = 50} [Inimigo {posicaoInimigo = (1.5,2.5), direcaoInimigo = Este, vidaInimigo = 100, velocidadeInimigo = 1.0, ataqueInimigo = 10, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Normal}]
 ([],10.0,0)
 
->>> atualizaInimigo 1 [[Terra, Terra, Agua],[Relva,Terra,Agua],[Relva,Agua,Agua]] (1.5,1.5) Inimigo {posicaoInimigo = (0.5,0.5), direcaoInimigo = Este, vidaInimigo = 75, velocidadeInimigo = 1.0, ataqueInimigo = 10, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Blindado}
-Inimigo {posicaoInimigo = (1.5,0.5), direcaoInimigo = Este, vidaInimigo = 75.0, velocidadeInimigo = 1.0, ataqueInimigo = 10.0, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Blindado}
+>>> atualizaInimigos 1 [[Terra, Terra, Agua],[Relva,Terra,Agua],[Relva,Agua,Agua]] Base {vidaBase = 100, posicaoBase = (1.5,1.5), creditosBase = 50} [Inimigo {posicaoInimigo = (0.5,0.5), direcaoInimigo = Este, vidaInimigo = 75, velocidadeInimigo = 1.0, ataqueInimigo = 10, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Blindado}]
+([Inimigo {posicaoInimigo = (1.5,0.5), direcaoInimigo = Este, vidaInimigo = 75.0, velocidadeInimigo = 1.0, ataqueInimigo = 10.0, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Blindado}],0.0,0)
 -}
 
 atualizaInimigos :: Tempo -> Mapa -> Base -> [Inimigo] -> ([Inimigo], Float, Creditos)

@@ -124,7 +124,7 @@ data Direcao
   | Oeste
   deriving (Eq, Show)
 
-data TipoInimigo = Normal | Blindado
+data TipoInimigo = Normal | Blindado | BossBlindado
   deriving (Eq, Show)
 
 -- | Inimigo que se move em direção à base do jogador.

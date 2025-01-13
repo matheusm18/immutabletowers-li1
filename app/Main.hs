@@ -47,31 +47,37 @@ imagensLoad = do
     bgjogogelo <- loadBMP "imgs/bgjogogelo.bmp"
     bgjogofogo <- loadBMP "imgs/bgjogofogo.bmp"
     bgjogoresina <- loadBMP "imgs/bgjogoresina.bmp"
-    inimigoEste <- loadBMP "imgs/SoldadoEste.bmp"
-    inimigofogoEste <- loadBMP "imgs/SoldadoFogoEste.bmp"
-    inimigoresinaEste <- loadBMP "imgs/SoldadoResinaEste.bmp"
-    inimigogeloEste <- loadBMP "imgs/SoldadoGeloEste.bmp"
-    inimigoOeste <- loadBMP "imgs/SoldadoOeste.bmp"
-    inimigofogoOeste <- loadBMP "imgs/SoldadoFogoOeste.bmp"
-    inimigoresinaOeste <- loadBMP "imgs/SoldadoResinaOeste.bmp"
-    inimigogeloOeste <- loadBMP "imgs/SoldadoGeloOeste.bmp"
-    inimigoNorte <- loadBMP "imgs/SoldadoNorte.bmp"
-    inimigofogoNorte <- loadBMP "imgs/SoldadoFogoNorte.bmp"
-    inimigoresinaNorte <- loadBMP "imgs/SoldadoResinaNorte.bmp"
-    inimigogeloNorte <- loadBMP "imgs/SoldadoGeloNorte.bmp"
-    inimigoSul <- loadBMP "imgs/SoldadoSul.bmp"
-    inimigofogoSul <- loadBMP "imgs/SoldadoFogoSul.bmp"
-    inimigoresinaSul <- loadBMP "imgs/SoldadoResinaSul.bmp"
-    inimigogeloSul <- loadBMP "imgs/SoldadoGeloSul.bmp"
+    inimigoEste <- loadBMP "imgs/inimigoEste.bmp"
+    inimigofogoEste <- loadBMP "imgs/inimigoFogoEste.bmp"
+    inimigoresinaEste <- loadBMP "imgs/inimigoResinaEste.bmp"
+    inimigogeloEste <- loadBMP "imgs/inimigoGeloEste.bmp"
+    inimigoOeste <- loadBMP "imgs/inimigoOeste.bmp"
+    inimigofogoOeste <- loadBMP "imgs/inimigoFogoOeste.bmp"
+    inimigoresinaOeste <- loadBMP "imgs/inimigoResinaOeste.bmp"
+    inimigogeloOeste <- loadBMP "imgs/inimigoGeloOeste.bmp"
+    inimigoNorte <- loadBMP "imgs/inimigoNorte.bmp"
+    inimigofogoNorte <- loadBMP "imgs/inimigoFogoNorte.bmp"
+    inimigoresinaNorte <- loadBMP "imgs/inimigoResinaNorte.bmp"
+    inimigogeloNorte <- loadBMP "imgs/inimigoGeloNorte.bmp"
+    inimigoSul <- loadBMP "imgs/inimigoSul.bmp"
+    inimigofogoSul <- loadBMP "imgs/inimigoFogoSul.bmp"
+    inimigoresinaSul <- loadBMP "imgs/inimigoResinaSul.bmp"
+    inimigogeloSul <- loadBMP "imgs/inimigoGeloSul.bmp"
     blindadoNorte <- loadBMP "imgs/blindadoNorte.bmp"
     blindadoSul <- loadBMP "imgs/blindadoSul.bmp"
     blindadoEste <- loadBMP "imgs/blindadoEste.bmp"
     blindadoOeste <- loadBMP "imgs/blindadoOeste.bmp"
+    bossNorte <- loadBMP "imgs/bossNorte.bmp"
+    bossSul <- loadBMP "imgs/bossSul.bmp"
+    bossEste <- loadBMP "imgs/bossEste.bmp"
+    bossOeste <- loadBMP "imgs/bossOeste.bmp"
     torrefogo <- loadBMP "imgs/TorreFogo.bmp"
     torreresina <- loadBMP "imgs/TorreResina.bmp"
     torregelo <- loadBMP "imgs/TorreGelo.bmp"
     portal <- loadBMP "imgs/portal.bmp"
     base <- loadBMP "imgs/base.bmp"
+    base50vida <- loadBMP "imgs/base50vida.bmp"
+    base25vida <- loadBMP "imgs/base25vida.bmp"
     terrenoagua1 <- loadBMP "imgs/terrenoagua1.bmp"
     terrenoagua2 <- loadBMP "imgs/terrenoagua2.bmp"
     terrenorelva1 <- loadBMP "imgs/terrenorelva1.bmp"
@@ -123,11 +129,17 @@ imagensLoad = do
            ("blindadoSul", blindadoSul),
            ("blindadoEste", blindadoEste),
            ("blindadoOeste", blindadoOeste),
+           ("bossNorte", bossNorte),
+           ("bossSul", bossSul),
+           ("bossEste", bossEste),
+           ("bossOeste", bossOeste),
            ("torrefogo", torrefogo),
            ("torreresina", torreresina),
            ("torregelo", torregelo),
            ("portal", portal),
            ("base",base),
+           ("base50vida",base50vida),
+           ("base25vida",base25vida),
            ("terrenoagua1", terrenoagua1),
            ("terrenoagua2", terrenoagua2),
            ("terrenorelva1", terrenorelva1),
