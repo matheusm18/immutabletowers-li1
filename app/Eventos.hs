@@ -8,7 +8,7 @@ import Tarefa1 (validaPosicaoRelva)
 import Data.Maybe (fromJust)
 import Dados
 
-{-| Função auxiliar que reage aos eventos do teclado quando o jogo está no menu inicial.
+{-| Função auxiliar que reage aos eventos do teclado quando o jogo está nos menus.
 
 Decidimos adicionar algumas extras funcionalidades: o próprio menu inicial, a escolha de texturas e a escolha de níveis de jogo.
 -}
@@ -26,9 +26,8 @@ reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(Immutab
       else if clicouDentro botaoSairNiveis posMouse then it {menu = MenuInicial}
       else it
 reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {menu = ModoJogo Texturas})
-    = if clicouDentro botaoSairMenuInicial posMouse then it {menu = MenuInicial}
-      else if clicouDentro botaoTextura1 posMouse then it {texturaAtual = 1}
-      else if clicouDentro botaoTextura2 posMouse then it {texturaAtual = 2}
+    = if clicouDentro botaoTextura1 posMouse then it {menu = MenuInicial, texturaAtual = 1}
+      else if clicouDentro botaoTextura2 posMouse then it {menu = MenuInicial, texturaAtual = 2}
       else it
 reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo, menu = ModoJogo PerdeuJogo}) 
     = if clicouDentro botaoSairMenuPerdeu posMouse then it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = Nothing} 
@@ -102,7 +101,7 @@ reageEventos k it@(ImmutableTowers {menu = MenuInicial}) = reageEventosMenu k it
 reageEventos k it@(ImmutableTowers {menu = ModoJogo _}) = reageEventosMenu k it
 reageEventos _ it = it
 
-{-| Função auxiliar que recebe o (xmin,xmax,ymin,ymax) de uma área e recebe (x,y) coordenadas do clique do rato e 
+{-| Função auxiliar que recebe uma tupla (xmin,xmax,ymin,ymax) de uma área e recebe a tupla (x,y) (coordenadas do clique do rato) e 
 verifica se o clique do rato está dentro desta área.
 -}
 
@@ -231,10 +230,10 @@ botaoSairMenuInicial :: (Float, Float, Float, Float)
 botaoSairMenuInicial = (-215,215,-268,-175)
 
 botaoTextura1 :: (Float, Float, Float, Float)
-botaoTextura1 = (-215,215,11,104)
+botaoTextura1 = (-215,215,-24.5,68.5)
 
 botaoTextura2 :: (Float, Float, Float, Float)
-botaoTextura2 = (-215,215,-128,-35)
+botaoTextura2 = (-215,215,-191.5,-98.5)
 
 botaoNivel1 :: (Float, Float, Float, Float)
 botaoNivel1 = (-215,215,157.5,250.5)

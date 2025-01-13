@@ -15,7 +15,7 @@ getImagem s lista = case lookup s lista of
     Just p -> p
     Nothing -> Blank
 
--- | Função auxiliar que já retorna a posição do inimigo convertida para o gloss, direção, tipo e a lista de projeteis do inimigo.
+-- | Função auxiliar que retorna a tupla com a posição do inimigo convertida para o gloss, a direção, a lista de projeteis do inimigo e o tipo do inimigo.
 getPosDirProjetil :: Inimigo -> (Posicao, Direcao, [Projetil], TipoInimigo)
 getPosDirProjetil i = (invertePos (posicaoInimigo i),direcaoInimigo i, projeteisInimigo i, tipoInimigo i)
 
@@ -49,13 +49,14 @@ getBg (Just t) limagens = case tipoProjetil (projetilTorre t) of
     Resina -> getImagem "bgjogoresina" limagens
     Gelo -> getImagem "bgjogogelo" limagens
 
--- | Função principal para desenhar o mapa.
+-- | Função principal para desenhar o jogo.
 desenha :: ImmutableTowers -> Picture
 desenha ImmutableTowers {menu = MenuInicial, imagens = limagens} = getImagem "menujogar" limagens
-desenha it@(ImmutableTowers {menu = ModoJogo EscolherNivel, imagens = limagens}) = case nivelMaximo it of 
-                                                                                    1 -> getImagem "menuniveis1" limagens
-                                                                                    2 -> getImagem "menuniveis2" limagens
-                                                                                    _ -> getImagem "menuniveis3" limagens
+desenha it@(ImmutableTowers {menu = ModoJogo EscolherNivel, imagens = limagens}) 
+  = case nivelMaximo it of 
+      1 -> getImagem "menuniveis1" limagens
+      2 -> getImagem "menuniveis2" limagens
+      _ -> getImagem "menuniveis3" limagens
 desenha ImmutableTowers {menu = ModoJogo Texturas, imagens = limagens} = getImagem "menutexturas" limagens
 desenha it@(ImmutableTowers {menu = ModoJogo GanhouJogo, imagens = limagens})
   = if nivelAtual it == Just 3 && nivelMaximo it == 3 then getImagem "menuzerou" limagens else getImagem "menuganhou" limagens
@@ -63,7 +64,7 @@ desenha ImmutableTowers {menu = ModoJogo PerdeuJogo, imagens = limagens} = getIm
 desenha ImmutableTowers {menu = ModoJogo Pausa, imagens = limagens} = getImagem "menupausa" limagens
 desenha (ImmutableTowers Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens torreSelecionada infoTorre _ _ textura)
             =  Pictures [getBg torreSelecionada limagens,
-                       (Translate (-440) (385) $ Pictures $ [desenhaMapa textura picTerrenos mapa] ++ [desenhaBase picBase posbase] ++ (map (desenhaTorres picTorres) lpostiposTorres) ++ (map (desenhaPortais picPortal) lposportais) ++ (map (desenhaInimigo picInimigos) dadosInimigos)),
+                        (Translate (-440) (385) $ Pictures $ [desenhaMapa textura picTerrenos mapa] ++ [desenhaBase picBase posbase] ++ (map (desenhaTorres picTorres) lpostiposTorres) ++ (map (desenhaPortais picPortal) lposportais) ++ (map (desenhaInimigo picInimigos) dadosInimigos)),
                          picVida,
                          picCreditos,
                          desenhaInfoTorre picMelhoriasTorres infoTorre]
@@ -90,7 +91,7 @@ desenhaVida v = Color red $ Scale 0.5 0.5 $ translate (1275) (-175) $ Text (show
 desenhaCreditos :: Int -> Picture
 desenhaCreditos c = Pictures [Color (orange) $ Scale 0.5 0.5 $ translate 1325 (-675) $ Text (show c)]
 
-{-| Função que recebe a lista de imagens e o mapa e retorna a imagem do mapa.
+{-| Função que recebe o numero da textura atual, a lista de imagens e o mapa, de modo a retornar a imagem do mapa.
 
 Fazemos zip com a lista [0, -1..] porque o eixo do gloss cresce pra cima), então decidimos passar as coordenadas do y simétricas para o gloss.
 
@@ -100,11 +101,17 @@ Ou seja, a segunda linha da matriz do mapa irá corresponder a lista das posiç�
 desenhaMapa :: Int -> [(String,Picture)] -> [[Terreno]] -> Picture
 desenhaMapa textura limagens mapa = Pictures $ concatMap (desenhaLinha textura limagens) (zip [0,-1..] mapa)
 
--- | Função que dada a lista de imagens e uma tupla que contem a coordenada do y (já correspondente ao gloss) e a linha da matriz do mapa retorna uma lista de Picture.
+{-| Função que dado o número da textura atual, a lista de imagens e uma tupla que contem a coordenada do y (já correspondente ao gloss) 
+e a linha da matriz do mapa retorna uma lista de Picture.
+-}
+
 desenhaLinha :: Int -> [(String,Picture)] -> (Int, [Terreno]) -> [Picture]
 desenhaLinha textura limagens (y, linha) = concatMap (desenhaChao textura limagens y) (zip [0..] linha)
 
--- | Função que dada a lista de imagens, a coordenada do y e uma tupla que contem a coordenada do x e o terreno retorna uma lista de Picture.
+{-| Função que dado o número da textura atual, a lista de imagens, a coordenada do y e uma tupla que contem a coordenada do x e o terreno 
+retorna uma lista de Picture.
+-}
+
 desenhaChao :: Int -> [(String,Picture)] -> Int -> (Int, Terreno) -> [Picture]
 desenhaChao textura limagens y (x, terreno) = [desenhaTerreno textura limagens terreno (posicaoCentro x y)]
 

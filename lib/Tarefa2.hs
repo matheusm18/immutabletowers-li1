@@ -85,7 +85,7 @@ False
 verificaResina :: [Projetil] -> Bool
 verificaResina listaprojetil = any (\p -> tipoProjetil p == Resina) listaprojetil
 
-{-| Função auxiliar que dobra a duração de um projétil.
+{-| Função auxiliar que dobra a duração de um projétil e devolve a duração dobrada.
 
 == Exemplos:
 
@@ -100,7 +100,7 @@ dobraDuracao :: Projetil -> Duracao
 dobraDuracao (Projetil _ Infinita) = Infinita
 dobraDuracao (Projetil _ (Finita d)) = Finita (2*d)
 
-{-| Função auxiliar que soma a duração de dois projéteis.
+{-| Função auxiliar que soma a duração de dois projéteis e devolve a duração somada.
 
 == Exemplos:
 
@@ -116,7 +116,7 @@ somaDuracao (Projetil _ Infinita) (Projetil _ _ ) = Infinita
 somaDuracao (Projetil _ _) (Projetil _ Infinita) = Infinita
 somaDuracao (Projetil _ (Finita d1)) (Projetil _ (Finita d2)) = Finita (d1 + d2)
 
-{-| Função que recebe um projetil incidente e uma outra lista de projeteis ativos e retorna a lista de projeteis normalizada.
+{-| Função que recebe um projetil incidente e a lista de projeteis ativos e retorna a lista de projeteis normalizada.
 
 Isto é, normaliza de acordo com as sinergias e pela ordem de precedência referida no enunciado do projeto.
 
@@ -179,8 +179,8 @@ atingeInimigo Torre {danoTorre = dano, projetilTorre = projetil} i@(Inimigo {tip
 atingeInimigo Torre {danoTorre = dano} i@(Inimigo {tipoInimigo = Blindado}) =
     i {vidaInimigo = vidaInimigo i - dano, projeteisInimigo = []}
 
-{-| Função que dada uma torre e a lista de inimigos ativos no jogo, 
-retorna uma tupla com o portal atualizado após a ativação do inimigo e a nova lista de inimigos ativos no jogo (adição do inimigo ativado)
+{-| Função que dado um portal e a lista de inimigos ativos no jogo
+retorna uma tupla com o portal atualizado após a ativação do inimigo e a nova lista de inimigos ativos no jogo (com a adição do inimigo ativado).
 
 == Exemplos:
 

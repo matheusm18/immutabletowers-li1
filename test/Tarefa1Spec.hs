@@ -28,6 +28,20 @@ testeValidaPosicaoRelva = TestList
     "validaPosicaoRelva False" ~: False ~=? validaPosicaoRelva (1.5,0.5) mapa01
   ]
 
+-- | Testes para a função posAdjacentes:
+testePosAdjacentes :: Test
+testePosAdjacentes = TestList
+  [ "posAdjacentes (0.5,0.5) [[Terra,Terra,Agua],[Relva,Terra,Terra], [Relva,Terra,Terra]]" ~: [(1.5,0.5)] ~=? posAdjacentes (0.5,0.5) [[Terra,Terra,Agua],[Relva,Terra,Terra], [Relva,Terra,Terra]],
+    "posAdjacentes (1.5,1.5) [[Terra,Terra,Agua],[Relva,Terra,Terra],[Relva,Terra,Terra]]" ~: [(2.5,1.5),(1.5,0.5),(1.5,2.5)] ~=? posAdjacentes (1.5,1.5) [[Terra,Terra,Agua],[Relva,Terra,Terra],[Relva,Terra,Terra]]
+  ]
+
+-- | Testes para a função verificaCaminho:
+testeVerificaCaminho :: Test
+testeVerificaCaminho = TestList
+  [ "verificaCaminho True" ~: True ~=? verificaCaminho (0.5,0.5) (2.5,2.5) [[Terra,Terra,Agua],[Relva,Terra,Terra],[Relva,Relva,Terra]],
+    "verificaCaminho False" ~: False ~=? verificaCaminho (0.5,0.5) (1.5,1.5) [[Terra,Agua],[Agua,Terra]]
+  ]
+
 -- | Testes para a função validaPortais:
 testeValidaPortais :: Test
 testeValidaPortais = TestList
@@ -77,6 +91,8 @@ testesTarefa1 =
       [ testeTipoTerreno,
         testeValidaPosicaoTerra,
         testeValidaPosicaoRelva,
+        testePosAdjacentes,
+        testeVerificaCaminho,
         testeValidaPortais,
         testeValidaInimigosPortal,
         testeValidaInimigosEmJogo,

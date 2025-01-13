@@ -14,15 +14,15 @@ import Tarefa1
 import Tarefa2
 import Data.Maybe (fromJust)
 
-{-| Função que com o passar do tempo retorna o portal atualizado juntamente com a lista de inimigos do jogo incluindo os inimigos ativados.
+{-| Função que com o passar do tempo retorna uma tupla com o portal atualizado e a lista de inimigos do jogo (incluindo os inimigos ativados).
 
 == Exemplos:
 
 >>> atualizaPortal 1 Portal {posicaoPortal = (1.5,2.5), ondasPortal = [Onda {cicloOnda = 10, tempoOnda = 10, entradaOnda = 5, inimigosOnda = [Inimigo {posicaoInimigo = (1.5,2.5), direcaoInimigo = Sul, vidaInimigo = 100, velocidadeInimigo = 1.0, ataqueInimigo = 10, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Normal}]}]} []
-(Portal {posicaoPortal = (1.5,2.5), ondasPortal = [Onda {inimigosOnda = [Inimigo {posicaoInimigo = (1.5,2.5), direcaoInimigo = Sul, vidaInimigo = 100.0, velocidadeInimigo = 1.0, ataqueInimigo = 10.0, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Normal}], cicloOnda = 10.0, tempoOnda = 10.0, entradaOnda = 4.0}]}, [])
+(Portal {posicaoPortal = (1.5,2.5), ondasPortal = [Onda {inimigosOnda = [Inimigo {posicaoInimigo = (1.5,2.5), direcaoInimigo = Sul, vidaInimigo = 100.0, velocidadeInimigo = 1.0, ataqueInimigo = 10.0, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Normal}], cicloOnda = 10.0, tempoOnda = 10.0, entradaOnda = 4.0}]},[])
 
 >>> atualizaPortal 1 Portal {posicaoPortal = (0.5,0.5), ondasPortal = [Onda {cicloOnda = 10, tempoOnda = 0, entradaOnda = 0, inimigosOnda = [Inimigo {posicaoInimigo = (0.5,0.5), direcaoInimigo = Sul, vidaInimigo = 100, velocidadeInimigo = 1.0, ataqueInimigo = 10, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Normal}]}]} []
-(Portal {posicaoPortal = (0.5,0.5), ondasPortal = [Onda {inimigosOnda = [], cicloOnda = 10.0, tempoOnda = 10.0, entradaOnda = 0.0}]}, [Inimigo {posicaoInimigo = (0.5,0.5), direcaoInimigo = Sul, vidaInimigo = 100.0, velocidadeInimigo = 1.0, ataqueInimigo = 10.0, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Normal}])
+(Portal {posicaoPortal = (0.5,0.5), ondasPortal = [Onda {inimigosOnda = [], cicloOnda = 10.0, tempoOnda = 10.0, entradaOnda = 0.0}]},[Inimigo {posicaoInimigo = (0.5,0.5), direcaoInimigo = Sul, vidaInimigo = 100.0, velocidadeInimigo = 1.0, ataqueInimigo = 10.0, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Normal}])
 -}
 
 atualizaPortal :: Tempo -> Portal -> [Inimigo] -> (Portal, [Inimigo])
@@ -31,30 +31,42 @@ atualizaPortal t portal inimigos =
     let (onda:restoondas) = ondasPortal portal
     in  if inimigosOnda onda == []
         then (portal {ondasPortal = restoondas}, inimigos)
-        else if entradaOnda onda == 0 && tempoOnda onda == 0
-        then (ativaInimigo portal inimigos)
         else if entradaOnda onda == 0 && tempoOnda onda > 0
         then (portal {ondasPortal = (onda { tempoOnda = max 0 (tempoOnda onda - t) }) : restoondas}, inimigos)
+        else if entradaOnda onda == 0 && tempoOnda onda == 0
+        then (ativaInimigo portal inimigos)
         else (portal {ondasPortal = (onda {entradaOnda = max 0 (entradaOnda onda - t)}) : restoondas}, inimigos)
 
-{-| Função que atualiza todos os portais do jogo com o passar do tempo.
+{-| Função que com o passar do tempo retorna uma tupla com a lista de todos os portais atualizados e 
+a lista de inimigos do jogo atualizada (incluindo todos os inimigos ativados).
 
 == Exemplos:
 
->>> atualizaPortais 2 [] []
-([], [])
+>>> atualizaPortais 2 [Portal {posicaoPortal = (2.5,1.5), ondasPortal = []}] []
+([Portal {posicaoPortal = (2.5,1.5), ondasPortal = []}],[])
 
 >>> atualizaPortais 1 [Portal {posicaoPortal = (1.5,3.5), ondasPortal = [Onda {cicloOnda = 10, tempoOnda = 10, entradaOnda = 5, inimigosOnda = [Inimigo {posicaoInimigo = (1.5,3.5), direcaoInimigo = Sul, vidaInimigo = 100, velocidadeInimigo = 1.0, ataqueInimigo = 10, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Normal}]}]}] []
-([Portal {posicaoPortal = (1.5,3.5), ondasPortal = [Onda {inimigosOnda = [Inimigo {posicaoInimigo = (1.5,3.5), direcaoInimigo = Sul, vidaInimigo = 100.0, velocidadeInimigo = 1.0, ataqueInimigo = 10.0, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Normal}], cicloOnda = 10.0, tempoOnda = 10.0, entradaOnda = 4.0}]}], [])
+([Portal {posicaoPortal = (1.5,3.5), ondasPortal = [Onda {inimigosOnda = [Inimigo {posicaoInimigo = (1.5,3.5), direcaoInimigo = Sul, vidaInimigo = 100.0, velocidadeInimigo = 1.0, ataqueInimigo = 10.0, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Normal}], cicloOnda = 10.0, tempoOnda = 10.0, entradaOnda = 4.0}]}],[])
 -}
 
 atualizaPortais :: Tempo -> [Portal] -> [Inimigo] -> ([Portal],[Inimigo])
 atualizaPortais _ [] inimigos = ([],inimigos)
-atualizaPortais t (p1:rps) inimigos = let (p1att, inimigosp1att) = atualizaPortal t p1 inimigos
-                                          (portais, inimigosatualizados) = atualizaPortais t rps inimigosp1att
-                                      in ((p1att : portais), inimigosatualizados)
+atualizaPortais t (portal1:rps) inimigos = let (portal1Att, inimigosPortal1Att) = atualizaPortal t portal1 inimigos
+                                               (portais, inimigosatualizados) = atualizaPortais t rps inimigosPortal1Att
+                                           in ((portal1Att : portais), inimigosatualizados)
 
--- | Função que dada uma torre e uma lista de inimigos ativos retorna uma lista com os inimigos apos serem atacados por esta torre e retorna a torre com o cooldown renovado, se ela atacar.
+{-| Função que dada uma torre e uma lista de inimigos ativos retorna uma tupla em que a primeira componente é a torre atualizada e a segunda componente é a 
+lista com os inimigos ativos atualizados (após a torre atacar, caso haja inimigos no alcance).
+
+== Exemplos:
+
+>>> atacaInimigos Torre {posicaoTorre = (1.5,1.5), danoTorre = 25, alcanceTorre = 2.0, rajadaTorre = 1, cicloTorre = 5, tempoTorre = 0, projetilTorre = Projetil Fogo (Finita 3), nivelTorre = 1} [Inimigo {posicaoInimigo = (2.5,1.5), direcaoInimigo = Sul, vidaInimigo = 100, velocidadeInimigo = 1.0, ataqueInimigo = 10, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Normal}]
+(Torre {posicaoTorre = (1.5,1.5), danoTorre = 25.0, alcanceTorre = 2.0, rajadaTorre = 1, cicloTorre = 5.0, tempoTorre = 5.0, projetilTorre = Projetil {tipoProjetil = Fogo, duracaoProjetil = Finita 3.0}, nivelTorre = 1},[Inimigo {posicaoInimigo = (2.5,1.5), direcaoInimigo = Sul, vidaInimigo = 75.0, velocidadeInimigo = 1.0, ataqueInimigo = 10.0, butimInimigo = 25, projeteisInimigo = [Projetil {tipoProjetil = Fogo, duracaoProjetil = Finita 3.0}], tipoInimigo = Normal}])
+
+>>> atacaInimigos Torre {posicaoTorre = (3.5,2.5), danoTorre = 25, alcanceTorre = 2.5, rajadaTorre = 1, cicloTorre = 5, tempoTorre = 0, projetilTorre = Projetil Resina (Finita 5), nivelTorre = 2} [Inimigo {posicaoInimigo = (2.5,2.5), direcaoInimigo = Norte, vidaInimigo = 100, velocidadeInimigo = 2.0, ataqueInimigo = 15, butimInimigo = 30, projeteisInimigo = [], tipoInimigo = Blindado}]
+(Torre {posicaoTorre = (3.5,2.5), danoTorre = 25.0, alcanceTorre = 2.5, rajadaTorre = 1, cicloTorre = 5.0, tempoTorre = 5.0, projetilTorre = Projetil {tipoProjetil = Resina, duracaoProjetil = Finita 5.0}, nivelTorre = 2},[Inimigo {posicaoInimigo = (2.5,2.5), direcaoInimigo = Norte, vidaInimigo = 75.0, velocidadeInimigo = 2.0, ataqueInimigo = 15.0, butimInimigo = 30, projeteisInimigo = [], tipoInimigo = Blindado}])
+-}
+
 atacaInimigos :: Torre -> [Inimigo] -> (Torre,[Inimigo])
 atacaInimigos torre inimigos =
     let (iatacar,_) = splitAt (rajadaTorre torre) (inimigosNoAlcance torre inimigos)
@@ -63,7 +75,17 @@ atacaInimigos torre inimigos =
     in  if null iatacar then (torre, inimigos)
         else (torre {tempoTorre = cicloTorre torre}, inimigosAtacados ++ inimigosRestantes)
 
--- | Função que atualiza as torres: ataca os inimigos e retorna a tupla com a torre atualizada e a lista dos inimigos após o ataque.
+{-| Função que atualiza as torres: ataca os inimigos e retorna a tupla com a lista das torres atualizadas e a lista dos inimigos após o ataque.
+
+== Exemplos:
+
+>>> atualizaTorres 1 [Torre {posicaoTorre = (3.5,2.5), danoTorre = 25, alcanceTorre = 2.5, rajadaTorre = 1, cicloTorre = 5, tempoTorre = 2, projetilTorre = Projetil Resina (Finita 5), nivelTorre = 2}] []
+([Torre {posicaoTorre = (3.5,2.5), danoTorre = 25.0, alcanceTorre = 2.5, rajadaTorre = 1, cicloTorre = 5.0, tempoTorre = 1.0, projetilTorre = Projetil {tipoProjetil = Resina, duracaoProjetil = Finita 5.0}, nivelTorre = 2}],[])
+
+>>> atualizaTorres 1 [Torre {posicaoTorre = (1.5,1.5), danoTorre = 25, alcanceTorre = 2.0, rajadaTorre = 1, cicloTorre = 5, tempoTorre = 0, projetilTorre = Projetil Fogo (Finita 3), nivelTorre = 1}] [Inimigo {posicaoInimigo = (2.5,1.5), direcaoInimigo = Sul, vidaInimigo = 100, velocidadeInimigo = 1.0, ataqueInimigo = 10, butimInimigo = 25, projeteisInimigo = [], tipoInimigo = Normal}]
+([Torre {posicaoTorre = (1.5,1.5), danoTorre = 25.0, alcanceTorre = 2.0, rajadaTorre = 1, cicloTorre = 5.0, tempoTorre = 5.0, projetilTorre = Projetil {tipoProjetil = Fogo, duracaoProjetil = Finita 3.0}, nivelTorre = 1}],[Inimigo {posicaoInimigo = (2.5,1.5), direcaoInimigo = Sul, vidaInimigo = 75.0, velocidadeInimigo = 1.0, ataqueInimigo = 10.0, butimInimigo = 25, projeteisInimigo = [Projetil {tipoProjetil = Fogo, duracaoProjetil = Finita 3.0}], tipoInimigo = Normal}])
+-}
+
 atualizaTorres :: Tempo -> [Torre] -> [Inimigo] -> ([Torre], [Inimigo])
 atualizaTorres t torres inimigos = foldl atualizaAux ([], inimigos) torres
   where
@@ -74,15 +96,15 @@ atualizaTorres t torres inimigos = foldl atualizaAux ([], inimigos) torres
         | otherwise = let torreAtualizada = torre { tempoTorre = max 0 (tempoTorre torre - t) }
                       in (torreAtualizada : acctorres, accinimigos)                          
 
-{-| Função que atualiza a vida de um inimigo de acordo com os projeteis ativos.
+{-| Função que retorna a vida de um inimigo atualizada (de acordo com os projeteis ativos).
 
 == Exemplos:
 
 >>> atualizaVidaProjeteis (Inimigo {vidaInimigo = 100, projeteisInimigo = [Projetil {duracaoProjetil = Finita 5, tipoProjetil = Fogo}]})
-100 - (1/30)
+99.96667
 
 >>> atualizaVidaProjeteis (Inimigo {vidaInimigo = 75, projeteisInimigo = [Projetil {duracaoProjetil = Finita 3, tipoProjetil = Gelo}]})
-75
+75.0
 -}
 
 atualizaVidaProjeteis :: Inimigo -> Float
@@ -93,7 +115,8 @@ atualizaVidaProjeteis Inimigo {vidaInimigo = vida, projeteisInimigo = lprojeteis
 
 {-| Função para dar floor nas componentes x e y das posições para obter a "posição geral".
 
-Como sabemos, na matriz toda posição em que o x pertence a [0,1] e o y pertence a [0,1] é a posição (0,0) da matriz, essa função acha essa posição "geral" da matriz.
+Como sabemos, na matriz toda posição em que, por exemplo, se o x pertence a [0,1] e o y pertence a [0,1] 
+corresponde a posição (0,0) da matriz, essa função acha essa posição "geral" da matriz.
 
 == Exemplos:
 
@@ -111,7 +134,7 @@ floorPosicao (x, y) = (fromIntegral (floor x),fromIntegral (floor y))
 
 Para essa função funcionar corretamente precisamos dar as posições do centro do quadrado da posição inicial e final.
 
-No fim, é devolvido o caminho com as posições gerais (para facilitar posteriormente na moveInimigo).
+No fim, é devolvido o caminho com as posições gerais (para facilitar posteriormente na moveInimigo) caso haja um caminho.
 
 == Exemplos:
 
@@ -131,7 +154,7 @@ encontrarCaminho posinicial posfinal mapa = encontrarCaminhoAux [[posinicial]] [
     encontrarCaminhoAux :: [[Posicao]] -> [Posicao] -> Maybe [Posicao]
     encontrarCaminhoAux [] _ = Nothing
     encontrarCaminhoAux (caminho:fila) visitados
-        | floorPosicao atual == floorPosicao posfinal = Just ((map) (floorPosicao) caminho) -- ^ verificar se tá na mesma posição geral do quadrado da posição final
+        | floorPosicao atual == floorPosicao posfinal = Just ((map) (floorPosicao) caminho) -- ^ verifica se tá na mesma posição geral do quadrado da posição final
         | atual `elem` visitados = encontrarCaminhoAux fila visitados
         | otherwise =
             let visitados' = atual : visitados
@@ -140,7 +163,8 @@ encontrarCaminho posinicial posfinal mapa = encontrarCaminhoAux [[posinicial]] [
             in (encontrarCaminhoAux (fila ++ novosCaminhos) visitados')
         where atual = last caminho -- ^ a pos final de um caminho é a que interessa para comparar 
 
-{-| Função auxiliar que retorna as posições válidas para o inimigo se mover (nunca voltar para trás).
+{-| Função auxiliar que retorna a lista composta pelas tuplas com as posições válidas e a respetiva direção que o inimigo deve tomar 
+para o inimigo se mover e nunca voltar para trás.
 
 == Exemplos:
 
@@ -161,8 +185,8 @@ getPosicoesValidas (x,y) dir mapa =
 
 {-| Função auxiliar que escolhe a direção que o inimigo deve seguir para chegar a base quando há mais de uma direção possível.
 
-A primeira lista é a lista das tuplas de posições e direções válidas para o inimigo se mover.
-A segunda lista é a lista de posições do caminho que o inimigo deve seguir.
+A primeira lista que a função recebe é a lista das tuplas de posições e direções válidas para o inimigo se mover.
+A segunda lista que a função recebe é a lista de posições do caminho que o inimigo deve seguir.
 
 == Exemplos:
 
@@ -199,11 +223,10 @@ pertenceCaminho (x,y) caminho = elem (x',y') caminho
 {-| Função auxiliar que retorna a posição do centro do quadrado para evitar bug de movimento.
 
 Sem essa função, antes na moveInimigo, quando o inimigo não podia continuar na mesma direção e tinha de fazer uma tomada de decisão,
-aconteciam casos em que o inimigo havia passado do centro do quadrado, por ex: estava em (9.55,4.55), 
-o inimigo deveria ir pra Sul mas a função getPosicoesValida retornava
-tanto a parte do Norte desse mesmo quadrado quanto a posicao imediatamente em baixo, o que causava bug.
+aconteciam casos em que o inimigo havia passado do centro do quadrado, por ex: estava em (9.55,4.55), o inimigo deveria ir pra Sul 
+mas a função getPosicoesValida retornava tanto a parte do Norte desse mesmo quadrado quanto a posicao imediatamente em baixo, o que causava bug.
 
-Ao chamar a função getPosCentroQuadrado para a posicao (x,y) que queremos usar na getPosicoesValidas, a moveInimigo funciona.
+Ao chamar a função getPosCentroQuadrado para a posicao (x,y) que queremos usar na getPosicoesValidas, a moveInimigo funciona como pretendemos.
 
 == Exemplos:
 
@@ -218,6 +241,8 @@ getPosCentroQuadrado :: Posicao -> Posicao
 getPosCentroQuadrado (x,y) = (fromIntegral (floor x) + 0.5, fromIntegral (floor y) + 0.5)
 
 {-| Função que move o inimigo de acordo com a sua direção e velocidade.
+
+A função retorna uma tupla com a nova direção e a nova posição do inimigo.
 
 == Exemplos:
 
@@ -236,7 +261,7 @@ moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocid
     = if any (\proj -> tipoProjetil proj == Gelo) lprojeteis
       then (direcao,(x,y))
       else
-        let fatorReducao = 0.5 -- ^ fator de reduçãoo de velocidade para a resina
+        let fatorReducao = 0.5 -- ^ fator de redução de velocidade para a resina
             velocidadeAtual = if any (\proj -> tipoProjetil proj == Resina) lprojeteis then velocidade*fatorReducao else velocidade
             caminho = (fromJust(encontrarCaminho (getPosCentroQuadrado (x,y)) (posbase) mapa))
             posicoesValidas = getPosicoesValidas (getPosCentroQuadrado (x,y)) direcao mapa -- ^ com a posicaoCentroQuadrado não buga mais o movimento
@@ -262,10 +287,10 @@ moveInimigo t Inimigo {posicaoInimigo = (x,y), direcaoInimigo = direcao, velocid
 == Exemplos:
 
 >>> atualizaDurProjetil 3 (Projetil Fogo (Finita 5))
-Projetil Fogo (Finita 2.0)
+Projetil {tipoProjetil = Fogo, duracaoProjetil = Finita 2.0}
 
 >>> atualizaDurProjetil 1 (Projetil Gelo Infinita)
-Projetil Gelo Infinita
+Projetil {tipoProjetil = Gelo, duracaoProjetil = Infinita}
 -}
 
 atualizaDurProjetil :: Tempo -> Projetil -> Projetil
@@ -289,7 +314,7 @@ duracaoExpirou :: Projetil -> Bool
 duracaoExpirou Projetil {duracaoProjetil = Finita 0} = True
 duracaoExpirou _ = False
 
-{-| Função auxiliar que atualiza os inimigos que já sofreram o dano da torre, isto é, movimentação, dano dos projéteis, etc.
+{-| Função auxiliar que atualiza os inimigos que já sofreram o dano da torre, isto é, movimenta-os, aplica o dano dos projéteis, etc.
 
 == Exemplos:
 
@@ -312,7 +337,7 @@ atualizaInimigo t mapa posbase i
           lprojeteisnova = filter (\p -> not (duracaoExpirou p)) (map (atualizaDurProjetil t) lprojeteis) -- ^ atualiza e remove os expirados
 
 {-| Função que atualiza os inimigos do jogo (aplica dano, movimenta, etc) e no fim retorna uma tupla 
-com a lista de inimigos atualizadas, o dano dos inimigos a base e o butim dos inimigos mortos.
+com a lista de inimigos atualizadas, o dano que os inimigos causaram na base e o butim dos inimigos mortos.
 
 == Exemplos:
 
@@ -346,7 +371,7 @@ getDanoNaBase inimigos base = danobase
     where inimigosbase = filter (\i -> dist (posicaoInimigo i) (posicaoBase base) <= 0.35) inimigos -- ^ comparar as posições estava a dar erro, então optamos por <= 0.35
           danobase = sum (map (\i -> ataqueInimigo i) inimigosbase)
 
-{-| Função auxiliar que retorna os créditos que os inimigos mortos deram a base.
+{-| Função auxiliar que retorna os créditos que os inimigos mortos deram para a base.
 
 == Exemplos:
 
@@ -379,7 +404,12 @@ atualizaBase _ base danobase butim
 {-| A função 'atualizaJogo' é a função principal da Tarefa 3.
 
 Esta função atualiza o jogo com base no tempo que passou desde a última atualização.
-De modo a retornar a base, os portais, as torres e os inimigos atualizados.
+De modo a retornar o jogo todo atualizado (base, portais, torres e inimigos atualizados).
+
+== Exemplo:
+
+>>> atualizaJogo 1 Jogo {baseJogo = Base {vidaBase = 100.0, posicaoBase = (1.5,1.5), creditosBase = 100}, portaisJogo = [Portal {posicaoPortal = (0.5,0.5), ondasPortal = [Onda {cicloOnda = 10, tempoOnda = 10, entradaOnda = 5, inimigosOnda = []}]}], torresJogo = [], mapaJogo = [[Terra,Terra],[Relva,Terra]], inimigosJogo = [], lojaJogo = [], precoUpgrades = []}
+Jogo {baseJogo = Base {vidaBase = 100.0, posicaoBase = (1.5,1.5), creditosBase = 100}, portaisJogo = [Portal {posicaoPortal = (0.5,0.5), ondasPortal = []}], torresJogo = [], mapaJogo = [[Terra,Terra],[Relva,Terra]], inimigosJogo = [], lojaJogo = [], precoUpgrades = []}
 -}
 
 atualizaJogo :: Tempo -> Jogo -> Jogo

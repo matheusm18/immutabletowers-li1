@@ -32,9 +32,17 @@ testeAtualizaTorres = TestList
   [ "atualizaTorres 1 [torre01] [inimigoEmJogo01]" ~: ([torre01 {tempoTorre = 2}], [inimigoEmJogo01]) ~=? atualizaTorres 1 [torre01] [inimigoEmJogo01],
     "atualizaTorres 2 [torre02, torre03] [inimigoEmJogo02]" ~: ([torre03 {tempoTorre = 5}, torre02 {tempoTorre = 0}], [inimigoEmJogo02 {vidaInimigo = 110, projeteisInimigo = [Projetil Resina (Finita 10)]}]) ~=? atualizaTorres 2 [torre02, torre03] [inimigoEmJogo02]
   ]
-  
--- | Testes para a função getPosicoesValidas
 
+-- | Testes para a função encontrarCaminho
+testeEncontrarCaminho :: Test
+testeEncontrarCaminho = TestList
+  [
+    "encontrarCaminho (0,0) (1,1) [[Terra, Terra, Agua],[Agua,Terra,Agua],[Relva,Agua,Agua]]" ~: Just [(0.0,0.0),(1.0,0.0),(1.0,1.0)] ~=? encontrarCaminho (0,0) (1,1) [[Terra, Terra, Agua],[Agua,Terra,Agua],[Relva,Agua,Agua]],
+    "encontrarCaminho (0.5,0.5) (1.5,2.5) [[Terra, Terra, Agua],[Agua,Terra,Agua],[Relva,Terra,Agua]]" ~: Just [(0.0,0.0),(1.0,0.0),(1.0,1.0),(1.0,2.0)] ~=? encontrarCaminho (0.5,0.5) (1.5,2.5) [[Terra, Terra, Agua],[Agua,Terra,Agua],[Relva,Terra,Agua]],
+    "encontrarCaminho (0.5,0.5) (1.5,1.5) [[Terra, Agua],[Agua,Terra]]" ~: Nothing ~=? encontrarCaminho (0.5,0.5) (1.5,1.5) [[Terra, Agua],[Agua,Terra]]
+  ]
+
+-- | Testes para a função getPosicoesValidas
 testeGetPosicoesValidas :: Test
 testeGetPosicoesValidas = TestList
   [
@@ -42,6 +50,7 @@ testeGetPosicoesValidas = TestList
     "getPosicoesValidas (2.5,1.5) Este [[Terra, Agua, Agua,Agua],[Terra,Terra,Terra,Terra],[Relva,Relva,Relva,Terra],[Relva,Terra,Terra,Terra]]" ~: [((3.001,1.5),Este)] ~=? getPosicoesValidas (2.5,1.5) Este [[Terra, Agua, Agua,Agua],[Terra,Terra,Terra,Terra],[Relva,Relva,Relva,Terra],[Relva,Terra,Terra,Terra]]
   ]
 
+-- | Testes para a função escolheDirecao
 testeEscolheDirecao :: Test
 testeEscolheDirecao = TestList
   [
@@ -49,6 +58,7 @@ testeEscolheDirecao = TestList
     "escolheDirecao [((2.001,0.5),Norte),((2.5,1.001),Sul)] [(2,1),(2,2)]" ~: Just Sul ~=? escolheDirecao [((2.001,0.5),Norte),((2.5,1.001),Sul)] [(2,1),(2,2)]
   ]
 
+-- | Testes para a função pertenceCaminho
 testePertenceCaminho :: Test
 testePertenceCaminho = TestList
   [
@@ -56,6 +66,7 @@ testePertenceCaminho = TestList
     "pertenceCaminho (0.5,0.5) [(1,1),(1,2),(1,3),(2,3),(3,3)]" ~: False ~=? pertenceCaminho (0.5,0.5) [(1,1),(1,2),(1,3),(2,3),(3,3)]
   ]
 
+-- | Testes para a função getPosCentroQuadrado
 testeGetPosCentroQuadrado :: Test
 testeGetPosCentroQuadrado = TestList
   [
@@ -63,6 +74,7 @@ testeGetPosCentroQuadrado = TestList
     "getPosCentroQuadrado (0.0,1.0)" ~: (0.5,1.5) ~=? getPosCentroQuadrado (0.0,1.0)
   ]
 
+-- | Testes para a função moveInimigo
 testeMoveInimigo :: Test
 testeMoveInimigo = TestList
   [
@@ -87,7 +99,8 @@ testeDuracaoExpirou = TestList
 -- | Testes para a função atualizaInimigos
 testeAtualizaInimigos :: Test
 testeAtualizaInimigos = TestList
-  [ "atualizaInimigos 0.5 mapa01 base01 [inimigoEmJogo01]" ~: ([inimigoEmJogo01 {posicaoInimigo = (1.5, 6.5), direcaoInimigo = Sul, vidaInimigo = 100.0, projeteisInimigo = []}], 0, 0) ~=? atualizaInimigos 0.5 mapa01 base01 [inimigoEmJogo01]
+  [ "atualizaInimigos 0.5 mapa01 base01 [inimigoEmJogo01]" ~: ([inimigoEmJogo01 {posicaoInimigo = (1.5, 6.5), direcaoInimigo = Sul, vidaInimigo = 100.0, projeteisInimigo = []}],0,0) ~=? atualizaInimigos 0.5 mapa01 base01 [inimigoEmJogo01],
+    "atualizaInimigos 0.5 mapa02 base02 [inimigoEmJogo02]" ~: ([inimigoEmJogo02 {posicaoInimigo = (8.5,7.0), direcaoInimigo = Sul, vidaInimigo = 150.0, projeteisInimigo = []}],0,0) ~=? atualizaInimigos 0.5 mapa02 base02 [inimigoEmJogo02]
   ]
 
 -- | Testes para a função getDanoNaBase
@@ -113,7 +126,7 @@ testeAtualizaBase = TestList
     "atualizaBase 1 base01 0 0" ~: base01 ~=? atualizaBase 1 base01 0 0
   ]
 
--- | Testes para a função atualizaJogo
+-- | Teste para a função atualizaJogo
 testeAtualizaJogo :: Test
 testeAtualizaJogo = TestList
   [ "atualizaJogo 0.5 jogo01" ~: jogoAposAtualizaJogo01 ~=? atualizaJogo 0.5 jogo01
@@ -127,6 +140,7 @@ testesTarefa3 =
         testeAtualizaPortais,
         testeAtacaInimigos,
         testeAtualizaTorres,
+        testeEncontrarCaminho,
         testeGetPosicoesValidas,
         testeEscolheDirecao,
         testePertenceCaminho,

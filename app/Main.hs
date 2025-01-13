@@ -28,7 +28,8 @@ main = do
 {-| Função que carrega as imagens do jogo de modo a passar estas para Picture e armazena-las
  numa lista de tuplas. 
  
- A primeira componente da tupla é uma string com o nome da imagem e a segunda componente é a imagem em si, para facilitar a busca pela imagem correta nas outras funções.
+ A primeira componente da tupla é uma string com o nome da imagem e a segunda componente é a imagem em si, 
+ para facilitar a busca pela imagem correta nas outras funções.
 -}
 
 imagensLoad :: IO [(String, Picture)]

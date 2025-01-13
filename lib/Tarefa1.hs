@@ -20,6 +20,9 @@ Just Agua
 
 >>> tipoTerreno (1.5,0.5) [[Terra,Relva],[Relva,Agua]]
 Just Relva
+
+>>> tipoTerreno (-2,-1) [[Terra,Relva],[Relva,Agua]]
+Nothing
 -}
 
 tipoTerreno :: Posicao -> Mapa -> Maybe Terreno
@@ -64,7 +67,7 @@ validaPosicaoRelva (x,y) mapa = case t of
     _ -> False
     where t = tipoTerreno (x,y) mapa
 
-{-| Função que dada uma posição retorna as posições que estão em volta cujo terreno é Terra.
+{-| Função que dada uma posição retorna a lista com as posições que estão em volta e cujo terreno é Terra.
 
 Como a função validaPosicaoTerra (que é utilizada dentro do filter) utiliza a função tipoTerreno, não é necessário verificar se as posições adjacentes são válidas.
 
@@ -160,7 +163,7 @@ validaPortais portais mapa base torres =
     all (\p -> verificaOndas (ondasPortal p)) portais -- ^ verifica se para cada portal tem no máximo uma onda ativa
 
 
-{-| Função que dada a posição do portal e um inimigo deste portal(por lançar), verifica se o inimigo cumpre as restrições da alínea a).
+{-| Função que dada a posição do portal e um inimigo deste portal (por lançar), verifica se o inimigo cumpre as restrições da alínea a).
 
 == Exemplos:
 
