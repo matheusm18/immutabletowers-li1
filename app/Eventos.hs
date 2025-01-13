@@ -13,24 +13,31 @@ Decidimos adicionar este extra com o menu inicial para tornar o jogo mais intuit
 -}
 
 reageEventosMenu :: Event -> ImmutableTowers -> ImmutableTowers
-reageEventosMenu (EventKey (SpecialKey KeyInsert) Down _ _) it@(ImmutableTowers {menu = ModoJogo EscolherNivel}) = it {nivelAtual = 3} -- ^ cheat code para desbloquear niveis
+reageEventosMenu (EventKey (SpecialKey KeyInsert) Down _ _) it@(ImmutableTowers {menu = ModoJogo EscolherNivel}) = it {nivelMaximo = 3} -- ^ cheat code para desbloquear niveis
 reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {menu = MenuInicial}) 
     = if clicouDentro botaoJogarMenuInicial posMouse then it {menu = ModoJogo EscolherNivel} else if clicouDentro botaoSairMenuInicial posMouse then error "Jogo fechado." else it
 reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {menu = ModoJogo EscolherNivel})
-    = if clicouDentro botaoNivel1 posMouse then it {jogoAtual = jogoInicio01, menu = ModoJogo EmAndamento, torreSelecionadaLoja = Nothing, infoTorre = Nothing}
-      else if clicouDentro botaoNivel2 posMouse && (nivelAtual it) >=2 then it {jogoAtual = jogoInicio02, menu = ModoJogo EmAndamento, torreSelecionadaLoja = Nothing, infoTorre = Nothing}
-      else if clicouDentro botaoNivel3 posMouse && (nivelAtual it == 3) then it {jogoAtual = jogoInicio03, menu = ModoJogo EmAndamento, torreSelecionadaLoja = Nothing, infoTorre = Nothing}
+    = if clicouDentro botaoNivel1 posMouse then it {jogoAtual = jogoInicio1, menu = ModoJogo EmAndamento, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = Just 1}
+      else if clicouDentro botaoNivel2 posMouse && (nivelMaximo it) >=2 then it {jogoAtual = jogoInicio2, menu = ModoJogo EmAndamento, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = Just 2}
+      else if clicouDentro botaoNivel3 posMouse && (nivelMaximo it == 3) then it {jogoAtual = jogoInicio3, menu = ModoJogo EmAndamento, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = Just 3}
       else if clicouDentro botaoSairNiveis posMouse then it {menu = MenuInicial}
       else it
-reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {menu = ModoJogo PerdeuJogo}) = 
-    if clicouDentro botaoSairMenuPerdeuGanhou posMouse then it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing} else it
-reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {menu = ModoJogo GanhouJogo}) = 
-   if clicouDentro botaoSairMenuPerdeuGanhou posMouse 
-   then (case nivelAtual it of 
-            1 -> it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = 2}
-            2 -> it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = 3}
-            _ -> it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = 3})
+reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo, menu = ModoJogo PerdeuJogo}) 
+    = if clicouDentro botaoSairMenuPerdeu posMouse then it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = Nothing} 
+      else if clicouDentro botaoReiniciarMenuPerdeu posMouse then it {jogoAtual = reiniciarNivel (jogo) (nivelAtual it), menu = ModoJogo EmAndamento, torreSelecionadaLoja = Nothing, infoTorre = Nothing}
+      else it 
+reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {menu = ModoJogo GanhouJogo}) =
+   if clicouDentro botaoSairMenuPerdeu posMouse 
+   then (case nivelMaximo it of 
+            1 -> it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = Nothing, nivelMaximo = 2}
+            2 -> it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = Nothing, nivelMaximo = 3}
+            _ -> it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = Nothing, nivelMaximo = 3})
    else it
+reageEventosMenu (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo, menu = ModoJogo Pausa}) =
+    if clicouDentro botaoRetornarMenuPausa posMouse then it {menu = ModoJogo EmAndamento}
+    else if clicouDentro botaoReiniciarMenuPausa posMouse then it {jogoAtual = reiniciarNivel (jogo) (nivelAtual it), menu = ModoJogo EmAndamento, torreSelecionadaLoja = Nothing, infoTorre = Nothing}
+    else if clicouDentro botaoSairMenuPausa posMouse then it {menu = ModoJogo EscolherNivel, torreSelecionadaLoja = Nothing, infoTorre = Nothing, nivelAtual = Nothing} 
+    else it
 reageEventosMenu _ it = it
 
 -- | Função auxiliar que reage ao evento do rato quando o jogador clicou dentro da área de melhoria (para simplificar a reageEventos)
@@ -69,6 +76,7 @@ reageCompraTorre _ it = it
 
 -- | Função principal que reage aos eventos do jogador (ações do teclado e do rato)
 reageEventos :: Event -> ImmutableTowers -> ImmutableTowers
+reageEventos (EventKey (SpecialKey KeyTab) Down _ _) it@(ImmutableTowers {menu = ModoJogo EmAndamento}) = it {menu = ModoJogo Pausa}
 reageEventos (EventKey (SpecialKey KeyInsert) Down _ _) it@(ImmutableTowers {jogoAtual = jogo, menu = ModoJogo EmAndamento}) = it {jogoAtual = jogo {baseJogo = (baseJogo jogo) {creditosBase = 9999}}} -- ^ cheat code para ter créditos
 reageEventos (EventKey (MouseButton LeftButton) Down _ posMouse) it@(ImmutableTowers {jogoAtual = jogo, menu = ModoJogo EmAndamento}) =
     if clicouDentro botaoMelhoriaArea posMouse
@@ -112,8 +120,23 @@ botaoJogarMenuInicial = (-215,215,-24.5,68.5)
 botaoSairMenuInicial :: (Float, Float, Float, Float)
 botaoSairMenuInicial = (-215,215,-191.5,-98.5)
 
-botaoSairMenuPerdeuGanhou :: (Float, Float, Float, Float)
-botaoSairMenuPerdeuGanhou = (-215,215,-171.5,-78.5)
+botaoReiniciarMenuPerdeu :: (Float, Float, Float, Float)
+botaoReiniciarMenuPerdeu = (-215,215,-24.5,68.5)
+
+botaoSairMenuPerdeu :: (Float, Float, Float, Float)
+botaoSairMenuPerdeu = (-215,215,-191.5,-98.5)
+
+botaoSairMenuGanhou :: (Float, Float, Float, Float)
+botaoSairMenuGanhou = (-215,215,-171,-79)
+
+botaoRetornarMenuPausa :: (Float, Float, Float, Float)
+botaoRetornarMenuPausa = (-215,215,11,104)
+
+botaoReiniciarMenuPausa :: (Float, Float, Float, Float)
+botaoReiniciarMenuPausa = (-215,215,-128,-35)
+
+botaoSairMenuPausa :: (Float, Float, Float, Float)
+botaoSairMenuPausa = (-215,215,-268,-175)
 
 botaoNivel1 :: (Float, Float, Float, Float)
 botaoNivel1 = (-215,215,157.5,250.5)
@@ -219,3 +242,11 @@ darUpgradeTorre torre = case nivelTorre torre of
                             2 -> torre {danoTorre = danoTorre torre + 10, nivelTorre = nivelTorre torre + 1}
                             3 -> torre {danoTorre = danoTorre torre + 10, alcanceTorre = alcanceTorre torre + 1, nivelTorre = nivelTorre torre + 1}
                             _ -> torre
+
+-- | Função auxiliar que reinicia o nível atual
+reiniciarNivel :: Jogo -> Maybe Nivel -> Jogo
+reiniciarNivel jogo nivel = case nivel of
+                                Just 1 -> jogoInicio1
+                                Just 2 -> jogoInicio2
+                                Just 3 -> jogoInicio3
+                                _ -> jogo

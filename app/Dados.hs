@@ -4,8 +4,8 @@ import LI12425
 import Desenhar(mapa01,mapa02,mapa03)
 
 -- | Estado do jogo inicial 1
-jogoInicio01 :: Jogo
-jogoInicio01 = Jogo {
+jogoInicio1 :: Jogo
+jogoInicio1 = Jogo {
     baseJogo = Base {
         vidaBase = 100,
         posicaoBase = (10.5, 8.5),
@@ -111,8 +111,8 @@ jogoInicio01 = Jogo {
 }
 
 -- | Estado do jogo inicial 2
-jogoInicio02 :: Jogo
-jogoInicio02 = Jogo {
+jogoInicio2 :: Jogo
+jogoInicio2 = Jogo {
     baseJogo = Base {
         vidaBase = 100,
         posicaoBase = (5.5, 5.5),
@@ -247,8 +247,8 @@ jogoInicio02 = Jogo {
 }
 
 -- | Estado do jogo inicial 3
-jogoInicio03 :: Jogo
-jogoInicio03 = Jogo {
+jogoInicio3 :: Jogo
+jogoInicio3 = Jogo {
     baseJogo = Base {
         vidaBase = 100,
         posicaoBase = (10.5, 5.5),

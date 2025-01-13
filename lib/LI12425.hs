@@ -11,11 +11,11 @@ Tipos de dados e funções auxiliares para a realização do projeto de LI1 em 2
 module LI12425 (
     -- * Tipos de dados
     -- ** Básicos
-    Creditos, Direcao(..), Distancia, Duracao(..), Posicao, Semente, Tempo,
+    Creditos, Direcao(..), Distancia, Duracao(..), Posicao, Semente, Tempo, NivelTorre,
     -- ** Mapas
     Mapa, Terreno(..),
     -- ** Entidades
-    Base(..), Torre(..), Portal(..), Inimigo(..), TipoProjetil(..), Projetil(..),TipoInimigo(..),
+    Base(..), Torre(..), Portal(..), Inimigo(..), TipoProjetil(..), Projetil(..), TipoInimigo(..),
     -- ** Jogo
     Jogo(..), Onda(..), Loja, PrecoUpgrades,
     -- * Funções auxiliares

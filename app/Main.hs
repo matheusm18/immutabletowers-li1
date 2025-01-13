@@ -23,7 +23,7 @@ fr = 60
 main :: IO ()
 main = do
   imagens <- imagensLoad
-  play janela fundo fr (ImmutableTowers jogoInicio01 (MenuInicial) imagens Nothing Nothing 1) desenha reageEventos reageTempo
+  play janela fundo fr (ImmutableTowers jogoInicio1 (MenuInicial) imagens Nothing Nothing Nothing 1) desenha reageEventos reageTempo
 
 {-| Função que carrega as imagens do jogo de modo a passar estas para Picture e armazena-las
  numa lista de tuplas com a string igual o nome da imagem e a imagem em si, para facilitar a busca pela imagem correta nas outras funções 
@@ -32,6 +32,7 @@ main = do
 imagensLoad :: IO [(String, Picture)]
 imagensLoad = do
     menujogar <- loadBMP "imgs/menujogar.bmp"
+    menupausa <- loadBMP "imgs/menupausa.bmp"
     menuganhou <- loadBMP "imgs/ganhou.bmp"
     menuperdeu <- loadBMP "imgs/perdeu.bmp"
     menuniveis1 <- loadBMP "imgs/menuniveis1.bmp"
@@ -82,6 +83,7 @@ imagensLoad = do
     melhoriaResina3 <- loadBMP "imgs/melhoriaresina3.bmp"
     melhoriaResina4 <- loadBMP "imgs/melhoriaresina4.bmp"
     return [("menujogar", menujogar),
+           ("menupausa", menupausa),
            ("menuganhou", menuganhou), 
            ("menuperdeu", menuperdeu),
            ("menuniveis1", menuniveis1),

@@ -45,13 +45,14 @@ getBg (Just t) limagens = case tipoProjetil (projetilTorre t) of
 -- | Função principal para desenhar o mapa
 desenha :: ImmutableTowers -> Picture
 desenha ImmutableTowers {menu = MenuInicial, imagens = limagens} = getImagem "menujogar" limagens
-desenha it@(ImmutableTowers {menu = ModoJogo EscolherNivel, imagens = limagens}) = case nivelAtual it of 
+desenha it@(ImmutableTowers {menu = ModoJogo EscolherNivel, imagens = limagens}) = case nivelMaximo it of 
                                                                                     1 -> getImagem "menuniveis1" limagens
                                                                                     2 -> getImagem "menuniveis2" limagens
                                                                                     _ -> getImagem "menuniveis3" limagens
 desenha ImmutableTowers {menu = ModoJogo GanhouJogo, imagens = limagens} = getImagem "menuganhou" limagens
 desenha ImmutableTowers {menu = ModoJogo PerdeuJogo, imagens = limagens} = getImagem "menuperdeu" limagens
-desenha (ImmutableTowers Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens torreSelecionada infoTorre _)
+desenha ImmutableTowers {menu = ModoJogo Pausa, imagens = limagens} = getImagem "menupausa" limagens
+desenha (ImmutableTowers Jogo {baseJogo = base, portaisJogo = lportais, torresJogo = ltorres, inimigosJogo = linimigos, mapaJogo = mapa} (ModoJogo EmAndamento) limagens torreSelecionada infoTorre _ _)
             =  Pictures [getBg torreSelecionada limagens,
                        (Translate (-440) (385) $ Pictures $ [desenhaMapa picTerrenos mapa] ++ [desenhaBase picBase posbase] ++ (map (desenhaTorres picTorres) lpostiposTorres) ++ (map (desenhaPortais picPortal) lposportais) ++ (map (desenhaInimigo picInimigos) dadosInimigos)),
                          picVida,

@@ -2,7 +2,7 @@
 
 ## Tipos de inimigos diferentes (Extra 3)
 
-No momento, existem dois tipos de inimigo: o inimigo normal (soldado) e um inimigo mais forte (Blindado), sendo este último imune aos efeitos dos projéteis que as torres atiram, ou seja, sofrem apenas o dano relativo ao impacto do projétil da torre.
+No momento, existem dois tipos de inimigo: o inimigo normal e um inimigo mais forte (Blindado), sendo este último imune aos efeitos dos projéteis que as torres atiram, ou seja, sofrem apenas o dano relativo ao impacto do projétil da torre.
 
 Para efeito, adicionamos um campo ao data type dos Inimigos chamado tipoInimigo que guarda o tipo de cada inimigo do jogo.
 
@@ -20,7 +20,7 @@ Adicionamos um sistema de progressão de jogo, onde após vencer o primeiro nív
 
 No momento, existem 3 níveis disponíveis e cada nível conta com mapa e inimigos únicos.
 
-Para possibilitar este sistema, adicionamos no data type do ImmutableTowers um campo chamado nivelAtual que guarda o nível máximo da fase em que o jogador pode jogar no momento. Também optamos por criar um arquivo chamado Dados.hs onde é armazenado os jogos iniciais de cada nível.
+Para possibilitar este sistema, adicionamos no data type do ImmutableTowers um campo chamado nivelMaximo que guarda o nível máximo da fase em que o jogador pode jogar no momento. Também optamos por criar um arquivo chamado Dados.hs onde é armazenado os jogos iniciais de cada nível.
 
 ## Outras funcionalidades gráficas
 
