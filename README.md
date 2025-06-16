@@ -23,6 +23,10 @@ O jogo permite ao jogador escolher entre três níveis distintos, acessíveis at
 
 ![menuniveis](imgs/menuniveis.png)
 
+### Funcionalidades Extras
+
+As funcionalidades extras podem ser consultadas [aqui](app/EXTRAS.md).
+
 ### Situação de jogo - Nível 1
 
 ![nivel1](imgs/nivel1.png)
@@ -37,8 +41,8 @@ O jogo permite ao jogador escolher entre três níveis distintos, acessíveis at
 
 ## Desenvolvido por
 
-- Matheus Monteiro Azevedo (a111430)
-- Francisco Luciano Martins (a111775)
+- [Matheus Monteiro Azevedo](https://github.com/matheusm18) - a111430
+- [Francisco Luciano Martins](https://github.com/XicoMartins54) - a111775
 
 ## Executável
 
