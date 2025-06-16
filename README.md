@@ -4,6 +4,12 @@ Immutable Towers é um jogo do gênero [Tower Defense](https://en.wikipedia.org/
 
 O objetivo do jogo é impedir que ondas de inimigos alcancem a base do jogador. Para isso, é necessário posicionar estrategicamente torres que atacam automaticamente os inimigos, evitando que estes destruam a base.
 
+## Nota final do projeto: 17/20
+
+## Enunciado do projeto
+
+O enunciado do projeto pode ser consultado [aqui](./enunciado_projeto.pdf)
+
 ## Imagens do jogo
 
 ### Menu Inicial
